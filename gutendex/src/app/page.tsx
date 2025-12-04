@@ -1,4 +1,4 @@
-import { Card } from "@mui/material";
+"use client";
 import Link from "next/link";
 
 export default function Home() {
@@ -20,25 +20,19 @@ export default function Home() {
 					</h3>
 				</header>
 				<div className="grid gap-4 sm:grid-cols-2">
-					<Card
-						variant="outlined"
-						className="rounded-lg border border-edge bg-container p-6 transition hover:border-edge-highlight">
-						{
-							<Link href="/store">
-								<>
-									<p className="text-sm uppercase tracking-wide text-tertiary">
-										Store Page
-									</p>
-									<p className="text-2xl font-semibold">
-										GutenDex.com
-									</p>
-									<p className="mt-3 text-sm text-tertiary">
-										Online book store, displaying API usage.
-									</p>
-								</>
-							</Link>
-						}
-					</Card>
+					<Link href="/store" className="block">
+						<div className="rounded-lg border border-edge bg-container p-6 transition hover:border-edge-highlight">
+							<p className="text-sm uppercase tracking-wide text-tertiary">
+								Store Page
+							</p>
+							<p className="text-2xl font-semibold">
+								GutenDex.com
+							</p>
+							<p className="mt-3 text-sm text-tertiary">
+								Online book store, displaying API usage.
+							</p>
+						</div>
+					</Link>
 				</div>
 			</div>
 		</main>

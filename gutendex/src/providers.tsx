@@ -1,53 +1,56 @@
 "use client";
 import { cn } from "@/utils/cn";
 
-import React from "react";
-import {
-	ThemeProvider,
-	createTheme,
-	useColorScheme,
-} from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import RadioGroup from "@mui/material/RadioGroup";
-import { FormControl, FormControlLabel, FormLabel, Radio } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import Brightness4Icon from "@mui/icons-material/Brightness4";
-import Brightness7Icon from "@mui/icons-material/Brightness7";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
-const theme = createTheme({
-	colorSchemes: {
-		dark: true,
-	},
-});
+type ThemeContextType = {
+	isDark: boolean;
+	toggleTheme: () => void;
+};
 
-function ThemeToggle() {
-	const { mode, setMode } = useColorScheme();
-	const [mounted, setMounted] = React.useState(false);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-	React.useEffect(() => {
-		setMounted(true);
-	}, []);
-
-	if (!mounted || !mode || !setMode) return null;
-
-	const toggle = () => setMode(mode === "dark" ? "light" : "dark");
-
-	return (
-		<IconButton
-			onClick={toggle}
-			aria-label="toggle theme"
-			sx={{ position: "fixed", bottom: 16, right: 16 }}>
-			{mode === "dark" ? <Brightness7Icon /> : <Brightness4Icon />}
-		</IconButton>
-	);
+export function useTheme() {
+	const context = useContext(ThemeContext);
+	if (!context) {
+		throw new Error("useTheme must be used within a ThemeProvider");
+	}
+	return context;
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+	const [isDark, setIsDark] = useState(false);
+
+	useEffect(() => {
+		// Check localStorage or system preference on mount
+		const stored = localStorage.getItem("theme");
+		if (stored) {
+			setIsDark(stored === "dark");
+		} else {
+			setIsDark(
+				window.matchMedia("(prefers-color-scheme: dark)").matches
+			);
+		}
+	}, []);
+
+	useEffect(() => {
+		// Toggle .dark class on html element
+		if (isDark) {
+			document.documentElement.classList.add("dark");
+			localStorage.setItem("theme", "dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+			localStorage.setItem("theme", "light");
+		}
+	}, [isDark]);
+
+	const toggleTheme = () => {
+		setIsDark((prev) => !prev);
+	};
+
 	return (
-		<ThemeProvider theme={theme} defaultMode="system">
-			<CssBaseline />
+		<ThemeContext.Provider value={{ isDark, toggleTheme }}>
 			{children}
-			<ThemeToggle />
-		</ThemeProvider>
+		</ThemeContext.Provider>
 	);
 }

@@ -1,52 +1,30 @@
-import Box from "@mui/material/Box";
-import RadioGroup from "@mui/material/RadioGroup";
-import Radio from "@mui/material/Radio";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormLabel from "@mui/material/FormLabel";
-import {
-	ThemeProvider,
-	createTheme,
-	useColorScheme,
-} from "@mui/material/styles";
+"use client";
+import { IoSunny, IoMoon } from "react-icons/io5";
 import { cn } from "@/utils/cn";
+import { useTheme } from "@/providers";
 
 export default function ThemeToggle() {
-	const { mode, setMode } = useColorScheme();
-	if (!mode) {
-		return null;
-	}
+	const { isDark, toggleTheme } = useTheme();
+
 	return (
-		<div>
-			<FormControl>
-				<FormLabel id="demo-theme-toggle">Theme</FormLabel>
-				<RadioGroup
-					aria-labelledby="demo-theme-toggle"
-					name="theme-toggle"
-					row
-					value={mode}
-					onChange={(event) =>
-						setMode(
-							event.target.value as "system" | "light" | "dark"
-						)
-					}>
-					<FormControlLabel
-						value="system"
-						control={<Radio />}
-						label="System"
-					/>
-					<FormControlLabel
-						value="light"
-						control={<Radio />}
-						label="Light"
-					/>
-					<FormControlLabel
-						value="dark"
-						control={<Radio />}
-						label="Dark"
-					/>
-				</RadioGroup>
-			</FormControl>
+		<div className={cn("fixed right-4 bottom-4 z-50")}>
+			<button
+				aria-label="toggle theme"
+				type="button"
+				aria-pressed={isDark}
+				onClick={toggleTheme}
+				className={cn(
+					"inline-flex items-center gap-2",
+					"rounded-full border border-foreground/30",
+					"px-3 py-1 text-sm transition-colors",
+					isDark
+						? "bg-foreground text-background"
+						: "bg-transparent text-foreground hover:bg-foreground/10"
+				)}
+			>
+				{isDark ? <IoSunny /> : <IoMoon />}
+				<span>{isDark ? "Dark" : "Light"}</span>
+			</button>
 		</div>
 	);
 }
