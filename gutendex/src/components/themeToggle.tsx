@@ -8,6 +8,7 @@ export default function ThemeToggle() {
 
 	return (
 		<div className={cn("fixed right-4 bottom-4 z-50")}>
+			{/* todo: struggling to fix this */}
 			<button
 				aria-label="toggle theme"
 				type="button"
