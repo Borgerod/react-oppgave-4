@@ -6,6 +6,8 @@ import { getBooks } from "../api/books/route";
 import StoreHeader from "@/components/header";
 import ProductCard from "@/components/productCard";
 import { Book } from "@/types";
+// import { usePathname } from "next/navigation";
+import CurrentPath from "@/utils/getCurrentPath";
 
 function computeUpperDownloadCountLimit(
 	results: Book[],
@@ -30,14 +32,25 @@ export default async function Store() {
 	const upperDownloadCountLimit = !data.previous
 		? computeUpperDownloadCountLimit(data.results)
 		: undefined;
-
+	// const pathname = usePathname();
+	// only render header on the root path
 	console.log("upperDownloadCountLimit: ", upperDownloadCountLimit);
 	return (
 		<main className="min-h-screen">
 			<StoreHeader />
 			<div className="mx-auto flex max-w-6xl flex-col gap-8">
-				<header>
-					<h1 className="text-2xl font-semibold">Store</h1>
+				<header className="flex flex-row gap-5 justify-between">
+					{/* <h1 className="text-2xl font-semibold">Store</h1> */}
+					<CurrentPath />
+
+					<span>
+						Search results:
+						<span>
+							{/* todo get resultcount */}
+							{/* {resultcount} */}
+						</span>
+						books
+					</span>
 				</header>
 
 				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

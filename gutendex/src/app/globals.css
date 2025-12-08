@@ -72,6 +72,12 @@ html {
 		white 10%
 	);
 
+	--color-divider: color-mix(
+		in srgb,
+		var(--foreground) 20%,
+		transparent 80% /*  */
+	);
+
 	--color-primary: var(--foreground);
 	--color-secondary: color-mix(
 		in srgb,

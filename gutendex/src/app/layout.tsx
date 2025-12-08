@@ -4,6 +4,8 @@ import "./globals.css";
 import { cn } from "@/utils/cn";
 import Providers from "@/providers";
 import ThemeToggle from "@/components/themeToggle";
+import CurrentPath from "@/utils/getCurrentPath";
+import StoreHeader from "@/components/header";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -27,6 +29,8 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" suppressHydrationWarning>
+			<StoreHeader />
+
 			<body
 				className={cn(
 					`${geistSans.variable} ${geistMono.variable} antialiased`,
@@ -34,7 +38,8 @@ export default function RootLayout({
 					"px-6 py-20",
 					"",
 					""
-				)}>
+				)}
+			>
 				<Providers>
 					{children}
 					<ThemeToggle />
