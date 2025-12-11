@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaRegCopyright } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import Tabs from "@/components/tabs";
+import ProductCard from "@/components/productCard";
 async function fetchBook(id: number): Promise<Book | null> {
 	const res = await fetch(`https://gutendex.com/books/${id}`, {
 		cache: "no-store",
@@ -56,17 +57,56 @@ export default async function BookProfilePage({
 	// Images(s)
 	const formats = book.formats as Record<string, string> | undefined;
 	const imgSrc = formats?.["image/jpeg"] || formats?.["image/jpg"] || "";
-	console.log;
+	const trimmed = (book.authors[0].name ?? "").trim();
+	if (!trimmed) return;
+	const encoded = encodeURIComponent(trimmed);
+	const queryString = `?search=${encoded}`;
+	// const res = await fetch(`/api/books${queryString}`); //other works of this author
+	const res = await fetch(`https://gutendex.com/books${queryString}`); //other works of this author
+	// const json = await res.json();
+	const data = await res.json();
+	// if (mounted) setData(json);
 	return (
 		<main
 			className={cn(
-				"justify-center",
-				"justify-between",
-				"pt-30",
-				// "align-center",
+				"flex-1",
+				"min-h-0",
+				"mt-30",
+				"mt-15",
+				"w-screen",
+				" lg:gap-x-3",
+				"items-stretch",
+				"self-center",
 
-				// "grid grid-cols-[3fr_2fr_0.5fr]",
-				"grid grid-cols-[3fr_3fr_1fr]",
+				// "min-h-screen",
+				"overflow-auto",
+				"lg:min-h-0",
+				"lg:overflow-visible",
+				"max-w-7xl",
+				// "max-w-10xl",
+
+				// mobile
+				"pb-0",
+				"grid",
+				"grid-cols-1",
+				"grid-rows-3",
+				"grid-rows-[1fr_auto_1fr]",
+				"grid-rows-[auto_auto_auto]",
+				// "grid-rows-[1fr_1fr_1fr]",
+				"w-full",
+				// md
+				"md:grid-cols-2",
+				"md:grid-rows-[3fr_1fr]",
+
+				// lg
+				// "lg:grid-cols-[4fr_4fr_3fr]",
+				"lg:pb-40",
+				"pb-20",
+				"lg:grid-cols-[4fr_4fr_3fr]",
+				"lg:grid-cols-[auto_4fr_3fr]",
+				// "lg:grid-cols-[auto_auto_auto]",
+				// todo: 4fr_4fr_3fr does not work, i need 4fr_4fr_2fr or something, but i need to adjust "max-w-7xl" in layout to make that happen
+				"lg:grid-rows-1",
 				"",
 				""
 			)}
@@ -74,13 +114,36 @@ export default async function BookProfilePage({
 			<section
 				id="profile-image left-side 1"
 				className={cn(
-					// "flex flex-col align-center",
-					"p-5 flex-wrap text-wrap",
-					// "min-w-0",
-					"max-w-150",
-					// "w-full",
-					"h-full",
+					"p-5 text-wrap",
+					"lg:max-w-150",
+					"md:max-w-150",
+					"max-w-none",
+					"lg:px-0 ",
+					"min-h-0",
+					// "lg:w-fit",
+					// center vertically on medium and large screens
+					"md:self-center md:place-self-center",
+					"lg:self-center lg:place-self-center",
+					// "justify-items-center",
+					// "aling-center",
 
+					// "lg:px-5",
+					// "md:px-5",
+					// "h-full",
+					// "lg: h-fit",
+					// "h-fit",
+					//
+					// "grid grid-rows-[1fr_1fr_1fr]",
+					// mobile
+					"row-start-1 row-span-1 col-start-1 col-span-full w-full", // vill ikke w-full i mobile
+					// md
+					"md:row-start-1 md:row-span-1 md:col-start-1 md:col-span-1",
+					// lg
+					"lg:row-start-1 lg:row-span-1 lg:col-start-1 lg:col-span-1",
+
+					//
+					// "bg-amber-100",
+					"",
 					"",
 					""
 				)}
@@ -89,7 +152,15 @@ export default async function BookProfilePage({
 					className={cn(
 						"grid grid-cols-3 grid-rows-1 items-center justify-center relative",
 						"grid grid-cols-[1fr_6fr_1fr]",
-						"",
+						"row-start-2",
+						"max-w-none w-fit",
+						"lg:mx-0",
+						// center this block horizontally within its parent
+						"mx-auto justify-self-center",
+						// "self-center justify-self-center",
+						// "place-self-center",
+
+						"content-center",
 						"",
 						""
 					)}
@@ -98,15 +169,16 @@ export default async function BookProfilePage({
 						<Image
 							src={imgSrc}
 							alt={book.title ?? "cover"}
-							width={300}
-							height={450}
+							width={220}
+							height={330}
 							// fill={true}
 							className={cn(
-								"w-full h-auto object-cover rounded-xl aspect-2/3 z-10",
+								// set an explicit width so the image is larger
+								"w-[220px] sm:w-[220px] md:w-[260px] h-auto object-cover rounded-xl aspect-2/3 z-10",
+								"w-[220px] sm:w-[220px] md:w-[260px] h-auto object-cover rounded-xl aspect-2/3 z-10",
 								"col-start-2 row-start-1",
 								"shadow-2xl",
-								// "p-15",
-								// "h-full",
+								"",
 								""
 							)}
 							// TODO make hover animation for zoomin.
@@ -122,10 +194,21 @@ export default async function BookProfilePage({
 				id="profile-bio middle-side 2"
 				className={cn(
 					"flex flex-col align-center",
-					"p-5 flex-wrap text-wrap",
-					"h-full",
+					// "mb-4 md:mb-0",
+					"p-5 text-wrap",
+					"min-h-0",
 					"w-full",
 					"min-w-0",
+
+					// mobile
+					"row-start-2 row-span-1 col-start-1 col-span-full",
+					// md
+					"md:row-span-1 md:row-start-1 md:col-start-2 md:col-span-1",
+					// lg
+					"lg:row-span-1 lg:row-start-1 lg:col-start-2 lg:col-span-1",
+
+					// "lg:mr-5",
+					// "bg-amber-300",
 					"",
 					""
 				)}
@@ -360,8 +443,7 @@ export default async function BookProfilePage({
 													"text-primary/80",
 													"w-fit",
 													"bg-foreground/10 hover:bg-foreground/30",
-													"dark:bg-foreground/20 dark:hover:bg-foreground/30",
-													"dark:bg-foreground/25 dark:hover:bg-foreground/35"
+													"dark:bg-foreground/20 dark:hover:bg-foreground/30"
 												)}
 												target="_blank"
 												rel="noopener noreferrer"
@@ -411,20 +493,120 @@ export default async function BookProfilePage({
 			<section
 				id="author-discover right-side 3 "
 				className={cn(
-					"flex flex-col  align-center",
-					"p-5 flex-wrap text-wrap",
-					"h-full ",
-					"justify-self-end",
+					"mt-5",
+
+					"md:mt-0",
+					"lg:mt-5",
+					"p-5 text-wrap",
+					"min-h-0",
+					"lg:p-0",
+
+					"grid",
+					"grid-cols-1 grid-rows-1", //? need this?
+					// "grid-cols-auto grid-rows-2", //? need this?
+					// "grid-cols-[auto] grid-rows-1", //? need this?
+					// "grid-cols-[1fr] grid-rows-1", //? need this?
+					// "grid-rows-[auto_1fr]", //? need this?
+					"lg:grid-rows-[auto_1fr]", //? need this?
+					"md:grid-rows-[auto]", //? need this?
+					// "flex flex-row flex-nowrap gap-4 overflow-auto",
+					//mobile
+					"row-start-3 row-span-1 col-start-1 col-span-full",
+					//md
+					"md:row-start-2 md:row-span-1 md:col-start-1 md:col-span-full",
+					//lg
+					// "lg:row-start-1 lg:row-span-1 lg:-col-start-1 lg:col-span-1",
+					"lg:row-start-1 lg:row-span-1 lg:col-start-3 lg:col-span-1 ",
+
+					// "bg-amber-600",
+
 					"",
 					""
 				)}
 			>
 				{/* TODO: get  books from same author Query*/}
-				<h2 className="text-wrap">Discover</h2>
-				<span className="text-xs text-secondary">
-					other works by this author
-				</span>
+				<div
+					id="discover header"
+					className={cn(
+						// mobile
+						"flex flex-row items-baseline gap-2",
+						// md:
+						"md:flex md:flex-row", //keep this because i might change it later
+						// lg:
+						"lg:flex-col lg:gap-0",
+
+						"",
+						""
+					)}
+				>
+					<h2 className="text-wrap">Discover</h2>
+					<span className="text-xs text-secondary">
+						other works by this author
+					</span>
+				</div>
+
+				<ul
+					className={cn(
+						"row-start-2",
+						// Mobile: use a grid with 2 rows; columns flow horizontally and
+						// the number of columns depends on the number of items.
+						"grid grid-rows-2 grid-flow-col auto-cols-min auto-rows-min",
+						// Keep grid on small screens; switch to flex starting at `md`.
+						"md:flex md:flex-row md:flex-nowrap md:items-start",
+						// On large screens collapse into a vertical column.
+						"lg:flex-col lg:flex-nowrap",
+						"items-start",
+						"mt-2",
+						"lg:mt-5",
+						"gap-4",
+						"overflow-auto",
+						"min-h-0",
+						"pb-2",
+						"px-1",
+						"",
+						""
+					)}
+				>
+					{data.results.map((discoverBook: Book, index: number) =>
+						// skips the same book as profile
+						book.id === discoverBook.id ? null : (
+							<ProductCard
+								key={discoverBook.id ?? index}
+								book={discoverBook}
+								index={index}
+								mini
+							/>
+						)
+					)}
+					{/* <div className="h-full overflow-auto">
+						
+					</div> */}
+				</ul>
 			</section>
 		</main>
 	);
 }
+
+//
+
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center ">
+// 	1
+// </div>
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center ">
+// 	2
+// </div>
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center ">
+// 	3
+// </div>
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center ">
+// 	4
+// </div>
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center ">
+// 	5
+// </div>
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center">
+// 	6
+// </div>
+// <div className="h-full w-70 p-20 bg-amber-800 flex justify-center items-center">
+// 	7
+// </div>

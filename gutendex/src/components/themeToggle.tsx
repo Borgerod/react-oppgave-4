@@ -1,7 +1,7 @@
 "use client";
 import { IoSunny, IoMoon } from "react-icons/io5";
 import { cn } from "@/utils/cn";
-import { useTheme } from "@/providers";
+import { useTheme } from "@/providers/providers";
 
 export default function ThemeToggle() {
 	const { isDark, toggleTheme } = useTheme();

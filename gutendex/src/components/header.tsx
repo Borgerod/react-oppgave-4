@@ -1,79 +1,76 @@
 "use client";
-import { usePathname } from "next/navigation";
-import { IoSearch, IoMenu, IoChevronBack } from "react-icons/io5";
+import { IoChevronBack, IoMenu } from "react-icons/io5";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import SearchBar from "./searchBar";
 
-const Search = ({ children }: { children: React.ReactNode }) => (
-	<div
-		className={cn(
-			"relative rounded-md",
-			"relative rounded-full",
-			"bg-white/15 hover:bg-white/25",
-			"w-xl",
-			"p-2 flex flex-row",
-			"items-center justify-left"
-		)}
-	>
-		{children}
-	</div>
-);
+// todo clicking gutendex homebutton should reset the query
+type StoreHeaderProps = {
+	onResults?: (data: any, queryString?: string) => void;
+};
 
-const SearchIconWrapper = ({ children }: { children: React.ReactNode }) => (
-	<div
-		className={cn(
-			"p-3 h-full mr-2",
-			"pointer-events-auto",
-			"rounded-full",
-			"flex items-center justify-center",
-			"hover:bg-foreground/30"
-		)}
-	>
-		{children}
-	</div>
-);
-
-const StyledInputBase = (
-	props: React.InputHTMLAttributes<HTMLInputElement>
-) => (
-	<input
-		// TODO: add onsubmit
-		{...props}
-		className={cn(
-			"text-inherit ",
-			"py-2 pr-2 ",
-			"transition-width w-full ",
-			"md:w-[20ch] ",
-			"bg-transparent",
-			" outline-none",
-			"",
-			""
-		)}
-	/>
-);
-
-export default function StoreHeader() {
+export default function StoreHeader({ onResults }: StoreHeaderProps) {
 	const pathname = usePathname();
-	// only render header on the root path
+	const isBookProfile = pathname?.startsWith("/book-profile");
 	if (pathname === "/") return null;
-
 	return (
-		<header className="absolute inset-x-0 top-0 bg-transparent">
+		<header className="relative bg-transparent w-full py-5">
 			<div
 				className={cn(
 					"flex flex-row justify-between items-center",
-					"gap-5 max-w-6xl mx-auto px-6 py-4"
+					// "gap-5 max-w-6xl mx-auto px-6 py-4 ",
+					"gap-5 max-w-6xl mx-auto px-0 py-4",
+					"h-15",
+					// "gap-5  mx-auto px-0 py-4",
+					// "py-5",
+					"py-0",
+					"px-5",
+					"lg:px-0",
+					// "gap-5 max-w-7xl mx-auto px-6 py-4 ",
+					isBookProfile ? "max-w-7xl" : "",
+					// "ml-1",
+					"",
+					""
 				)}
 			>
-				<div className="flex flex-row items-center justify-center -ml-10">
+				{/* <div className="flex flex-row items-center justify-center -ml-10"> */}
+				<div
+					className={cn(
+						"flex w-full md:w-fit *:flex-row items-center justify-center",
+						"",
+						""
+						// "absolute left-1/2 -translate-x-1/2 sm:static sm:left-auto sm:translate-x-0",
+						// "z-10"
+					)}
+				>
+					<Link href={"/store"}>
+						<div
+							className={cn(
+								"p-2 rounded-full",
+								"flex items-center justify-center",
+								"hover:bg-foreground/10",
+								"text-nowrap",
+								"text-xl",
+								"sm:text-sm",
+								"",
+								""
+							)}
+						>
+							GutenDex Library
+						</div>
+					</Link>
 					{pathname === "/store" ? (
 						<Link href="/">
 							<button
 								aria-label="back"
 								className={cn(
+									"absolute top-7 left-6 md:static",
 									"p-2 rounded-full",
 									"flex items-center justify-center",
-									"hover:bg-foreground/10"
+									"hover:bg-foreground/10",
+									"",
+									""
 								)}
 							>
 								<IoChevronBack size={20} aria-label="root" />
@@ -81,135 +78,49 @@ export default function StoreHeader() {
 							</button>
 						</Link>
 					) : null}
-					<Link href={"/store"}>
-						<div
-							className={cn(
-								"p-2 rounded-full",
-								"flex items-center justify-center",
-								"hover:bg-foreground/10"
-							)}
-						>
-							GutenDex Library
-						</div>
-					</Link>
 				</div>
-				<Search>
-					<SearchIconWrapper>
-						<IoSearch className={cn("pointer-events-none")} />
-					</SearchIconWrapper>
-					<StyledInputBase
-						className={cn("pointer-events-none", "cursor-none")}
-						placeholder="Search…"
-						aria-label="search"
-					/>
-				</Search>
+				<div
+					className={cn(
+						"hidden md:flex lg:flex justify-center w-full"
+					)}
+				>
+					<SearchBar onResults={onResults} />
+				</div>
+
 				<button
 					aria-label="menu"
 					className={cn(
-						"p-3 h-full mr-2",
+						"absolute right-7 top-7 sm:static sm:right-auto sm:top-auto",
+						"p-2",
+						// "h-full",
+						"-mr-3",
 						"pointer-events-auto",
 						"rounded-full",
 						"flex items-center justify-center",
-						"hover:bg-foreground/30"
+						"hover:bg-foreground/10"
 					)}
+
+					// onClick={}
+					// TODO: make menu popup
 				>
-					<IoMenu size={24} />
+					{/* <IoMenu size={24} className="" /> */}
+					<IoMenu size={19} className="" />
 				</button>
+			</div>
+			<div
+				className={cn(
+					"flex justify-center w-full",
+					// "hidden",
+					"md:hidden",
+					"lg:hidden",
+					//
+					"px-5",
+					"",
+					""
+				)}
+			>
+				<SearchBar onResults={onResults} />
 			</div>
 		</header>
 	);
 }
-// import { IoSearch } from "react-icons/io5";
-// import { IoMenu } from "react-icons/io5";
-// import { cn } from "@/utils/cn";
-
-// const Search = ({ children }: { children: React.ReactNode }) => (
-// 	<div
-// 		className={cn(
-// 			"relative rounded-md",
-// 			"relative rounded-full",
-// 			"bg-white/15 hover:bg-white/25",
-// 			"w-xl",
-// 			"p-2 flex flex-row",
-// 			"items-center justify-left"
-// 		)}
-// 	>
-// 		{children}
-// 	</div>
-// );
-
-// const SearchIconWrapper = ({ children }: { children: React.ReactNode }) => (
-// 	<div
-// 		className={cn(
-// 			// "px-4 h-full",
-// 			"p-3 h-full mr-2",
-// 			// "pointer-events-none ",
-// 			"pointer-events-auto",
-// 			"rounded-full",
-// 			"flex items-center justify-center",
-// 			"hover:bg-foreground/30",
-// 			"",
-// 			""
-// 		)}
-// 	>
-// 		{children}
-// 	</div>
-// );
-
-// const StyledInputBase = (
-// 	props: React.InputHTMLAttributes<HTMLInputElement>
-// ) => (
-// 	<input
-// 		{...props}
-// 		className={cn(
-// 			"text-inherit py-2 pr-2 transition-width w-full md:w-[20ch] bg-transparent outline-none"
-// 		)}
-// 	/>
-// );
-// export default function StoreHeader() {
-// 	return (
-// 		<header className="absolute inset-x-0 top-0 bg-transparent">
-// 			<div
-// 				className={cn(
-// 					"flex flex-row justify-between items-center",
-// 					"gap-5 max-w-6xl mx-auto px-6 py-4"
-// 				)}
-// 			>
-// 				<div className="text-nowrap">GutenDex Library</div>
-// 				<Search>
-// 					<SearchIconWrapper>
-// 						<IoSearch
-// 							className={cn("pointer-events-none", "", "")}
-// 							// onClick={}
-// 							// todo add onclick to search button
-// 						/>
-// 					</SearchIconWrapper>
-// 					<StyledInputBase
-// 						className={cn("pointer-events-none", "cursor-none", "")}
-// 						placeholder="Search…"
-// 						aria-label="search"
-// 					/>
-// 				</Search>
-// 				<button
-// 					aria-label="menu"
-// 					className={cn(
-// 						// "px-4 h-full",
-// 						"p-3 h-full mr-2",
-// 						// "pointer-events-none ",
-// 						"pointer-events-auto",
-// 						"rounded-full",
-// 						"flex items-center justify-center",
-// 						"hover:bg-foreground/30",
-// 						"",
-// 						""
-// 					)}
-
-// 					// onClick={}
-// 					// TODO: make menu popup
-// 				>
-// 					<IoMenu size={24} className="" />
-// 				</button>
-// 			</div>
-// 		</header>
-// 	);
-// }

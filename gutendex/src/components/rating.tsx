@@ -7,12 +7,14 @@ import { cn } from "@/utils/cn";
 interface RatingProps {
 	ratingCount: number;
 	upperDownloadCountLimit?: number;
+	mini?: boolean;
 }
 
 export class Rating extends Component<RatingProps> {
 	static propTypes = {
 		ratingCount: PropTypes.number,
 		upperDownloadCountLimit: PropTypes.number,
+		mini: PropTypes.bool,
 	};
 
 	rating =
@@ -44,7 +46,9 @@ export class Rating extends Component<RatingProps> {
 		const upper = this.props.upperDownloadCountLimit ?? 1;
 		return (
 			<div className="flex flex-col w-full text-sm  text-secondary ">
-				popularity:
+				<span className={cn(this.props.mini ? "hidden" : "")}>
+					popularity:
+				</span>
 				<div className="flex flex-row w-full h-5 items-center gap-1">
 					<div>
 						<span className="text-sm font-semibold text-tertiary text-center self-center justify-self-center h-full">
@@ -62,7 +66,8 @@ export class Rating extends Component<RatingProps> {
 						className="text-sm text-tertiary inline-block text-center self-center justify-self-center h-full"
 						role="note"
 						aria-label={`Downloads: ${this.props.ratingCount.toLocaleString()}`}
-						title={`Downloads: ${this.props.ratingCount.toLocaleString()}`}>
+						title={`Downloads: ${this.props.ratingCount.toLocaleString()}`}
+					>
 						(
 						{new Intl.NumberFormat("en", {
 							notation: "compact",

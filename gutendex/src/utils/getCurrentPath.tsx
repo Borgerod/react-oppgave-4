@@ -1,7 +1,12 @@
 "use client";
 import { usePathname } from "next/navigation";
 
-export default function CurrentPath() {
+export default function CurrentPath(queryString?: string) {
 	const pathname = usePathname();
-	return <div>{pathname}</div>;
+	return (
+		<div>
+			{pathname}
+			{queryString ? `/${queryString}` : ""}
+		</div>
+	);
 }

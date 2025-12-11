@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/utils/cn";
-import Providers from "@/providers";
+import Providers from "@/providers/providers";
 import ThemeToggle from "@/components/themeToggle";
-import CurrentPath from "@/utils/getCurrentPath";
 import StoreHeader from "@/components/header";
 
 const geistSans = Geist({
@@ -24,23 +23,30 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-}: Readonly<{
+}: {
 	children: React.ReactNode;
-}>) {
+}) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<StoreHeader />
-
+		<html lang="en">
 			<body
 				className={cn(
 					`${geistSans.variable} ${geistMono.variable} antialiased`,
 					"bg-background text-foreground",
-					"px-6 py-20",
+					"h-screen flex flex-col",
+					"max-w-4xl mx-auto",
+					"max-w-5xl mx-auto",
+					"lg:h-screen",
+					"h-fit",
+					"h-full",
+					"max-w-8xl mx-auto",
+					// "px-4 sm:px-6 lg:px-8",
+					// "justify-start items-stretch",
 					"",
 					""
 				)}
 			>
 				<Providers>
+					<StoreHeader />
 					{children}
 					<ThemeToggle />
 				</Providers>
