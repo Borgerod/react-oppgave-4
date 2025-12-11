@@ -21,3 +21,10 @@ export type Book = {
 	// formats: object;
 	download_count: number;
 };
+
+export type BooksResponse = {
+	count: number;
+	next: string | null;
+	previous: string | null;
+	results: Book[];
+};

@@ -5,9 +5,10 @@ import { FaRegCopyright } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import Tabs from "@/components/tabs";
 import ProductCard from "@/components/productCard";
+import CardSkeleton from "@/components/cardSkeleton";
 async function fetchBook(id: number): Promise<Book | null> {
 	const res = await fetch(`https://gutendex.com/books/${id}`, {
-		cache: "no-store",
+		next: { revalidate: 3600 }, // Cache for 1 hour
 	});
 
 	if (!res.ok) return null;
@@ -62,7 +63,9 @@ export default async function BookProfilePage({
 	const encoded = encodeURIComponent(trimmed);
 	const queryString = `?search=${encoded}`;
 	// const res = await fetch(`/api/books${queryString}`); //other works of this author
-	const res = await fetch(`https://gutendex.com/books${queryString}`); //other works of this author
+	const res = await fetch(`https://gutendex.com/books${queryString}`, {
+		next: { revalidate: 3600 }, // Cache for 1 hour
+	}); //other works of this author
 	// const json = await res.json();
 	const data = await res.json();
 	// if (mounted) setData(json);
@@ -96,7 +99,10 @@ export default async function BookProfilePage({
 				"w-full",
 				// md
 				"md:grid-cols-2",
-				"md:grid-rows-[3fr_1fr]",
+				// "md:grid-rows-[3fr_1fr]",
+				"md:grid-rows-[auto_1fr]",
+				"md:px-20",
+				"lg:px-0",
 
 				// lg
 				// "lg:grid-cols-[4fr_4fr_3fr]",
@@ -107,10 +113,14 @@ export default async function BookProfilePage({
 				// "lg:grid-cols-[auto_auto_auto]",
 				// todo: 4fr_4fr_3fr does not work, i need 4fr_4fr_2fr or something, but i need to adjust "max-w-7xl" in layout to make that happen
 				"lg:grid-rows-1",
+
+				// "lg:py-40 lg:pb-50",
+				// "lg:m-0",
+				"lg:py-20 lg:pb-50",
+				"lg:m-0",
 				"",
 				""
-			)}
-		>
+			)}>
 			<section
 				id="profile-image left-side 1"
 				className={cn(
@@ -146,8 +156,7 @@ export default async function BookProfilePage({
 					"",
 					"",
 					""
-				)}
-			>
+				)}>
 				<div
 					className={cn(
 						"grid grid-cols-3 grid-rows-1 items-center justify-center relative",
@@ -163,8 +172,7 @@ export default async function BookProfilePage({
 						"content-center",
 						"",
 						""
-					)}
-				>
+					)}>
 					{imgSrc ? (
 						<Image
 							src={imgSrc}
@@ -206,13 +214,12 @@ export default async function BookProfilePage({
 					"md:row-span-1 md:row-start-1 md:col-start-2 md:col-span-1",
 					// lg
 					"lg:row-span-1 lg:row-start-1 lg:col-start-2 lg:col-span-1",
-
+					"md:h-fit",
 					// "lg:mr-5",
 					// "bg-amber-300",
 					"",
 					""
-				)}
-			>
+				)}>
 				{/* Book ID: {book.id} */}
 				{/* TITLE */}
 				{(() => {
@@ -256,22 +263,22 @@ export default async function BookProfilePage({
 						.filter(Boolean);
 
 					return (
-						<div className="py-5 text-secondary text-sm" key={i}>
+						<div
+							className="py-5 text-secondary text-md lg:text-sm"
+							key={i}>
 							{paragraphs.length === 0
 								? "unknown"
 								: paragraphs.map((p, idx) =>
 										idx === 0 ? (
 											<p
 												className="italic font-thin"
-												key={`summary-${i}-${idx}`}
-											>
+												key={`summary-${i}-${idx}`}>
 												{p}
 											</p>
 										) : (
 											<p
 												className="py-5"
-												key={`summary-${i}-${idx}`}
-											>
+												key={`summary-${i}-${idx}`}>
 												{p}
 											</p>
 										)
@@ -297,8 +304,7 @@ export default async function BookProfilePage({
 						"",
 						"gap-y-2",
 						"gap-x-4"
-					)}
-				>
+					)}>
 					{/* editors */}
 					<div className="grid grid-cols-2 gap-2">
 						<span id="key" className="text-sm font-medium">
@@ -416,8 +422,7 @@ export default async function BookProfilePage({
 													"dark:bg-foreground/25 dark:hover:bg-foreground/35"
 												)}
 												target="_blank"
-												rel="noopener noreferrer"
-											>
+												rel="noopener noreferrer">
 												{prettyMime(mime)}
 											</a>
 										)
@@ -446,8 +451,7 @@ export default async function BookProfilePage({
 													"dark:bg-foreground/20 dark:hover:bg-foreground/30"
 												)}
 												target="_blank"
-												rel="noopener noreferrer"
-											>
+												rel="noopener noreferrer">
 												{subject}
 											</a>
 										)
@@ -477,8 +481,7 @@ export default async function BookProfilePage({
 													"dark:bg-foreground/25 dark:hover:bg-foreground/35"
 												)}
 												target="_blank"
-												rel="noopener noreferrer"
-											>
+												rel="noopener noreferrer">
 												{bookshelf}
 											</a>
 										)
@@ -522,8 +525,7 @@ export default async function BookProfilePage({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				{/* TODO: get  books from same author Query*/}
 				<div
 					id="discover header"
@@ -537,8 +539,7 @@ export default async function BookProfilePage({
 
 						"",
 						""
-					)}
-				>
+					)}>
 					<h2 className="text-wrap">Discover</h2>
 					<span className="text-xs text-secondary">
 						other works by this author
@@ -565,22 +566,24 @@ export default async function BookProfilePage({
 						"px-1",
 						"",
 						""
-					)}
-				>
-					{data.results.map((discoverBook: Book, index: number) =>
-						// skips the same book as profile
-						book.id === discoverBook.id ? null : (
-							<ProductCard
-								key={discoverBook.id ?? index}
-								book={discoverBook}
-								index={index}
-								mini
-							/>
-						)
-					)}
-					{/* <div className="h-full overflow-auto">
-						
-					</div> */}
+					)}>
+					{!data?.results
+						? Array.from({ length: 5 }).map((_, index) => (
+								<CardSkeleton key={index} mini />
+						  ))
+						: data.results.map(
+								(discoverBook: Book, index: number) =>
+									// skips the same book as profile
+									book.id === discoverBook.id ? null : (
+										<ProductCard
+											key={discoverBook.id ?? index}
+											book={discoverBook}
+											index={index}
+											mini
+										/>
+									)
+						  )}
+					{/* <div className="h-full overflow-auto">					</div> */}
 				</ul>
 			</section>
 		</main>

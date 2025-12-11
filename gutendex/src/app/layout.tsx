@@ -43,8 +43,7 @@ export default function RootLayout({
 					// "justify-start items-stretch",
 					"",
 					""
-				)}
-			>
+				)}>
 				<Providers>
 					<StoreHeader />
 					{children}

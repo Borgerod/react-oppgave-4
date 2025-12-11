@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { cn } from "@/utils/cn";
+import type { BooksResponse } from "@/types";
 import { useRouter } from "next/navigation";
 
 const SearchIcon = () => (
@@ -10,22 +11,27 @@ const SearchIcon = () => (
 			// "p-3",
 			"p-2",
 			"h-full ",
+			"aspect-square",
 			"mr-2",
 			"pointer-events-auto",
 			"rounded-full",
 			"flex items-center justify-center",
 			"hover:bg-foreground/30",
 			"hover:bg-foreground/10",
+
+			// "h-12",
+			// "sm:h-full",
+			"text-xl sm:text-md",
+
 			"",
 			""
-		)}
-	>
+		)}>
 		<IoSearch className={cn("pointer-events-none")} />
 	</div>
 );
 
 type SearchBarProps = {
-	onResults?: (data: any, queryString?: string) => void;
+	onResults?: (data: BooksResponse, queryString?: string) => void;
 	onQuery?: (queryString?: string) => void;
 };
 
@@ -42,7 +48,7 @@ export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
 		try {
 			const res = await fetch(`https://gutendex.com/books${queryString}`);
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
-			const data = await res.json();
+			const data = (await res.json()) as BooksResponse;
 			if (onResults) onResults(data, queryString);
 			else router.push(`/store${queryString}`);
 			if (onQuery) onQuery(queryString);
@@ -60,6 +66,7 @@ export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
 					"text-sm",
 					"p-1",
 					// "px-3",
+					// "sm:px-1",
 					// "py-2",
 					// "py-1",
 					"border border-foreground/10",
@@ -69,9 +76,12 @@ export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
 					// "hover:bg-foreground/10",
 					"hover:border-edge-highlight",
 					// "h-[43px]",
+					"h-12",
+					"h-15",
+					"sm:h-full",
+					"text-lg sm:text-sm",
 					""
-				)}
-			>
+				)}>
 				<SearchIcon />
 				<input
 					name="q"

@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/utils/cn";
-import type { Author, Book } from "@/types";
+import type { Book } from "@/types";
 import Image from "next/image";
 import Rating from "./rating";
 import Link from "next/link";
@@ -65,23 +65,23 @@ export default function ProductCard({
 					mini
 						? "inline-block flex-none w-80 h-fit"
 						: // : "block w-full h-full"
-						  "block h-full w-2xs"
+						  "block h-full w-lg sm:w-2xs"
 				}`,
-				"w-xl",
-				"sm:w-2xs",
+				// "w-xl",
+				"",
+				// "sm:p-1",
 				"hover:bg-container-raised hover:scale-101",
 
-				"shadow-2xl shadow-xl",
+				// "shadow-2xl",
+				"shadow-xl",
 				"",
 				""
-			)}
-		>
+			)}>
 			<div
 				className={cn(
 					"overflow-hidden rounded-3xl",
 					`${mini ? "" : "h-full"}`
-				)}
-			>
+				)}>
 				<div
 					className={cn(
 						`${
@@ -90,9 +90,11 @@ export default function ProductCard({
 								: "flex flex-row gap-4 p-4 h-full sm:flex-col w-full"
 							// : "flex flex-col gap-4 p-4 h-full md:flex-col"
 							// : "flex flex-col justify-between gap-4 p-4 h-full"
-						}`
-					)}
-				>
+						}`,
+						// "flex flex-row gap-4 p-4 h-full sm:flex-col w-full",
+						"",
+						""
+					)}>
 					{imgSrc ? (
 						<Image
 							src={imgSrc}
@@ -103,10 +105,14 @@ export default function ProductCard({
 								"rounded-xl aspect-2/3",
 								// keep aspect-ratio but prevent the image from growing too tall
 								// use object-contain so the cover keeps its proportions
+								"h-full",
+								"w-30 ",
+								"",
 								`${
 									mini
 										? "h-30 w-20 object-cover"
-										: "  object-cover"
+										: "object-cover sm:h-full sm:w-full sm:object-cover"
+
 									// : "  max-h-[55vh] sm:max-h-[420px] object-cover"
 								}`
 							)}
@@ -126,153 +132,173 @@ export default function ProductCard({
 							)}
 						/>
 					)}
+
 					<div
 						className={cn(
-							// `${mini ? "flex flex-col justify-between" : ""}`,
-							`${mini ? "flex flex-col gap-2" : ""}`,
-
-							// "flex flex-col",
+							"flex flex-col",
+							"flex justify-between gap-4 h-full sm:flex-col w-full",
 							"",
 							""
-						)}
-					>
-						<h2
-							className={cn(
-								"text-2xl font-extralight text-primary p-0 m-0 leading-[0.75]",
-								// "text-2xl font-extralight text-primary p-0 m-0 leading-none",
-								`${mini ? "text-xs" : ""}`,
-								""
-							)}
-						>
-							{titleMain}
-							{titleSub && (
-								<span
-									className={cn(
-										"text-sm italic font-thin text-secondary ml-2 align-baseline leading-[0.75]",
-										`${mini ? "text-xs ml-1" : ""}`
-									)}
-								>
-									{titleSub}
-								</span>
-							)}
-						</h2>
-						<p
-							className={cn(
-								// "text-sm italic font-thin mt-1 align-baseline leading-[0.75]",
-								"text-sm italic font-thin mt-1 align-baseline ",
-								// "mb-auto",
-								`${mini ? "text-xs" : ""}`
-							)}
-						>
-							<span className={cn("text-xs text-tertiary mr-1")}>
-								By:
-							</span>
-							<span
-								title={authorsText}
-								className={cn(
-									`${mini ? "truncate max-w-40" : ""}`
-								)}
-							>
-								{authorsText}
-							</span>
-						</p>
+						)}>
 						<div
 							className={cn(
-								"mt-auto",
-								`${mini ? "visible" : "hidden"}`,
+								// `${mini ? "flex flex-col justify-between" : ""}`,
+								`${mini ? "flex flex-col gap-2" : ""}`,
+								"sm: flex-col",
+								// "flex flex-col",
 								"",
 								""
-							)}
-						>
-							<Rating
-								ratingCount={download_count}
-								upperDownloadCountLimit={upperLimit}
-								mini={mini}
-							/>
+							)}>
+							<h2
+								className={cn(
+									"text-2xl font-extralight text-primary p-0 m-0 ",
+									// "text-2xl font-extralight text-primary p-0 m-0 leading-[0.75]",
+									"text-2xl font-extralight text-primary p-0 m-0 leading-none",
+									"text-2xl font-extralight text-primary p-0 m-0 leading-tight",
+									`${mini ? "text-xs leading-[0.75]" : ""}`,
+									""
+								)}>
+								{titleMain}
+								{titleSub && (
+									<span
+										className={cn(
+											"text-sm italic font-thin text-secondary ml-2 align-baseline leading-[0.75]",
+											`${mini ? "text-xs ml-1" : ""}`
+										)}>
+										{titleSub}
+									</span>
+								)}
+							</h2>
+							<p
+								className={cn(
+									// "text-sm italic font-thin mt-1 align-baseline leading-[0.75]",
+									"text-sm italic font-thin mt-1 align-baseline ",
+									// "mb-auto",
+									`${mini ? "text-xs" : ""}`
+								)}>
+								<span
+									className={cn(
+										"text-xs text-tertiary mr-1"
+									)}>
+									By:
+								</span>
+								<span
+									title={authorsText}
+									className={cn(
+										`${mini ? "truncate max-w-40" : ""}`
+									)}>
+									{authorsText}
+								</span>
+							</p>
+							<div
+								className={cn(
+									"mt-auto",
+									`${mini ? "visible" : "hidden"}`,
+									"",
+									""
+								)}>
+								<Rating
+									ratingCount={download_count}
+									upperDownloadCountLimit={upperLimit}
+									mini={mini}
+								/>
+							</div>
 						</div>
-					</div>
-
-					<div
-						className={cn(
-							// "flex flex-row flex-wrap gap-1 mt-2",
-							// `${mini ? "hidden" : ""}`,
-							"flex flex-col",
-							"h-full",
-							`${mini ? "hidden" : ""}`,
-							""
-						)}
-					>
 						<div
 							className={cn(
 								// "flex flex-row flex-wrap gap-1 mt-2",
-								`${mini ? "visible" : ""}`,
-
-								"mt-auto",
-								"",
+								// `${mini ? "hidden" : ""}`,
+								"flex flex-row justify-between",
+								"flex sm:flex-col sm:gap-4",
+								// "h-full",
+								`${mini ? "hidden" : ""}`,
 								""
-							)}
-						>
-							<Rating
-								ratingCount={download_count}
-								upperDownloadCountLimit={upperLimit}
-								mini={mini}
-							/>
-						</div>
-						<p>
-							{(book.bookshelves || []).map(
-								(shelf: string, index: number) =>
-									shelf.includes("Category:") &&
-									!shelf.includes("Literature") ? (
-										<button
-											key={`${shelf}-${index}`}
-											className=""
-											// onClick={}
-											// TODO:
-											//       "download_count": 303668
-										>
-											<span
-												key={`${shelf}-${index}`}
-												className={cn(
-													"text-xs font-thin",
-													"px-2 py-0.5",
-													"rounded-full",
-													"text-secondary",
-													"text-primary/80",
-													"mr-1",
-													// "text-tertiary",
-													"bg-foreground/10 hover:bg-foreground/30",
-													"dark:bg-foreground/20 dark:hover:bg-foreground/30",
-													"dark:bg-foreground/25 dark:hover:bg-foreground/35",
-													"",
-													"",
-													""
-												)}
-											>
-												{shelf.split("Category:")[1]}
-											</span>
-										</button>
-									) : (
+							)}>
+							<div
+								className={cn(
+									// "flex flex-row flex-wrap gap-1 mt-2",
+									// `${mini ? "hidden" : ""}`,
+									"flex flex-col",
+									"h-full",
+									`${mini ? "hidden" : ""}`,
+									""
+								)}>
+								<div
+									className={cn(
+										// "flex flex-row flex-wrap gap-1 mt-2",
+										`${mini ? "visible" : ""}`,
+
+										"mt-auto",
+										"",
 										""
-									)
-							)}
-						</p>
+									)}>
+									<Rating
+										ratingCount={download_count}
+										upperDownloadCountLimit={upperLimit}
+										mini={mini}
+									/>
+								</div>
+								<p>
+									{(book.bookshelves || []).map(
+										(shelf: string, index: number) =>
+											shelf.includes("Category:") &&
+											!shelf.includes("Literature") ? (
+												<button
+													key={`${shelf}-${index}`}
+													className=""
+													// onClick={}
+													// TODO:
+													//       "download_count": 303668
+												>
+													<span
+														key={`${shelf}-${index}`}
+														className={cn(
+															"text-xs font-thin",
+															"px-2 py-0.5",
+															"rounded-full",
+															"text-secondary",
+															"text-primary/80",
+															"mr-1",
+															// "text-tertiary",
+															"bg-foreground/10 hover:bg-foreground/30",
+															"dark:bg-foreground/20 dark:hover:bg-foreground/30",
+															"dark:bg-foreground/25 dark:hover:bg-foreground/35",
+															"",
+															"",
+															""
+														)}>
+														{
+															shelf.split(
+																"Category:"
+															)[1]
+														}
+													</span>
+												</button>
+											) : (
+												""
+											)
+									)}
+								</p>
+							</div>
+							{/* TODO: check the versions maybe someone are kindle frieldy or not */}
+							{/* TODO: would be funny to actually add prices and make the tutor pay to review the rest. */}
+							<button
+								className={cn(
+									"rounded-full",
+									"w-fit p-1 px-5",
+									"border border-accent text-accent",
+									"hover:border-accent-dark hover:text-black hover:bg-accent-dark",
+									"h-10 text-nowrap self-",
+									"sm:h-full",
+									// `${mini ? "hidden" : "mt-auto"}`,
+									`${mini ? "hidden" : ""}`,
+									"",
+									""
+								)}>
+								Read more
+							</button>
+						</div>
 					</div>
-					{/* TODO: check the versions maybe someone are kindle frieldy or not */}
-					{/* TODO: would be funny to actually add prices and make the tutor pay to review the rest. */}
-					<button
-						className={cn(
-							"rounded-full",
-							"w-fit p-1 px-5",
-							"border border-accent text-accent",
-							"hover:border-accent-dark hover:text-black hover:bg-accent-dark",
-							// `${mini ? "hidden" : "mt-auto"}`,
-							`${mini ? "hidden" : ""}`,
-							"",
-							""
-						)}
-					>
-						Read more
-					</button>
 				</div>
 			</div>
 		</Link>
@@ -289,10 +315,10 @@ export default function ProductCard({
 // 		<div className="flex flex-col justify-between gap-4 p-4 h-full">
 // 			<img
 // 				src={
-// 					(book as any).formats[
+// 					book.formats[
 // 						"image/jpeg"
 // 					] ||
-// 					(book as any).formats[
+// 					book.formats[
 // 						"image/jpg"
 // 					] ||
 // 					""

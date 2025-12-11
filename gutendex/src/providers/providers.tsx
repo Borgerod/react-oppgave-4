@@ -2,6 +2,7 @@
 import { cn } from "@/utils/cn";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import type { Book, BooksResponse } from "@/types";
 
 type ThemeContextType = {
 	isDark: boolean;
@@ -59,7 +60,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 	useEffect(() => {
 		let mounted = true;
 
-		function computeUpperDownloadCountLimit(results: any[], limit = 1.5) {
+		function computeUpperDownloadCountLimit(results: Book[], limit = 1.5) {
 			if (!results || results.length === 0) return undefined;
 			let current = results[0]?.download_count;
 			for (let i = 1; i < results.length; i++) {
@@ -77,7 +78,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 			try {
 				const res = await fetch("/api/books");
 				if (!res.ok) return;
-				const json = await res.json();
+				const json = (await res.json()) as BooksResponse;
 				if (!mounted) return;
 				// only set when we have the first page (no previous)
 				if (!json.previous) {
