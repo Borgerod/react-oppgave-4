@@ -8,22 +8,19 @@ import type { BooksResponse } from "@/types";
 import { useState } from "react";
 import { useRef, useEffect } from "react";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-import { MdToggleOn } from "react-icons/md";
-import { LiaToggleOnSolid } from "react-icons/lia";
-// import { useState } from "react";
+import Filter from "./filter";
 
 // todo clicking gutendex homebutton should reset the query
 type StoreHeaderProps = {
 	onResults?: (data: BooksResponse, queryString?: string) => void;
 };
-
 export default function StoreHeader({ onResults }: StoreHeaderProps) {
 	const pathname = usePathname();
 	const isBookProfile = pathname?.startsWith("/book-profile");
 	const [isOpen, toggleMenu] = useState(false);
 	const [openFilter, toggleFilter] = useState(false);
-	const [copyright, toggleCopyRight] = useState(false);
 	const menuRef = useRef<HTMLDivElement>(null);
+
 	useEffect(() => {
 		if (!isOpen) return;
 		function handleClickOutside(event: MouseEvent) {
@@ -57,7 +54,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 
 						"",
 						""
-					)}>
+					)}
+				>
 					Stop snooping!
 				</div>
 			) : (
@@ -83,7 +81,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 					// "ml-1",
 					"",
 					""
-				)}>
+				)}
+			>
 				{/* <div className="flex flex-row items-center justify-center -ml-10"> */}
 				{/* <div
 					className={cn(
@@ -111,7 +110,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 								"h-full",
 								"",
 								""
-							)}>
+							)}
+						>
 							<IoChevronBack size={20} aria-label="root" />
 							<span className="pr-2">/root</span>
 						</button>
@@ -134,7 +134,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 
 							"",
 							""
-						)}>
+						)}
+					>
 						GutenDex Library
 					</div>
 				</Link>
@@ -152,7 +153,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 						"sm:visible",
 						"",
 						""
-					)}>
+					)}
+				>
 					<button
 						aria-label="menu"
 						onClick={() => toggleFilter(!openFilter)}
@@ -167,7 +169,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 							"rounded-full",
 							"flex items-center justify-center",
 							"hover:bg-foreground/10"
-						)}>
+						)}
+					>
 						<PiSlidersHorizontalFill size={19} className="" />
 					</button>
 					<SearchBar onResults={onResults} />
@@ -187,7 +190,8 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 						"rounded-full",
 						"flex items-center justify-center",
 						"hover:bg-foreground/10"
-					)}>
+					)}
+				>
 					<IoMenu size={19} className="" />
 				</button>
 			</div>
@@ -202,65 +206,21 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 					"px-5",
 					"",
 					""
-				)}>
+				)}
+			>
 				<SearchBar onResults={onResults} />
 			</div>
-			{openFilter ? (
-				<div
-					aria-label="filter"
-					id="filter"
-					// ref={menuRef}
-					className={cn(
-						// "absolute z-10 top-20 right-10",
-						// "absolute z-10 top-5 right-60",
-						// "border-y",
-						"h-fit min-h-20 w-full  border-b border-edge",
-						"text-xl text-center content-center",
-						"gird grid-rows-auto",
-						"",
-						""
-					)}>
-					<select name="searchBy" id="searchBy">
-						<option value="books">books</option>
-						<option value="author">author</option>
-						<option value="books">books</option>
-						<option value="books">books</option>
-						<option value="books">books</option>
-					</select>
-					<select name="language" id="language">
-						{/* todo make multiselect */}
-						<option value="English">English</option>
-						<option value="Norwegian">Norwegian</option>
-						<option value="French">French</option>
-						<option value="Spanish">Spanish</option>
-						<option value="Mandarin">Mandarin</option>
-					</select>
-					<button
-						onClick={() => toggleCopyRight(!copyright)}
-						className="flex gap-2 text-md">
-						copyright
-						{copyright ? (
-							<div>
-								<LiaToggleOnSolid
-									size={24}
-									className="rotate-180"
-								/>
-							</div>
-						) : (
-							<div>
-								<LiaToggleOnSolid
-									size={24}
-									// fill="green"
-									color="var(--accent)"
-								/>
-							</div>
-						)}
-					</button>
-					FILTER TIME!
-				</div>
-			) : (
-				<></>
-			)}
+			{openFilter && <Filter />}
 		</header>
 	);
 }
+
+/*
+<select name="searchBy" id="searchBy">
+	<option value="books">books</option>
+	<option value="author">author</option>
+	<option value="books">books</option>
+	<option value="books">books</option>
+	<option value="books">books</option>
+</select>
+*/

@@ -25,7 +25,8 @@ const SearchIcon = () => (
 
 			"",
 			""
-		)}>
+		)}
+	>
 		<IoSearch className={cn("pointer-events-none")} />
 	</div>
 );
@@ -81,7 +82,8 @@ export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
 					"sm:h-full",
 					"text-lg sm:text-sm",
 					""
-				)}>
+				)}
+			>
 				<SearchIcon />
 				<input
 					name="q"

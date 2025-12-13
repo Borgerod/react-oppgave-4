@@ -93,6 +93,7 @@ html {
 	);
 
 	--color-primary: var(--foreground);
+	--color-primary-inv: var(--background);
 	--color-secondary: color-mix(
 		in srgb,
 		var(--foreground) 70%,
