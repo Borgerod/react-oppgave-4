@@ -20,7 +20,7 @@ export default function Home() {
 					</h3>
 				</header>
 				<div className="grid gap-4 sm:grid-cols-2">
-					<Link href="/store" className="block">
+					<Link href="/store" className="block shadow-md">
 						<div className="rounded-lg border border-edge bg-container p-6 transition hover:border-edge-highlight">
 							<p className="text-sm uppercase tracking-wide text-tertiary">
 								Store Page

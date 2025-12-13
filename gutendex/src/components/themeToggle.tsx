@@ -17,14 +17,18 @@ export default function ThemeToggle() {
 				className={cn(
 					"inline-flex items-center gap-2",
 					"rounded-full border border-foreground/30",
-					"px-3 py-1 text-sm transition-colors",
+					"px-3 py-2 text-sm transition-colors",
+
+					"",
 					isDark
-						? "bg-foreground text-background"
-						: "bg-transparent text-foreground hover:bg-foreground/10"
-				)}
-			>
+						? "bg-container-inv text-primary-inv"
+						: // : "bg-transparent text-foreground hover:bg-foreground/10"
+						  "bg-container-inv text-primary-inv"
+				)}>
 				{isDark ? <IoSunny /> : <IoMoon />}
-				<span>{isDark ? "Dark" : "Light"}</span>
+				<span className="leading-none">
+					{isDark ? "Dark" : "Light"}
+				</span>
 			</button>
 		</div>
 	);

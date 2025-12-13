@@ -2,23 +2,51 @@
 import { IoChevronBack, IoMenu } from "react-icons/io5";
 import { cn } from "@/utils/cn";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { usePathname, useSearchParams } from "next/navigation";
 import SearchBar from "./searchBar";
 import type { BooksResponse } from "@/types";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
 import Filter from "./filter";
+import { FcKindle } from "react-icons/fc";
+import { MdDownloadForOffline } from "react-icons/md";
+import { FaBook } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
+import { ThemeContext } from "@emotion/react";
+
+{
+	/* <FcKindle />
+<FaBook />;
+<MdDownloadForOffline />;
+<IoMdDownload />; */
+}
 
 // todo clicking gutendex homebutton should reset the query
 type StoreHeaderProps = {
 	onResults?: (data: BooksResponse, queryString?: string) => void;
+	topics?: string[];
 };
-export default function StoreHeader({ onResults }: StoreHeaderProps) {
+export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 	const pathname = usePathname();
+	const searchParams = useSearchParams();
 	const isBookProfile = pathname?.startsWith("/book-profile");
 	const [isOpen, toggleMenu] = useState(false);
 	const [openFilter, toggleFilter] = useState(false);
+	// Read searchQuery directly from URL params instead of local state
+	const searchQuery = searchParams?.get("search") || "";
+
+	// Calculate selected filters count directly from URL params
+	const selectedCount = React.useMemo(() => {
+		if (!searchParams) return 0;
+		const topicsCount = searchParams.getAll("topic").length;
+		const languagesCount = searchParams.getAll("language").length;
+		const formatsCount = searchParams.getAll("format").length;
+		const copyrightCount = searchParams.get("copyright") === "on" ? 1 : 0;
+		return topicsCount + languagesCount + formatsCount + copyrightCount;
+	}, [searchParams]);
+
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -38,106 +66,103 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 	}, [isOpen]);
 
 	if (pathname === "/") return null;
-
+	let filterCount;
 	return (
 		<header className="relative bg-transparent w-full py-10 sm:py-5">
-			{isOpen ? (
+			{isOpen && (
 				<div
 					aria-label="menu"
 					id="menu"
-					ref={menuRef}
 					className={cn(
-						"absolute z-10 top-20 right-10",
-						"absolute z-10 top-5 right-60",
+						"absolute",
+						"z-10 sm:top-20 sm:right-7.5",
+						"z-10 top-25 right-7.5",
 						"h-200 w-100 bg-container-solid rounded-2xl shadow border border-edge",
 						"text-xl text-center content-center",
-
+						"shadow-xl",
 						"",
 						""
-					)}
-				>
+					)}>
 					Stop snooping!
 				</div>
-			) : (
-				<></>
 			)}
 			<div
 				className={cn(
 					"flex flex-row justify-between items-center",
-					// "gap-5 max-w-6xl mx-auto px-6 py-4 ",
 					"gap-5 max-w-6xl mx-auto px-0 py-4",
 					"h-15",
 					"h-12",
-					// "gap-5  mx-auto px-0 py-4",
-					// "py-5",
 					"py-0",
 					"px-5",
 					"lg:px-10",
 					"lg:max-w-7xl",
 					"mb-5",
-
-					// "gap-5 max-w-7xl mx-auto px-6 py-4 ",
 					isBookProfile ? "max-w-7xl" : "",
-					// "ml-1",
 					"",
 					""
-				)}
-			>
-				{/* <div className="flex flex-row items-center justify-center -ml-10"> */}
-				{/* <div
-					className={cn(
-						"flex w-full",
-						// "md:w-fit",
-						// "sm:w-fit",
-						// "*:flex-row",
-						// "items-center justify-center",
-						"",
-						""
-						// "absolute left-1/2 -translate-x-1/2 sm:static sm:left-auto sm:translate-x-0",
-						// "z-10"
-					)}> */}
+				)}>
 				{pathname === "/store" ? (
 					<Link href="/" className="h-full">
 						<button
 							aria-label="back"
 							className={cn(
-								// "absolute top-7 left-6 md:static",
-								// "p-2",
 								"px-2",
-								" rounded-full",
+								"rounded-full",
 								"flex items-center justify-center",
 								"hover:bg-foreground/10",
 								"h-full",
 								"",
 								""
-							)}
-						>
+							)}>
 							<IoChevronBack size={20} aria-label="root" />
 							<span className="pr-2">/root</span>
 						</button>
 					</Link>
 				) : null}
-				<Link href={"/store"} className="h-full ">
-					<div
-						className={cn(
-							// "p-2 ",
-							"px-3",
-							// "w-auto",
-							"rounded-full",
-							// "aspect-square",
-							"flex items-center justify-center",
-							"hover:bg-foreground/10",
-							"text-nowrap",
-							"text-xl",
-							"sm:text-sm",
-							"h-full",
-
-							"",
-							""
-						)}
-					>
-						GutenDex Library
-					</div>
+				<Link
+					href={"/store"}
+					// className="h-full flex items-center"
+					className={cn(
+						"px-5",
+						"rounded-full",
+						"flex items-center justify-center",
+						"hover:bg-foreground/10",
+						"text-nowrap",
+						"text-xl",
+						// "sm:text-sm",
+						// "sm:text-sm",
+						"h-full",
+						"text-center",
+						"leading-none",
+						"w-fit gap-2",
+						"",
+						""
+					)}>
+					{/* <span></span> */}
+					{/* {isDark ? (
+						<Image
+							src="/gutendex_dark.png"
+							alt="logo"
+							width={20}
+							height={20}
+						/>
+					) : (
+						<Image
+							src="/gutendex_light.png"
+							alt="logo"
+							width={20}
+							height={20}
+						/>
+					)} */}
+					<span>GutenDex Library</span>
+					{/* <span className="leading-none">GutenDex Library</span> */}
+					{/* <div className={cn("", "", "")}>GutenDex Library</div> */}
+					{/* <div className="grid grid-cols-1 grid-rows-1 h-full aspect-square">
+						<FaBook className="row-start-1 col-start-1 h-full w-full aspect-square " />
+						<div className="row-start-1 col-start-1 self-center justify-self-center bg-primary aspect-square size-6 w-7 leading-none mb-2">
+							<IoMdDownload className="row-start-1 col-start-1 self-center justify-self-center text-primary bg-white rounded-full p-0.5" />
+						</div>
+					</div> */}
 				</Link>
 				{/* </div> */}
 
@@ -153,74 +178,150 @@ export default function StoreHeader({ onResults }: StoreHeaderProps) {
 						"sm:visible",
 						"",
 						""
-					)}
-				>
-					<button
-						aria-label="menu"
+					)}>
+					<SearchBar
+						onResults={onResults}
+						searchQuery={searchQuery}
+					/>
+					{/* <button
+						aria-label="filter"
 						onClick={() => toggleFilter(!openFilter)}
 						className={cn(
-							// "absolute right-7 top-7 sm:static sm:right-auto sm:top-auto",
-							// "p-2",
 							"p-3",
 							"aspect-square",
 							"h-full",
-							// "-mr-3",
 							"pointer-events-auto",
 							"rounded-full",
 							"flex items-center justify-center",
 							"hover:bg-foreground/10"
-						)}
-					>
+						)}>
 						<PiSlidersHorizontalFill size={19} className="" />
+					</button> */}
+					<button
+						aria-label="filter"
+						onClick={() => toggleFilter(!openFilter)}
+						className={cn(
+							"p-3",
+							"aspect-square",
+							"h-full",
+							"pointer-events-auto",
+							"rounded-full",
+							"flex items-center justify-center",
+							"hover:bg-foreground/10",
+							"grid grid-cols-1 grid-rows-1",
+							"",
+							""
+						)}>
+						<PiSlidersHorizontalFill size={19} className="" />
+						{selectedCount ? (
+							<div
+								className={cn(
+									"m-0 p-0",
+									"row-start-1 col-start-1",
+									// "self-end",
+									"ml-2 mt-1",
+									"w-full",
+									"justify-items-end",
+									"",
+									""
+								)}>
+								<span
+									className={cn(
+										"h-4 aspect-square ",
+										"justify-self-end",
+										"bg-orange-600",
+										"rounded-full",
+										"flex items-center justify-center text-center",
+										"text-xs text-white",
+										"",
+										""
+									)}>
+									{selectedCount}
+								</span>
+							</div>
+						) : (
+							<></>
+						)}
 					</button>
-					<SearchBar onResults={onResults} />
 				</div>
 
-				<button
-					aria-label="filter"
-					onClick={() => toggleMenu(!isOpen)}
-					className={cn(
-						// "absolute right-7 top-7 sm:static sm:right-auto sm:top-auto",
-						// "p-2",
-						// "p-3",
-						"aspect-square",
-						"h-full",
-						// "-mr-3",
-						"pointer-events-auto",
-						"rounded-full",
-						"flex items-center justify-center",
-						"hover:bg-foreground/10"
-					)}
-				>
-					<IoMenu size={19} className="" />
-				</button>
+				<div ref={menuRef} className="h-full">
+					<button
+						aria-label="menu"
+						onClick={() => toggleMenu((prev) => !prev)}
+						className={cn(
+							"aspect-square",
+							"h-full",
+							"pointer-events-auto",
+							"rounded-full",
+							"flex items-center justify-center",
+							"hover:bg-foreground/10"
+						)}>
+						<IoMenu size={19} className="" />
+					</button>
+				</div>
 			</div>
 			<div
 				className={cn(
 					"flex justify-center w-full",
-					// "hidden",
 					"md:hidden",
 					"lg:hidden",
 					"sm:hidden",
+					"gap-2",
 					//
 					"px-5",
 					"",
 					""
-				)}
-			>
-				<SearchBar onResults={onResults} />
+				)}>
+				<SearchBar onResults={onResults} searchQuery={searchQuery} />
+				<button
+					aria-label="filter"
+					onClick={() => toggleFilter(!openFilter)}
+					className={cn(
+						"p-3",
+						"aspect-square",
+						"h-full",
+						"pointer-events-auto",
+						"rounded-full",
+						"flex items-center justify-center",
+						"hover:bg-foreground/10",
+						"grid grid-cols-1 grid-rows-1",
+						"",
+						""
+					)}>
+					<PiSlidersHorizontalFill size={19} className="" />
+					{selectedCount ? (
+						<div
+							className={cn(
+								"m-0 p-0",
+								"row-start-1 col-start-1",
+								// "self-end",
+								"ml-2 mt-1",
+								"w-full",
+								"justify-items-end",
+								"",
+								""
+							)}>
+							<span
+								className={cn(
+									"h-4 aspect-square ",
+									"justify-self-end",
+									"bg-orange-600",
+									"rounded-full",
+									"flex items-center justify-center text-center",
+									"text-xs text-white",
+									"",
+									""
+								)}>
+								{selectedCount}
+							</span>
+						</div>
+					) : (
+						<></>
+					)}
+				</button>
 			</div>
-			{openFilter && <Filter />}
+			{openFilter && <Filter searchQuery={searchQuery} topics={topics} />}
 		</header>
 	);
 }
-
-/*
-<select name="searchBy" id="searchBy">
-	<option value="books">books</option>
-	<option value="author">author</option>
-	<option value="books">books</option>
-	<option value="books">books</option>
-	<option value="books">books</option>
-</select>
-*/

@@ -1,4 +1,5 @@
 import { cn } from "@/utils/cn";
+import { Tag } from "./Tag";
 
 type FilterInputProps = {
 	label: string;
@@ -29,7 +30,18 @@ export default function FilterInput({
 	);
 
 	return (
-		<div className="grid grid-cols-1 justify-start justify-items-start w-fit h-fit max-h-50 sm:border-none border-b border-divider py-5">
+		<div
+			className={cn(
+				"grid grid-cols-1",
+				"justify-start justify-items-start",
+				"items-start content-start",
+				"sm:border-none border-b border-divider ",
+				"py-5 gap-2 ",
+				"w-full",
+				"max-w-full",
+				"",
+				""
+			)}>
 			{/* <div className="grid grid-cols-1 justify-start justify-items-start w-fit "> */}
 			<span className="p-0 m-0 text-base">{label}</span>
 			<input
@@ -47,15 +59,18 @@ export default function FilterInput({
 					"bg-container",
 					"text-sm",
 					"p-1",
+					"pl-4",
 					"border border-foreground/10",
-					"focus:outline-none focus:ring-2 focus:ring-accent",
+					// "focus:outline-none focus:ring-2 focus:ring-accent",
 					"rounded-full",
 					"w-full",
 					"hover:border-edge-highlight",
 					// "h-12",
 					// "h-15",
-					"sm:h-full",
+					// "sm:h-full",
+					// "w-fit sm:w-fit",
 					"text-lg sm:text-sm",
+
 					"",
 
 					""
@@ -65,33 +80,28 @@ export default function FilterInput({
 			{filteredItems.length === 0 ? (
 				<div className="text-xs text-muted">No {label} match.</div>
 			) : (
-				// <ul className="flex flex-wrap gap-x-1 h-md h-30 w-50 overflow-auto content-start h-fit max-h-50">
-				<ul className="flex flex-wrap gap-x-1 w-50 overflow-auto content-start h-fit max-h-50">
+				<ul
+					className={cn(
+						"flex flex-wrap",
+						"gap-1",
+						"content-start",
+						"w-full",
+						"max-h-24",
+						"overflow-y-scroll",
+
+						"",
+						""
+					)}>
 					{filteredItems.map((item, index) => {
 						const id = itemIdGetter(item, index);
 						return (
 							<li key={id}>
-								<input
+								<Tag
 									id={id}
-									type="checkbox"
-									name={item}
-									aria-label={item}
-									title={item}
-									className="sr-only peer"
+									item={item}
 									checked={!!selectedItems[item]}
-									onChange={() => onToggleItem(item)}
+									onToggle={() => onToggleItem(item)}
 								/>
-								<label
-									htmlFor={id}
-									className={cn(
-										"text-xs font-thin px-2 py-0 rounded-full text-primary/80 bg-foreground/10 hover:bg-accent/50 dark:bg-foreground/25 dark:hover:bg-accent/50 hover:dark:text-primary-inv hover:text-primary active:dark:bg-accent-dark/50 active:bg-accent-dark/50",
-										"peer-checked:bg-accent/50 peer-checked:dark:text-primary-inv peer-checked:text-primary",
-										"",
-										""
-									)}
-								>
-									{item}
-								</label>
 							</li>
 						);
 					})}

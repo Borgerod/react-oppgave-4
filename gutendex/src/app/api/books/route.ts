@@ -4,11 +4,60 @@ export async function GET(request: NextRequest) {
 	// Forward any search/query params from the incoming request to the Gutendex API
 	const search = request.nextUrl.search || "";
 	const target = `https://gutendex.com/books${search}`;
-	const res = await fetch(target, {
-		next: { revalidate: 60 },
-	});
-	const data = await res.json();
-	return NextResponse.json(data);
+	let res: Response | undefined = undefined;
+	try {
+		res = await fetch(target, { next: { revalidate: 60 } });
+	} catch (e) {
+		console.error("/api/books proxy fetch failed:", e);
+		return NextResponse.json(
+			{ error: "upstream fetch failed" },
+			{ status: 502 }
+		);
+	}
+
+	if (!res) {
+		return NextResponse.json(
+			{ error: "no upstream response" },
+			{ status: 502 }
+		);
+	}
+
+	// If upstream returned non-OK, forward status and body (text) to client
+	if (!res.ok) {
+		try {
+			const text = await res.text();
+			const contentType = res.headers.get("content-type") || "text/plain";
+			return new NextResponse(text || res.statusText, {
+				status: res.status,
+				headers: { "content-type": contentType },
+			});
+		} catch (e) {
+			console.warn("/api/books: failed to read upstream body", e);
+			return new NextResponse(res.statusText || "Upstream error", {
+				status: res.status,
+			});
+		}
+	}
+
+	// Upstream OK: try to parse JSON, but fall back to text if parsing fails
+	try {
+		const data = await res.json();
+		return NextResponse.json(data);
+	} catch (e) {
+		try {
+			const text = await res.text();
+			return new NextResponse(text || "", {
+				status: 200,
+				headers: { "content-type": "text/plain" },
+			});
+		} catch (err) {
+			console.warn(
+				"/api/books: failed to read upstream body after json failure",
+				err
+			);
+			return new NextResponse("", { status: 200 });
+		}
+	}
 }
 // [
 //   'id',             'title',

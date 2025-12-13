@@ -3,30 +3,20 @@ import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import { cn } from "@/utils/cn";
 import type { BooksResponse } from "@/types";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const SearchIcon = () => (
 	<div
 		className={cn(
-			// "p-3",
-			"p-2",
-			"h-full ",
-			"aspect-square",
+			"w-10",
+			"h-10",
 			"mr-2",
 			"pointer-events-auto",
 			"rounded-full",
 			"flex items-center justify-center",
-			"hover:bg-foreground/30",
 			"hover:bg-foreground/10",
-
-			// "h-12",
-			// "sm:h-full",
-			"text-xl sm:text-md",
-
-			"",
-			""
-		)}
-	>
+			"text-xl sm:text-md"
+		)}>
 		<IoSearch className={cn("pointer-events-none")} />
 	</div>
 );
@@ -34,20 +24,43 @@ const SearchIcon = () => (
 type SearchBarProps = {
 	onResults?: (data: BooksResponse, queryString?: string) => void;
 	onQuery?: (queryString?: string) => void;
+	searchQuery?: string;
+	setSearchQuery?: (query: string) => void;
 };
 
-export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
-	const [query, setQuery] = useState("");
+export default function SearchBar({
+	onResults,
+	onQuery,
+	searchQuery,
+	setSearchQuery,
+}: SearchBarProps) {
+	const [localQuery, setLocalQuery] = useState(searchQuery ?? "");
+
+	// Sync if parent updates the searchQuery prop
+	React.useEffect(() => {
+		if (typeof searchQuery === "string") setLocalQuery(searchQuery);
+	}, [searchQuery]);
+
+	const query = localQuery;
 	const router = useRouter();
+	const searchParams = useSearchParams();
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const trimmed = (query ?? "").trim();
 		if (!trimmed) return;
+
+		// Preserve existing filter parameters
+		const params = new URLSearchParams(searchParams?.toString() || "");
+		params.set("search", trimmed);
+
+		const queryString = `?${params.toString()}`;
 		const encoded = encodeURIComponent(trimmed);
-		const queryString = `?search=${encoded}`;
+
 		try {
-			const res = await fetch(`https://gutendex.com/books${queryString}`);
+			const res = await fetch(
+				`https://gutendex.com/books?search=${encoded}`
+			);
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			const data = (await res.json()) as BooksResponse;
 			if (onResults) onResults(data, queryString);
@@ -63,32 +76,45 @@ export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
 			<div
 				className={cn(
 					"flex flex-row items-center",
-					"bg-container",
+
 					"text-sm",
-					"p-1",
+					"px-3 py-0",
 					// "px-3",
 					// "sm:px-1",
 					// "py-2",
 					// "py-1",
-					"border border-foreground/10",
-					"focus:outline-none focus:ring-2 focus:ring-accent",
+					// "border border-foreground/10",
+					// "focus:outline-none focus:ring-2 focus:ring-accent",
+					"focus:outline-none focus:ring-none ",
 					"rounded-full",
 					"w-full",
 					// "hover:bg-foreground/10",
+					"border border-edge-dark",
 					"hover:border-edge-highlight",
 					// "h-[43px]",
 					"h-12",
-					"h-15",
-					"sm:h-full",
 					"text-lg sm:text-sm",
+					"bg-container",
+					// "justify-center",
+					// "justify-items-center",
+					// "justify-content-center",
+					// "content-center",
+					// "leading-none",
+
+					// "bg-background",
+					"",
+					"",
 					""
-				)}
-			>
+				)}>
 				<SearchIcon />
 				<input
 					name="q"
 					value={query}
-					onChange={(e) => setQuery(e.target.value)}
+					onChange={(e) => {
+						const v = e.target.value;
+						setLocalQuery(v);
+						if (setSearchQuery) setSearchQuery(v);
+					}}
 					type="text"
 					placeholder="Search.."
 					aria-label="Search"
@@ -97,7 +123,13 @@ export default function SearchBar({ onResults, onQuery }: SearchBarProps) {
 						"bg-transparent",
 						"placeholder:italic",
 						"outline-none",
-						"focus:outline-none"
+						"focus:outline-none",
+						// "leading-none",
+						"py-0",
+						"leading-none",
+						"h-full",
+						"",
+						""
 					)}
 				/>
 			</div>

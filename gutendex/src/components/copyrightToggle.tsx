@@ -4,7 +4,7 @@ type CopyrightToggleProps = {
 	checked: boolean;
 	onChange: (checked: boolean) => void;
 };
-
+// TODO change default color
 export default function CopyrightToggle({
 	checked,
 	onChange,
@@ -12,9 +12,8 @@ export default function CopyrightToggle({
 	return (
 		<label
 			htmlFor="copyright"
-			className="cursor-pointer grid grid-cols-2 w-full gap-2 items-center justify-between "
-		>
-			copyright
+			className="cursor-pointer grid grid-cols-2 w-full gap-2 items-center justify-between ">
+			Copyright
 			<input
 				id="copyright"
 				type="checkbox"
@@ -27,11 +26,14 @@ export default function CopyrightToggle({
 			/>
 			{checked ? (
 				<div className="flex justify-end">
-					<LiaToggleOnSolid size={32} className="rotate-180" />
+					<LiaToggleOnSolid size={32} className="text-accent-dark" />
 				</div>
 			) : (
 				<div className="flex justify-end">
-					<LiaToggleOnSolid size={32} color="var(--accent)" />
+					<LiaToggleOnSolid
+						size={32}
+						className="rotate-180 text-divider"
+					/>
 				</div>
 			)}
 		</label>
