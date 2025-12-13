@@ -57,7 +57,6 @@ export class Rating extends Component<RatingProps> {
 							).toFixed(2)}
 						</span>
 					</div>
-					{/* todo make algorithm */}
 					<div className="grid grid-cols-5 grid-rows-0 h-4 ">
 						{stars}
 					</div>
@@ -66,8 +65,7 @@ export class Rating extends Component<RatingProps> {
 						className="text-sm text-tertiary inline-block text-center self-center justify-self-center h-full"
 						role="note"
 						aria-label={`Downloads: ${this.props.ratingCount.toLocaleString()}`}
-						title={`Downloads: ${this.props.ratingCount.toLocaleString()}`}
-					>
+						title={`Downloads: ${this.props.ratingCount.toLocaleString()}`}>
 						(
 						{new Intl.NumberFormat("en", {
 							notation: "compact",
@@ -116,79 +114,3 @@ export class FullStar extends Component {
 		return <FaStar className={cn("p-0.5", "h-full", "", "")} />;
 	}
 }
-
-// //* alternativ STARS
-// export class FullStarAlt extends Component {
-// 	render() {
-// 		return (
-// 			<div id="half-star" className="grid grid-cols-1 grid-rows-1">
-// 				<FaStar
-// 					className={cn(
-// 						"row-start-1 col-start-1",
-// 						"p-1",
-// 						"h-4",
-// 						"", //
-// 						""
-// 					)}
-// 					// className=" p-0 ml-0 self-center justify-self-left"
-// 					color="#f59e0b"
-// 					fill="#f59e0b"
-// 					size={24}
-// 					// size={20}
-// 				/>
-// 				<CiStar
-// 					// className=" p-0.5 mr-0.5 self-center justify-self-left"
-// 					// className="row-start-1 col-start-1 h-4"
-// 					className={cn(
-// 						"row-start-1 col-start-1",
-// 						// "p-0.5",
-// 						"h-4",
-// 						"", //
-// 						""
-// 					)}
-// 					// className=" p-0 mr-0.5"
-// 					color="#f59e0b"
-// 					fill="#f59e0b"
-// 					size={24}
-// 				/>
-// 			</div>
-// 		);
-// 	}
-// }
-
-// export class HalfStarAlt extends Component {
-// 	render() {
-// 		return (
-// 			<div id="half-star" className="grid grid-cols-1 grid-rows-1">
-// 				<FaStarHalf
-// 					// className="p-0.5 row-start-1 col-start-1 h-4"
-// 					className={cn(
-// 						"row-start-1 col-start-1",
-// 						"p-1",
-// 						"h-4",
-// 						"", //
-// 						""
-// 					)}
-// 					color="#f59e0b"
-// 					fill="#f59e0b"
-// 					size={24}
-// 				/>
-// 				<CiStar
-// 					// className=" p-0.5 mr-0.5 self-center justify-self-left"
-// 					// className="row-start-1 col-start-1 h-4"
-// 					className={cn(
-// 						"row-start-1 col-start-1",
-// 						// "p-0.5",
-// 						"h-4",
-// 						"", //
-// 						""
-// 					)}
-// 					// className=" p-0 mr-0.5"
-// 					color="#f59e0b"
-// 					fill="#f59e0b"
-// 					size={24}
-// 				/>
-// 			</div>
-// 		);
-// 	}
-// }

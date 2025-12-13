@@ -4,7 +4,7 @@
 
 import { cn } from "@/utils/cn";
 import { useState, useRef, useEffect } from "react";
-import { IoChevronBack, IoChevronDown } from "react-icons/io5";
+import { IoChevronDown } from "react-icons/io5";
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface SelectMenuProps {

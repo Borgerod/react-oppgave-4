@@ -40,7 +40,7 @@ export default function SelectedFiltersTags({
 			<ul className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
 				{/* Topics */}
 				{Object.entries(selectedTopics)
-					.filter(([_, v]) => v)
+					.filter(([, v]) => v)
 					.map(([topic]) => (
 						<li key={`selected-topic-${topic}`}>
 							<Tag
@@ -54,7 +54,7 @@ export default function SelectedFiltersTags({
 					))}
 				{/* Formats */}
 				{Object.entries(selectedFormats)
-					.filter(([_, v]) => v)
+					.filter(([, v]) => v)
 					.map(([format]) => (
 						<li key={`selected-format-${format}`}>
 							<Tag
@@ -68,7 +68,7 @@ export default function SelectedFiltersTags({
 					))}
 				{/* Languages */}
 				{Object.entries(selectedLanguages)
-					.filter(([_, v]) => v)
+					.filter(([, v]) => v)
 					.map(([language]) => (
 						<li key={`selected-language-${language}`}>
 							<Tag

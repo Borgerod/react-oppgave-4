@@ -14,7 +14,7 @@ const CACHE_FILE = path.join(CACHE_DIR, "topics.json");
 async function ensureCacheDir() {
 	try {
 		await fsp.mkdir(CACHE_DIR, { recursive: true });
-	} catch (e) {
+	} catch {
 		// ignore
 	}
 }
@@ -56,13 +56,15 @@ export function isCacheValid(entry: CacheEntry | null): boolean {
 	try {
 		const age = Date.now() - entry.updatedAt;
 		return age < (entry.ttl || 0) * 1000;
-	} catch (e) {
+	} catch {
 		return false;
 	}
 }
 
-export default {
+const topicsCache = {
 	readTopicsCache,
 	writeTopicsCache,
 	isCacheValid,
 };
+
+export default topicsCache;

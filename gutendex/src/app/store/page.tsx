@@ -70,7 +70,7 @@ export default function Store() {
 	const selectedLanguages = React.useMemo(() => {
 		const languages: Record<string, boolean> = {};
 		if (searchParams) {
-			searchParams.getAll("language").forEach((language) => {
+			searchParams.getAll("languages").forEach((language) => {
 				languages[language] = true;
 			});
 		}
@@ -179,7 +179,7 @@ export default function Store() {
 					Math.round(window.innerHeight / 2)
 				);
 				window.scrollBy({ top: -moveUp, left: 0, behavior: "auto" });
-			} catch (e) {
+			} catch {
 				// ignore in SSR or restrictive environments
 			}
 		}
@@ -220,7 +220,7 @@ export default function Store() {
 					onRemoveTopic={(topic) => removeFilter("topic", topic)}
 					onRemoveFormat={(format) => removeFilter("format", format)}
 					onRemoveLanguage={(language) =>
-						removeFilter("language", language)
+						removeFilter("languages", language)
 					}
 					onRemoveCopyright={() => removeFilter("copyright")}
 				/>

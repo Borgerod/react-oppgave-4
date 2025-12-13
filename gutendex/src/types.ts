@@ -1,7 +1,7 @@
 export type Author = {
 	name: string;
-	birth_year: number;
-	death_year: number;
+	birth_year: number | null;
+	death_year: number | null;
 };
 
 export type Book = {
@@ -16,9 +16,7 @@ export type Book = {
 	languages: string[];
 	copyright: boolean;
 	media_type: string;
-	// formats: string[];
 	formats: Record<string, string>;
-	// formats: object;
 	download_count: number;
 };
 

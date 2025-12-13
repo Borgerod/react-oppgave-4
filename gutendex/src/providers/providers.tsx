@@ -28,22 +28,17 @@ export function useUpperDownloadCount() {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-	const [isDark, setIsDark] = useState(false);
-	const [upperDownloadCountLimit, setUpperDownloadCountLimit] = useState<
-		number | undefined
-	>(undefined);
-
-	useEffect(() => {
+	const [isDark, setIsDark] = useState(() => {
 		// Check localStorage or system preference on mount
 		const stored = localStorage.getItem("theme");
 		if (stored) {
-			setIsDark(stored === "dark");
-		} else {
-			setIsDark(
-				window.matchMedia("(prefers-color-scheme: dark)").matches
-			);
+			return stored === "dark";
 		}
-	}, []);
+		return window.matchMedia("(prefers-color-scheme: dark)").matches;
+	});
+	const [upperDownloadCountLimit, setUpperDownloadCountLimit] = useState<
+		number | undefined
+	>(undefined);
 
 	useEffect(() => {
 		// Toggle .dark class on html element

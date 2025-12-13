@@ -11,9 +11,7 @@ export async function fetchCategories(opts?: {
 	maxConsecutiveFailures?: number;
 }): Promise<string[]> {
 	const startPage = opts?.startPage ?? 1;
-	const maxPages = opts?.maxPages ?? 500; // safety upper bound
-	// Allow a higher default for consecutive failures so intermittent 5xx
-	// responses don't stop the crawl prematurely. Caller can override via opts.
+	const maxPages = opts?.maxPages ?? 500;
 	const maxConsecutiveFailures = opts?.maxConsecutiveFailures ?? 100;
 
 	const found = new Set<string>();

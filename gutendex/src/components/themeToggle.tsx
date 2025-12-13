@@ -8,7 +8,6 @@ export default function ThemeToggle() {
 
 	return (
 		<div className={cn("fixed right-4 bottom-4 z-50")}>
-			{/* todo: struggling to fix this */}
 			<button
 				aria-label="toggle theme"
 				type="button"
@@ -22,8 +21,7 @@ export default function ThemeToggle() {
 					"",
 					isDark
 						? "bg-container-inv text-primary-inv"
-						: // : "bg-transparent text-foreground hover:bg-foreground/10"
-						  "bg-container-inv text-primary-inv"
+						: "bg-container-inv text-primary-inv"
 				)}>
 				{isDark ? <IoSunny /> : <IoMoon />}
 				<span className="leading-none">

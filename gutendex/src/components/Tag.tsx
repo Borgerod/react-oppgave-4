@@ -60,10 +60,7 @@ export function Tag({ id, item, checked, onToggle, closeIcon }: TagProps) {
 							"text-secondary hover:text-primary hover:font-bold",
 							"",
 							""
-						)}
-						// className="p-0 m-0 bg-transparent border-0 cursor-pointer flex items-center"
-						//
-					>
+						)}>
 						<IoMdClose className="" />
 					</button>
 				) : null}

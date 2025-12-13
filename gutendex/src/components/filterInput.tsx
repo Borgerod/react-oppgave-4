@@ -42,7 +42,6 @@ export default function FilterInput({
 				"",
 				""
 			)}>
-			{/* <div className="grid grid-cols-1 justify-start justify-items-start w-fit "> */}
 			<span className="p-0 m-0 text-base">{label}</span>
 			<input
 				aria-label={`Filter ${label}`}
@@ -61,18 +60,11 @@ export default function FilterInput({
 					"p-1",
 					"pl-4",
 					"border border-foreground/10",
-					// "focus:outline-none focus:ring-2 focus:ring-accent",
 					"rounded-full",
 					"w-full",
 					"hover:border-edge-highlight",
-					// "h-12",
-					// "h-15",
-					// "sm:h-full",
-					// "w-fit sm:w-fit",
 					"text-lg sm:text-sm",
-
 					"",
-
 					""
 				)}
 			/>
@@ -88,7 +80,6 @@ export default function FilterInput({
 						"w-full",
 						"max-h-24",
 						"overflow-y-scroll",
-
 						"",
 						""
 					)}>

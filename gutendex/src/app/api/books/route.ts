@@ -31,8 +31,8 @@ export async function GET(request: NextRequest) {
 				status: res.status,
 				headers: { "content-type": contentType },
 			});
-		} catch (e) {
-			console.warn("/api/books: failed to read upstream body", e);
+		} catch (_e) {
+			console.warn("/api/books: failed to read upstream body", _e);
 			return new NextResponse(res.statusText || "Upstream error", {
 				status: res.status,
 			});
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
 	try {
 		const data = await res.json();
 		return NextResponse.json(data);
-	} catch (e) {
+	} catch {
 		try {
 			const text = await res.text();
 			return new NextResponse(text || "", {
@@ -59,12 +59,3 @@ export async function GET(request: NextRequest) {
 		}
 	}
 }
-// [
-//   'id',             'title',
-//   'authors',        'summaries',
-//   'editors',        'translators',
-//   'subjects',       'bookshelves',
-//   'languages',      'copyright',
-//   'media_type',     'formats',
-//   'download_count'
-// ]

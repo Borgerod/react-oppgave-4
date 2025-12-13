@@ -18,6 +18,7 @@ export default function CopyrightToggle({
 				id="copyright"
 				type="checkbox"
 				name="copyright"
+				value="on"
 				aria-label="Filter by copyright status"
 				title="copyright"
 				className="sr-only peer "

@@ -8,10 +8,6 @@ type TabItem = {
 	content: ReactNode;
 };
 
-function OrginizeRounded() {
-	return;
-}
-
 export default function Tabs({
 	tabs,
 	initial = 0,
@@ -22,7 +18,6 @@ export default function Tabs({
 	const [active, setActive] = useState(
 		Math.max(0, Math.min(initial, tabs.length - 1))
 	);
-	// const [activeIdx, setActiveIdx] = useState(0);
 
 	return (
 		<div className="w-full">
@@ -69,8 +64,7 @@ export default function Tabs({
 							""
 						)}
 						aria-pressed={i === active}
-						type="button"
-					>
+						type="button">
 						{t.label}
 					</button>
 				))}

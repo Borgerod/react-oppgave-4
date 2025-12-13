@@ -14,7 +14,6 @@ export default function YearRangeFilter({
 	onYearToChange,
 }: YearRangeFilterProps) {
 	return (
-		// <div className="grid grid-cols-2 justify-start justify-items-start w-fit">
 		<div className="flex flex-row gap-2  justify-items-start w-full justify-items-between items-center justify-between sm:justify-between">
 			<span className="p-0 m-0 text-base">Year</span>
 			<div className="flex gap-1 items-center">
@@ -26,7 +25,6 @@ export default function YearRangeFilter({
 					value={yearFrom}
 					onChange={(e) => onYearFromChange(e.target.value)}
 					className={cn(
-						// "w-full",
 						"bg-transparent",
 						"placeholder:italic",
 						"outline-none",
@@ -39,18 +37,11 @@ export default function YearRangeFilter({
 						"focus:outline-none focus:ring-2 focus:ring-accent",
 						"rounded-full",
 						"hover:border-edge-highlight",
-						// "h-12",
-						// "h-15",
 						"w-20",
 						"w-16",
-
 						"sm:w-16",
 						"sm:w-20",
 						"w-fit",
-						"",
-						// "px-0",
-						// "px-0",
-						// "sm:h-full",
 						"text-lg sm:text-sm",
 						"px-2",
 						"",
@@ -80,14 +71,11 @@ export default function YearRangeFilter({
 						"rounded-full",
 						"w-full",
 						"hover:border-edge-highlight",
-						// "h-12",
-						// "h-15",
 						"w-20",
 						"w-16",
 						"sm:w-16",
 						"sm:w-20",
 						"w-fit",
-						// "sm:h-full",
 						"text-lg sm:text-sm",
 						"px-2",
 						"",
