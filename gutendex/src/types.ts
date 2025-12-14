@@ -1,8 +1,10 @@
-export type Author = {
+export type Person = {
 	name: string;
 	birth_year: number | null;
 	death_year: number | null;
 };
+
+export type Author = Person;
 
 export type Book = {
 	id: number;
