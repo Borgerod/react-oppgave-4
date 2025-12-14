@@ -1,5 +1,4 @@
 "use client";
-import { cn } from "@/utils/cn";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import type { Book, BooksResponse } from "@/types";
@@ -29,6 +28,8 @@ export function useUpperDownloadCount() {
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 	const [isDark, setIsDark] = useState(() => {
+		// Safe initialization that works during SSR
+		if (typeof window === "undefined") return false;
 		// Check localStorage or system preference on mount
 		const stored = localStorage.getItem("theme");
 		if (stored) {
@@ -41,7 +42,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 	>(undefined);
 
 	useEffect(() => {
-		// Toggle .dark class on html element
+		// Toggle .dark class on html element and persist to localStorage
 		if (isDark) {
 			document.documentElement.classList.add("dark");
 			localStorage.setItem("theme", "dark");
