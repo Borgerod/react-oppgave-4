@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+	createContext,
+	useContext,
+	useState,
+	useEffect,
+	startTransition,
+} from "react";
 import type { Book, BooksResponse } from "@/types";
 
 type ThemeContextType = {
@@ -27,19 +33,24 @@ export function useUpperDownloadCount() {
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-	const [isDark, setIsDark] = useState(() => {
-		// Safe initialization that works during SSR
-		if (typeof window === "undefined") return false;
-		// Check localStorage or system preference on mount
-		const stored = localStorage.getItem("theme");
-		if (stored) {
-			return stored === "dark";
-		}
-		return window.matchMedia("(prefers-color-scheme: dark)").matches;
-	});
+	const [isDark, setIsDark] = useState(false);
 	const [upperDownloadCountLimit, setUpperDownloadCountLimit] = useState<
 		number | undefined
 	>(undefined);
+
+	// Load theme preference on mount
+	useEffect(() => {
+		const stored = localStorage.getItem("theme");
+		startTransition(() => {
+			if (stored) {
+				setIsDark(stored === "dark");
+			} else {
+				setIsDark(
+					window.matchMedia("(prefers-color-scheme: dark)").matches
+				);
+			}
+		});
+	}, []);
 
 	useEffect(() => {
 		// Toggle .dark class on html element and persist to localStorage

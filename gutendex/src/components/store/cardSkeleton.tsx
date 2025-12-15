@@ -63,11 +63,11 @@ export default function CardSkeleton({ mini = false }: Props) {
 								<span className="rounded-full bg-foreground/20 dark:bg-foreground/20 mr-1 px-3 py-0.5 text-sm" />
 								<span className="rounded-full bg-foreground/50 px-15 ml-1" />
 								{mini && (
-									<div className="flex items-center gap-0.5 mt-0.5">
+									<span className="flex items-center gap-0.5 mt-0.5">
 										<span className="rounded-full px-4 py-1.5 bg-foreground/20 dark:bg-foreground/20 text-xs" />
 										<span className="rounded-full px-10 py-1.5 bg-foreground/30 dark:bg-foreground/30 text-xs" />
 										<span className="rounded-full px-4 py-1.5 bg-foreground/20 dark:bg-foreground/20" />
-									</div>
+									</span>
 								)}
 							</p>
 						</div>

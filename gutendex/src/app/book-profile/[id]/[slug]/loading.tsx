@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import CardSkeleton from "@/components/cardSkeleton";
+import CardSkeleton from "@/components/store/cardSkeleton";
 
 export default function Loading() {
 	return (

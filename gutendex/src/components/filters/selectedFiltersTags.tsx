@@ -1,6 +1,6 @@
 "use client";
 
-import { Tag } from "./Tag";
+import { Tag } from "./tag";
 
 type SelectedFiltersTagsProps = {
 	selectedTopics?: Record<string, boolean>;

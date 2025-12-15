@@ -2,19 +2,18 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import ProductCard from "@/components/productCard";
+import ProductCard from "@/components/store/productCard";
 import { Book, BooksResponse } from "@/types";
 // import { usePathname } from "next/navigation";
 import CurrentPath from "@/utils/getCurrentPath";
-import CardSkeleton from "@/components/cardSkeleton";
+import CardSkeleton from "@/components/store/cardSkeleton";
 import { cn } from "@/utils/cn";
-import useScrollPosition from "@/components/useScrollPosition";
-import SelectMenu from "@/components/selectMenu";
-import SelectedFiltersTags from "@/components/selectedFiltersTags";
+import SelectMenu from "@/components/store/selectMenu";
+import SelectedFiltersTags from "@/components/filters/selectedFiltersTags";
 // todo: issue, the popularity chart updates when its filtered, it should allways calculate popoularity by all books.
 function computeUpperDownloadCountLimit(
 	results: Book[],
-	limit: number = 1.5
+	limit: number = 1.25
 ): number | undefined {
 	if (!results || results.length === 0) return undefined;
 	let current = results[0]?.download_count;
@@ -37,9 +36,10 @@ export default function Store() {
 	const [loading, setLoading] = useState(true);
 	const [lastQuery, setLastQuery] = useState<string | undefined>(undefined);
 	const [pageCount, setPageCount] = useState<number>(1);
-	const scrollPosition = useScrollPosition();
-	const [isFetchingMore, setIsFetchingMore] = useState(false);
+	const isFetchingMoreRef = React.useRef<boolean>(false);
 	const lastFetchTriggerRef = React.useRef<number>(0);
+	const hasMorePagesRef = React.useRef<boolean>(true);
+	const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
 	// const [sortByQuery, setSortByQuery] = useState("");
 	const upperDownloadCountLimit =
 		data && !data.previous
@@ -103,6 +103,8 @@ export default function Store() {
 	useEffect(() => {
 		setPageCount(1);
 		setData(null);
+		hasMorePagesRef.current = true;
+		isFetchingMoreRef.current = false;
 	}, [searchParamsStr]);
 
 	// Fetch page data and append when pageCount > 1
@@ -121,6 +123,10 @@ export default function Store() {
 				const json = (await res.json()) as BooksResponse;
 
 				if (!mounted) return;
+
+				// Update hasMorePages ref
+				hasMorePagesRef.current = !!json.next;
+
 				if (pageCount === 1) {
 					setData(json);
 				} else {
@@ -144,7 +150,10 @@ export default function Store() {
 			} catch (err) {
 				console.error("Failed to fetch books", err);
 			} finally {
-				if (mounted) setLoading(false);
+				if (mounted) {
+					setLoading(false);
+					isFetchingMoreRef.current = false;
+				}
 			}
 		}
 		load();
@@ -153,37 +162,36 @@ export default function Store() {
 		};
 	}, [searchParamsStr, pageCount]);
 
-	//* LOAD NEXT PAGE
+	//* LOAD NEXT PAGE VIA INTERSECTION OBSERVER
 	useEffect(() => {
-		const now = Date.now();
-		// small cooldown to avoid rapid retriggers
-		const cooldown = 900; // ms
+		const target = loadMoreRef.current;
+		if (!target) return;
 
-		if (
-			scrollPosition > 99 &&
-			!loading &&
-			data?.next &&
-			!isFetchingMore &&
-			now - (lastFetchTriggerRef.current || 0) > cooldown
-		) {
-			lastFetchTriggerRef.current = now;
-			setIsFetchingMore(true);
-			setPageCount((prev) => prev + 1);
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const [entry] = entries;
+				if (!entry?.isIntersecting) return;
+				if (isFetchingMoreRef.current) return;
+				if (!hasMorePagesRef.current) return;
+				if (loading) return;
 
-			// Move the scroll up by half a viewport in pixels so we don't
-			// immediately sit at the bottom after the new content appends.
-			// Using pixels avoids recomputing percentages against changing height.
-			try {
-				const moveUp = Math.max(
-					300,
-					Math.round(window.innerHeight / 2)
-				);
-				window.scrollBy({ top: -moveUp, left: 0, behavior: "auto" });
-			} catch {
-				// ignore in SSR or restrictive environments
-			}
-		}
-	}, [scrollPosition, loading, data, isFetchingMore]);
+				const now = Date.now();
+				const cooldown = 1200;
+				if (now - lastFetchTriggerRef.current < cooldown) return;
+
+				lastFetchTriggerRef.current = now;
+				isFetchingMoreRef.current = true;
+				setPageCount((prev) => prev + 1);
+			},
+			{ root: null, rootMargin: "0px 0px 300px 0px", threshold: 0 }
+		);
+
+		observer.observe(target);
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [loading]);
 	// function sortByQuery(value: string): void {}
 
 	// function loadNextPage() {
@@ -304,7 +312,7 @@ export default function Store() {
 						  ))
 						: data.results.map((book: Book, index: number) => (
 								<ProductCard
-									key={book.id ?? index}
+									key={`${book.id}-${index}`}
 									book={book}
 									upperDownloadCountLimit={
 										upperDownloadCountLimit
@@ -313,6 +321,7 @@ export default function Store() {
 								/>
 						  ))}
 				</div>
+				<div ref={loadMoreRef} aria-hidden className="h-1 w-full" />
 			</div>
 			{/* TODO: when scoll hits this point. load in next page */}
 		</main>

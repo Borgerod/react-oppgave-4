@@ -1,10 +1,10 @@
 "use client";
 import { cn } from "@/utils/cn";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import Form from "next/form";
-import FilterInput from "./filterInput";
-import CopyrightToggle from "./copyrightToggle";
-import YearRangeFilter from "./yearRangeFilter";
+import FilterInput from "@/components/filters/filterInput";
+import CopyrightToggle from "@/components/filters/copyrightToggle";
+import YearRangeFilter from "@/components/filters/yearRangeFilter";
 import { useSearchParams } from "next/navigation";
 import fetchCategories from "@/utils/fetchCategories";
 import { ALL_LANGUAGES } from "@/utils/languages";
@@ -29,6 +29,13 @@ export default function Filter({
 	const [copyright, toggleCopyRight] = useState(
 		() => searchParams?.get("copyright") === "on"
 	);
+
+	// Sync copyright with URL params
+	useEffect(() => {
+		startTransition(() => {
+			toggleCopyRight(searchParams?.get("copyright") === "on");
+		});
+	}, [searchParams]);
 
 	// Topic search + selection state
 	const [topicQuery, setTopicQuery] = useState("");
@@ -117,6 +124,19 @@ export default function Filter({
 		return topics;
 	});
 
+	// Sync selected topics with URL params
+	useEffect(() => {
+		const topics: Record<string, boolean> = {};
+		if (searchParams) {
+			searchParams.getAll("topic").forEach((topic) => {
+				topics[topic] = true;
+			});
+		}
+		startTransition(() => {
+			setSelectedTopics(topics);
+		});
+	}, [searchParams]);
+
 	// Language search + selection state
 	const [languageQuery, setLanguageQuery] = useState("");
 	const [allLanguages] = useState<string[]>(() => ALL_LANGUAGES);
@@ -132,6 +152,19 @@ export default function Filter({
 		}
 		return languages;
 	});
+
+	// Sync selected languages with URL params
+	useEffect(() => {
+		const languages: Record<string, boolean> = {};
+		if (searchParams) {
+			searchParams.getAll("languages").forEach((language) => {
+				languages[language] = true;
+			});
+		}
+		startTransition(() => {
+			setSelectedLanguages(languages);
+		});
+	}, [searchParams]);
 
 	// Format (mime_type) search + selection state
 	const [formatQuery, setFormatQuery] = useState("");
@@ -155,6 +188,19 @@ export default function Filter({
 		}
 		return formats;
 	});
+
+	// Sync selected formats with URL params
+	useEffect(() => {
+		const formats: Record<string, boolean> = {};
+		if (searchParams) {
+			searchParams.getAll("format").forEach((format) => {
+				formats[format] = true;
+			});
+		}
+		startTransition(() => {
+			setSelectedFormats(formats);
+		});
+	}, [searchParams]);
 
 	// Report total selected filters count to parent
 	useEffect(() => {
@@ -332,7 +378,7 @@ export default function Filter({
 					type="submit"
 					className={cn(
 						"text-nowrap rounded-full w-full sm:w-fit px-6 py-1 transition-colors border",
-						"hover:border-accent-dark hover:text-container-solid hover:bg-accent-dark border-accent-dark text-accent-dark", //option 2
+						"hover:border-accent-dark hover:text-container-solid hover:bg-accent-dark border-accent-dark text-accent-dark",
 						"",
 						""
 					)}>

@@ -4,12 +4,12 @@ import { cn } from "@/utils/cn";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-import SearchBar from "./searchBar";
+import SearchBar from "@/components/filters/searchBar";
 import type { BooksResponse } from "@/types";
 import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-import Filter from "./filter";
+import Filter from "@/components/filters/filter";
 import { useTheme } from "@/providers/providers";
 
 type StoreHeaderProps = {
@@ -85,6 +85,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					"lg:px-10",
 					"lg:max-w-7xl",
 					"mb-5",
+					"gap-0",
 					isBookProfile ? "max-w-7xl" : "",
 					"",
 					""
@@ -94,11 +95,16 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						<button
 							aria-label="back"
 							className={cn(
+								"absolute top-10 left-10",
+								"sm:top-15 sm:left-10",
+								"md:top-15 md:left-10",
+								"xl:top-5 lx:left-10",
 								"px-2",
+								"py-2",
 								"rounded-full",
 								"flex items-center justify-center",
 								"hover:bg-foreground/10",
-								"h-full",
+								"h-12",
 								"",
 								""
 							)}>
@@ -119,26 +125,54 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						"h-full",
 						"text-center",
 						"leading-none",
-						"w-fit gap-2",
+						"h-15",
+						"w-25",
+						"rounded-full p-0",
+						"sm:p-2 sm:px-5",
+
+						"sm:h-full",
+						"sm:w-fit",
+
 						"",
 						""
 					)}>
-					{isDark ? (
-						<Image
-							src="/gutendex_dark.png"
-							alt="logo"
-							width={20}
-							height={20}
-						/>
-					) : (
-						<Image
-							src="/gutendex_light.png"
-							alt="logo"
-							width={20}
-							height={20}
-						/>
-					)}
-					<span>GutenDex Library</span>
+					<div className="self-center justify-items-center w-fit">
+						{isDark ? (
+							<>
+								<Image
+									src="/gutendex_long_dark.png"
+									alt="logo"
+									width={200}
+									height={20}
+									className="invisible sm:visible -mb-5 sm:m-0"
+								/>
+								<Image
+									src="/gutendex_short_dark.png"
+									alt="logo"
+									width={60}
+									height={50}
+									className="visible sm:hidden sm:invisible sm:w-0 sm:h-0 "
+								/>
+							</>
+						) : (
+							<>
+								<Image
+									src="/gutendex_long_light.png"
+									alt="logo"
+									width={200}
+									height={20}
+									className="invisible sm:visible  -mb-5 sm:m-0"
+								/>
+								<Image
+									src="/gutendex_short_light.png"
+									alt="logo"
+									width={60}
+									height={50}
+									className="visible sm:hidden sm:invisible sm:w-0 sm:h-0 "
+								/>
+							</>
+						)}
+					</div>
 				</Link>
 
 				<div

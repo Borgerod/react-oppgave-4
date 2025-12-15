@@ -29,7 +29,7 @@ export default function Home() {
 								GutenDex.com
 							</p>
 							<p className="mt-3 text-sm text-tertiary">
-								Online book store, displaying API usage.
+								Online eBook Library, displaying API usage.
 							</p>
 						</div>
 					</Link>

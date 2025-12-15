@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import { Tag } from "./Tag";
+import { Tag } from "./tag";
 
 type FilterInputProps = {
 	label: string;

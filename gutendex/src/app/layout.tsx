@@ -3,10 +3,25 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/utils/cn";
 import Providers from "@/providers/providers";
-import ThemeToggle from "@/components/themeToggle";
-import StoreHeader from "@/components/header";
+import ThemeToggle from "@/components/layout/themeToggle";
+import StoreHeader from "@/components/layout/header";
 import getTopicsServer from "@/utils/getTopicsServer";
 import { readTopicsCache, isCacheValid } from "@/utils/topicsCache";
+
+/* TODO [ ]: Add stylized frontpage;
+			- add popular pics section
+ 			- add bookshelf section (kategories)
+ 			- add subjects section (kategories)
+? 			- add previous reads / downloads
+			- add add hot / trending (newcommers with many downloads)(algorithm - popular / newest)
+?			- add highlighted Authors grid
+			- add 
+*/
+// TODO [ ]: organize components
+// TODO [ ]: cleanup tailwind, remove unused components etc
+// TODO [ ]:
+// ! NOTE: the API is not working correctly; cannot combine topics in search.
+// ? Suggestion: do a fetch for all the different topics, and then make own algorithm to sort the items contain all topics.
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -69,8 +84,6 @@ export default async function RootLayout({
 					"h-fit",
 					"h-full",
 					"max-w-8xl mx-auto",
-					// "px-4 sm:px-6 lg:px-8",
-					// "justify-start items-stretch",
 					"",
 					""
 				)}>

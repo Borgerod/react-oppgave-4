@@ -2,10 +2,11 @@
 import { cn } from "@/utils/cn";
 import type { Book } from "@/types";
 import Image from "next/image";
-import Rating from "./rating";
+import Rating from "@/components/store/rating";
 import Link from "next/link";
 import { useUpperDownloadCount } from "@/providers/providers";
-// import { useEffect, useState } from "react";
+import { Tag } from "@/components/filters/tag";
+
 type Props = {
 	book: Book;
 	index?: number;
@@ -47,11 +48,11 @@ export default function ProductCard({
 		return prop
 			.trim()
 			.toLowerCase()
-			.normalize("NFKD") // separate diacritics
-			.replace(/[\u0300-\u036f]/g, "") // remove diacritics
-			.replace(/[^\w\s-]/g, "") // remove punctuation except - and spaces
-			.replace(/\s+/g, "-") // spaces -> dashes
-			.replace(/-+/g, "-"); // collapse repeated dashes
+			.normalize("NFKD")
+			.replace(/[\u0300-\u036f]/g, "")
+			.replace(/[^\w\s-]/g, "")
+			.replace(/\s+/g, "-")
+			.replace(/-+/g, "-");
 	}
 	return (
 		<Link
@@ -211,39 +212,31 @@ export default function ProductCard({
 										mini={mini}
 									/>
 								</div>
-								<p>
+								<p className="flex flex-row gap-1 text-nowrap flex-wrap">
 									{(book.bookshelves || []).map(
-										(shelf: string, index: number) =>
-											shelf.includes("Category:") &&
-											!shelf.includes("Literature") ? (
-												<button
-													key={`${shelf}-${index}`}
-													className="">
-													<span
-														key={`${shelf}-${index}`}
-														className={cn(
-															"text-xs font-thin",
-															"px-2 py-0.5",
-															"rounded-full",
-															"text-secondary",
-															"text-primary/80",
-															"mr-1",
-															"bg-foreground/10 hover:bg-foreground/30",
-															"dark:bg-foreground/20 dark:hover:bg-foreground/30",
-															"dark:bg-foreground/25 dark:hover:bg-foreground/35",
-															"",
-															""
-														)}>
-														{
-															shelf.split(
-																"Category:"
-															)[1]
-														}
-													</span>
-												</button>
-											) : (
-												""
+										(shelf: string, index: number) => {
+											if (
+												!shelf.includes("Category:") ||
+												shelf.includes("Literature")
 											)
+												return null;
+											const category = (
+												shelf.split("Category:")[1] ||
+												""
+											).trim();
+											const topic =
+												encodeURIComponent(category);
+											return (
+												<Tag
+													url={`/store?topic=${topic}`}
+													key={`${shelf}-${index}`}
+													id={`${book.id}-${shelf}-${index}`}
+													item={category}
+													checked={false}
+													onToggle={() => {}}
+												/>
+											);
+										}
 									)}
 								</p>
 							</div>
