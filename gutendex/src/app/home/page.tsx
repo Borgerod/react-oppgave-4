@@ -1,16 +1,16 @@
 "use client";
-import BookShelf from "@/components/BookShelf";
-import Highlights from "@/components/highlights";
-import PopularAuthorsGrid from "@/components/PopularAuthorsGrid";
-import SubjectGrid from "@/components/SubjectAuthorsGrid";
-import SubjectAuthorsGrid from "@/components/SubjectAuthorsGrid";
+import BookShelf from "@/components/ui/BookShelf";
+import Highlights from "@/components/ui/highlights";
+import PopularAuthorsGrid from "@/components/ui/PopularAuthorsGrid";
+import SubjectGrid from "@/components/ui/SubjectAuthorsGrid";
+import SubjectAuthorsGrid from "@/components/ui/SubjectAuthorsGrid";
 import { Book, BooksResponse } from "@/types";
 import React, { useEffect, useState } from "react";
 import { useHomeCache } from "@/providers/providers";
 import { FaHeart } from "react-icons/fa6";
-import { FaRegHeart } from "react-icons/fa6";
+// import { FaRegHeart } from "react-icons/fa6";
 
-type HomeProps = {};
+type HomeProps = Record<string, never>;
 
 export default function Home({}: HomeProps) {
 	const [data, setData] = useState<BooksResponse | null>(null);
@@ -74,7 +74,7 @@ export default function Home({}: HomeProps) {
 			// skip load if we already have newBooksData cached
 			if (cache && cache.newBooksData) return;
 			try {
-				const pageCount = 1;
+				// const pageCount = 1;
 				// const apiUrl = `/api/books?sort=descending&page=${pageCount}`;
 				const apiUrl = `/api/books?sort=descending`;
 

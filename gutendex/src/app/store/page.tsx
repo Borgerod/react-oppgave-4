@@ -9,7 +9,7 @@ import CardSkeleton from "@/components/store/cardSkeleton";
 import { cn } from "@/utils/cn";
 import SelectMenu from "@/components/store/selectMenu";
 import SelectedFiltersTags from "@/components/filters/selectedFiltersTags";
-import Highlights from "@/components/highlights";
+import Highlights from "@/components/ui/highlights";
 // todo: issue, the popularity chart updates when its filtered, it should allways calculate popoularity by all books.
 function computeUpperDownloadCountLimit(
 	results: Book[],
@@ -334,8 +334,7 @@ export default function Store() {
 						"gap-4",
 						"",
 						""
-					)}
-				>
+					)}>
 					{/* If initial load or no data, show full skeleton set */}
 					{isInitialLoad || !hasResults ? (
 						Array.from({ length: 15 }).map((_, index) => (
