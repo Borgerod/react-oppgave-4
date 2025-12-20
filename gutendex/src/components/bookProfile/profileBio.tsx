@@ -79,20 +79,23 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 				return (
 					<div
 						className="py-5 text-secondary text-md lg:text-sm"
-						key={i}>
+						key={i}
+					>
 						{paragraphs.length === 0
 							? "unknown"
 							: paragraphs.map((p, idx) =>
 									idx === 0 ? (
 										<p
 											className="italic font-thin"
-											key={`summary-${i}-${idx}`}>
+											key={`summary-${i}-${idx}`}
+										>
 											{p}
 										</p>
 									) : (
 										<p
 											className="py-5"
-											key={`summary-${i}-${idx}`}>
+											key={`summary-${i}-${idx}`}
+										>
 											{p}
 										</p>
 									)
@@ -115,7 +118,8 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 					"",
 					"gap-y-2",
 					"gap-x-4"
-				)}>
+				)}
+			>
 				{/* editors */}
 				<div className="grid grid-cols-2 gap-2">
 					<span id="key" className="text-sm font-medium">
@@ -233,7 +237,8 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 												"dark:bg-foreground/25 dark:hover:bg-foreground/35"
 											)}
 											target="_blank"
-											rel="noopener noreferrer">
+											rel="noopener noreferrer"
+										>
 											{prettyMime(mime)}
 										</a>
 									)
@@ -262,7 +267,8 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 												"dark:bg-foreground/20 dark:hover:bg-foreground/30"
 											)}
 											target="_blank"
-											rel="noopener noreferrer">
+											rel="noopener noreferrer"
+										>
 											{subject}
 										</a>
 									)
@@ -292,7 +298,8 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 												"dark:bg-foreground/25 dark:hover:bg-foreground/35"
 											)}
 											target="_blank"
-											rel="noopener noreferrer">
+											rel="noopener noreferrer"
+										>
 											{bookshelf}
 										</a>
 									)

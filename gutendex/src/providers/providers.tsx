@@ -32,11 +32,55 @@ export function useUpperDownloadCount() {
 	return context;
 }
 
+// Home cache context: stores client-side snapshot of /home data to avoid reloading
+type HomeCache = {
+	previewData?: Book[] | null;
+	newBooksData?: Book[] | null;
+	favBooksData?: Book[] | null;
+	timestamp?: number;
+};
+
+const HomeCacheContext = createContext<
+	{ cache: HomeCache; setCache: (c: HomeCache) => void } | undefined
+>(undefined);
+
+export function useHomeCache() {
+	const context = useContext(HomeCacheContext);
+	if (!context) {
+		throw new Error("useHomeCache must be used within Providers");
+	}
+	return context;
+}
+
 export default function Providers({ children }: { children: React.ReactNode }) {
 	const [isDark, setIsDark] = useState(false);
 	const [upperDownloadCountLimit, setUpperDownloadCountLimit] = useState<
 		number | undefined
 	>(undefined);
+	const [homeCache, setHomeCache] = useState<HomeCache>(() => {
+		try {
+			const raw =
+				typeof window !== "undefined"
+					? sessionStorage.getItem("homeCache")
+					: null;
+			if (raw) return JSON.parse(raw) as HomeCache;
+		} catch (e) {
+			// ignore
+		}
+		return {} as HomeCache;
+	});
+
+	// persist home cache to sessionStorage when it changes
+	useEffect(() => {
+		try {
+			sessionStorage.setItem(
+				"homeCache",
+				JSON.stringify(homeCache || {})
+			);
+		} catch (e) {
+			// ignore
+		}
+	}, [homeCache]);
 
 	// Load theme preference on mount
 	useEffect(() => {
@@ -111,7 +155,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 	return (
 		<UpperDownloadCountContext.Provider value={upperDownloadCountLimit}>
 			<ThemeContext.Provider value={{ isDark, toggleTheme }}>
-				{children}
+				<HomeCacheContext.Provider
+					value={{ cache: homeCache, setCache: setHomeCache }}
+				>
+					{children}
+				</HomeCacheContext.Provider>
 			</ThemeContext.Provider>
 		</UpperDownloadCountContext.Provider>
 	);

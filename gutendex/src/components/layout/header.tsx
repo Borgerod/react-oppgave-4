@@ -1,6 +1,7 @@
 "use client";
 import { IoChevronBack, IoMenu } from "react-icons/io5";
 import { cn } from "@/utils/cn";
+import { iconBtnClass, textBtnClass } from "@/components/buttonClasses";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
@@ -11,6 +12,7 @@ import { useRef, useEffect } from "react";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
 import Filter from "@/components/filters/filter";
 import { useTheme } from "@/providers/providers";
+import { HiLibrary } from "react-icons/hi";
 
 type StoreHeaderProps = {
 	onResults?: (data: BooksResponse, queryString?: string) => void;
@@ -36,7 +38,20 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 		return topicsCount + languagesCount + formatsCount + copyrightCount;
 	}, [searchParams]);
 
-	const menuRef = useRef<HTMLDivElement>(null);
+	const menuRef = useRef<HTMLButtonElement | null>(null);
+
+	const logoBtnClass = cn(
+		"h-fit",
+		"w-fit",
+		"sm:-left-2",
+		"mx-auto",
+		"px-5",
+		"sm:px-2 sm:pr-3",
+		"",
+		""
+	);
+	// `iconBtnClass` and `textBtnClass` are imported from
+	// src/components/buttonClasses.ts
 
 	useEffect(() => {
 		if (!isOpen) return;
@@ -56,87 +71,116 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 
 	if (pathname === "/") return null;
 	return (
-		<header className="relative bg-transparent w-full py-10 sm:py-5">
+		<header
+			className={cn(
+				"relative",
+				"flex",
+				"flex-col",
+				"w-full",
+				"py-10",
+				"sm:py-5",
+				"gap-y-5 sm:gap-x-5",
+				// "flex-row",
+				// "sm:flex-row",
+				// "bg-transparent",
+				// "justify-items-between",
+				// "content-between",
+				// "grid",
+				// "flex flex-row",
+				// "gap-5",
+				// "justify-around",
+				"",
+				""
+			)}
+		>
 			{isOpen && (
 				<div
 					aria-label="menu"
 					id="menu"
 					className={cn(
 						"absolute",
-						"z-10 sm:top-20 sm:right-7.5",
-						"z-10 top-25 right-7.5",
-						"h-200 w-100 bg-container-solid rounded-2xl shadow border border-edge",
+						"h-200 w-100 bg-container-solid rounded-3xl shadow border border-edge",
 						"text-xl text-center content-center",
 						"shadow-xl",
-						"",
-						""
-					)}>
+						"z-50 top-25 right-0"
+					)}
+				>
 					Stop snooping!
 				</div>
 			)}
-			<div
-				className={cn(
-					"flex flex-row justify-between items-center",
-					"gap-5 max-w-6xl mx-auto px-0 py-4",
-					"h-15",
-					"h-12",
-					"py-0",
-					"px-5",
-					"lg:px-10",
-					"lg:max-w-7xl",
-					"mb-5",
-					"gap-0",
-					isBookProfile ? "max-w-7xl" : "",
-					"",
-					""
-				)}>
-				{pathname === "/store" ? (
-					<Link href="/" className="h-full">
-						<button
-							aria-label="back"
-							className={cn(
-								"absolute top-10 left-10",
-								"sm:top-15 sm:left-10",
-								"md:top-15 md:left-10",
-								"xl:top-5 lx:left-10",
-								"px-2",
-								"py-2",
-								"rounded-full",
-								"flex items-center justify-center",
-								"hover:bg-foreground/10",
-								"h-12",
-								"",
-								""
-							)}>
-							<IoChevronBack size={20} aria-label="root" />
-							<span className="pr-2">/root</span>
-						</button>
-					</Link>
-				) : null}
+			{/* {pathname === "/store" ? (
 				<Link
-					href={"/store"}
+					href="/"
 					className={cn(
-						"px-5",
-						"rounded-full",
-						"flex items-center justify-center",
-						"hover:bg-foreground/10",
-						"text-nowrap",
-						"text-xl",
-						"h-full",
-						"text-center",
-						"leading-none",
-						"h-15",
-						"w-25",
-						"rounded-full p-0",
-						"sm:p-2 sm:px-5",
+						`${iconBtnClass}`,
+						`${textBtnClass}`,
+						// "h-full",
+						// "w-20",
+						// "grid grid-cols-2",
+						"absolute",
+						// "md:absolute",
+						// "md:top-10",
+						// "sm:-left-10",
+						"sm:left-0",
+						"visible",
+						// "sm:invisible hidden",
+						// "sm:absolute",
+						// "sm:top-20 sm:left-0",
+						"bg-amber-400",
+						"md:top-7 md:left-10",
+						// "1190px:top-7",
+						"lg:top-7 lg:left-5",
+						// "xl:top-7 lx:left-5",
+						// "xl:top-5 lx:left-10",
 
-						"sm:h-full",
-						"sm:w-fit",
-
+						// "lg:relative lg:top-0 lg:left-0",
 						"",
 						""
-					)}>
-					<div className="self-center justify-items-center w-fit">
+					)}
+				>
+					<IoChevronBack size={20} aria-label="root" />
+					<span className="pr-2">/root</span>
+				</Link>
+			) : null} */}
+			<div
+				id="logo-menu-row"
+				className={cn(
+					"flex flex-row",
+					"justify-between",
+					"w-full",
+					"gap-2",
+					// "flex flex-row justify-between items-center",
+					// "flex flex-row justify-items-stretch",
+
+					// "justify-evenly",
+					// "justify-center",
+					// "justify-around",
+					// "gap-5",
+					// "gap-5 max-w-6xl mx-auto px-0 py-4",
+					// "h-15",
+					// "h-12",
+					// "py-0",
+					// "px-5",
+					// "lg:px-10",
+					// "lg:max-w-7xl",
+					// "mb-5",
+					// "gap-0",
+					// isBookProfile ? "max-w-7xl" : "",
+					"",
+					""
+				)}
+			>
+				<Link
+					href={"/home"}
+					className={cn(
+						`${iconBtnClass}`,
+						`${textBtnClass}`,
+						`${logoBtnClass}`,
+						"",
+						""
+					)}
+				>
+					<div className="self-center flex items-center justify-center ">
 						{isDark ? (
 							<>
 								<Image
@@ -144,14 +188,14 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									alt="logo"
 									width={200}
 									height={20}
-									className="invisible sm:visible -mb-5 sm:m-0"
+									className="hidden sm:block self-center object-contain align-middle"
 								/>
 								<Image
 									src="/gutendex_short_dark.png"
 									alt="logo"
 									width={60}
 									height={50}
-									className="visible sm:hidden sm:invisible sm:w-0 sm:h-0 "
+									className="block sm:hidden self-center"
 								/>
 							</>
 						) : (
@@ -161,33 +205,49 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									alt="logo"
 									width={200}
 									height={20}
-									className="invisible sm:visible  -mb-5 sm:m-0"
+									className="hidden sm:block self-center object-contain align-middle"
 								/>
 								<Image
 									src="/gutendex_short_light.png"
 									alt="logo"
 									width={60}
 									height={50}
-									className="visible sm:hidden sm:invisible sm:w-0 sm:h-0 "
+									className="block sm:hidden self-center"
 								/>
 							</>
 						)}
 					</div>
 				</Link>
-
+				{isBookProfile ? (
+					<Link
+						href={"/store"}
+						className={cn(
+							`${iconBtnClass}`,
+							// `${textBtnClass}`,
+							// `${logoBtnClass}`,
+							"hidden sm:block",
+							""
+						)}
+					>
+						<HiLibrary
+							size={19}
+							className="place-self-center align-middle"
+						/>
+					</Link>
+				) : null}
 				<div
+					id="searchbar-row-1"
 					className={cn(
-						"justify-center items-center content-center",
+						"flex-row",
 						"w-full",
-						"md:flex",
-						"lg:flex",
-						"sm:flex",
-						"hidden",
+						"justify-self-center",
+						"justify-center",
 						"gap-2",
-						"sm:visible",
-						"",
+						"hidden",
+						"sm:flex",
 						""
-					)}>
+					)}
+				>
 					<SearchBar
 						onResults={onResults}
 						searchQuery={searchQuery}
@@ -196,19 +256,9 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					<button
 						aria-label="filter"
 						onClick={() => toggleFilter(!openFilter)}
-						className={cn(
-							"p-3",
-							"aspect-square",
-							"h-full",
-							"pointer-events-auto",
-							"rounded-full",
-							"flex items-center justify-center",
-							"hover:bg-foreground/10",
-							"grid grid-cols-1 grid-rows-1",
-							"",
-							""
-						)}>
-						<PiSlidersHorizontalFill size={19} className="" />
+						className={iconBtnClass}
+					>
+						<PiSlidersHorizontalFill size={19} className="block" />
 						{selectedCount ? (
 							<div
 								className={cn(
@@ -219,7 +269,8 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									"justify-items-end",
 									"",
 									""
-								)}>
+								)}
+							>
 								<span
 									className={cn(
 										"h-4 aspect-square ",
@@ -230,7 +281,8 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 										"text-xs text-white",
 										"",
 										""
-									)}>
+									)}
+								>
 									{selectedCount}
 								</span>
 							</div>
@@ -240,8 +292,8 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					</button>
 				</div>
 
-				<div ref={menuRef} className="h-full">
-					<button
+				{/* <div ref={menuRef} className="h-full"> */}
+				{/* <button
 						aria-label="menu"
 						onClick={() => toggleMenu((prev) => !prev)}
 						className={cn(
@@ -251,38 +303,49 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 							"rounded-full",
 							"flex items-center justify-center",
 							"hover:bg-foreground/10"
-						)}>
-						<IoMenu size={19} className="" />
-					</button>
-				</div>
+						)}
+					> */}
+				<button
+					aria-label="menu"
+					onClick={() => toggleMenu((prev) => !prev)}
+					ref={menuRef}
+					className={iconBtnClass}
+				>
+					<IoMenu size={19} className="block" />
+				</button>
+				{/* </div> */}
 			</div>
 			<div
+				id="searchbar-row-mobile"
 				className={cn(
-					"flex justify-center w-full",
+					"flex w-full",
+					"justify-between",
+					"items-center",
+					"sm:justify-center",
 					"md:hidden",
 					"lg:hidden",
 					"sm:hidden",
-					"gap-2",
-					"px-5",
+					"gap-1",
+					// "px-5",
 					"",
 					""
-				)}>
+				)}
+			>
+				{isBookProfile ? (
+					<Link
+						href={"/store"}
+						className={cn(`${iconBtnClass}`, "", "")}
+						aria-label="library"
+					>
+						<HiLibrary size={19} />
+					</Link>
+				) : null}
 				<SearchBar onResults={onResults} searchQuery={searchQuery} />
 				<button
 					aria-label="filter"
 					onClick={() => toggleFilter(!openFilter)}
-					className={cn(
-						"p-3",
-						"aspect-square",
-						"h-full",
-						"pointer-events-auto",
-						"rounded-full",
-						"flex items-center justify-center",
-						"hover:bg-foreground/10",
-						"grid grid-cols-1 grid-rows-1",
-						"",
-						""
-					)}>
+					className={iconBtnClass}
+				>
 					<PiSlidersHorizontalFill size={19} className="" />
 					{selectedCount ? (
 						<div
@@ -294,7 +357,8 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 								"justify-items-end",
 								"",
 								""
-							)}>
+							)}
+						>
 							<span
 								className={cn(
 									"h-4 aspect-square ",
@@ -305,7 +369,8 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									"text-xs text-white",
 									"",
 									""
-								)}>
+								)}
+							>
 								{selectedCount}
 							</span>
 						</div>
@@ -314,7 +379,13 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					)}
 				</button>
 			</div>
-			{openFilter && <Filter searchQuery={searchQuery} topics={topics} />}
+			{openFilter && (
+				<Filter
+					searchQuery={searchQuery}
+					topics={topics}
+					onClose={() => toggleFilter(false)}
+				/>
+			)}
 		</header>
 	);
 }

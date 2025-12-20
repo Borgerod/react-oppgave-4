@@ -122,6 +122,11 @@ html {
 		var(--foreground) 40%,
 		var(--background) 60%
 	);
+	--color-ultra-light: color-mix(
+		in srgb,
+		var(--foreground) 20%,
+		var(--background) 80%
+	);
 
 	--font-sans: var(--font-geist-sans);
 	--font-mono: var(--font-geist-mono);
@@ -134,8 +139,8 @@ html {
 }
 
 * {
-	scrollbar-width: thin;
-	scrollbar-color: var(--scrollbar-thumb-start) var(--scrollbar-track);
+	/* scrollbar-width: thin; */
+	/* scrollbar-color: var(--scrollbar-thumb-start) var(--scrollbar-track); */
 }
 
 *::-webkit-scrollbar {
@@ -161,4 +166,13 @@ html {
 
 *::-webkit-scrollbar-corner {
 	background: transparent;
+}
+
+@layer utilities {
+	.text-very-light {
+		color: color-mix(in srgb, var(--foreground) 30%, var(--background) 70%);
+	}
+	.text-ultra-light {
+		color: color-mix(in srgb, var(--foreground) 20%, var(--background) 80%);
+	}
 }

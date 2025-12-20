@@ -1,0 +1,16 @@
+tsrfc -> ```
+            import React from 'react'
+
+            type Props = {}
+
+            export default function highlights({}: Props) {
+            return (
+                <div>highlights</div>
+            )
+            }
+        ```
+
+
+
+other NEXTjssnippets: 
+https://marketplace.visualstudio.com/items?itemName=PulkitGangwar.nextjs-snippets

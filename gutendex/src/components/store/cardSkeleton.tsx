@@ -15,21 +15,21 @@ export default function CardSkeleton({ mini = false }: Props) {
 			className={cn(
 				"bg-container border-edge border rounded-3xl shadow-xl hover:bg-container-raised hover:scale-101 animate-pulse",
 				mini
-					? "inline-block flex-none w-80 h-fit"
-					: "block h-full w-lg sm:w-2xs"
-			)}>
+					? "inline-block sm:flex-none sm:w-80 w-full h-fit min-w-0"
+					: "block h-full w-full sm:w-2xs min-w-0"
+			)}
+		>
 			<div
-				className={cn(
-					"overflow-hidden rounded-3xl",
-					!mini && "h-full"
-				)}>
+				className={cn("overflow-hidden rounded-3xl", !mini && "h-full")}
+			>
 				<div
 					id="image"
 					className={cn(
 						mini
 							? "flex flex-row gap-4 items-start p-4"
 							: "flex flex-row gap-4 p-4 h-full sm:flex-col w-full"
-					)}>
+					)}
+				>
 					<div
 						className={cn(
 							"bg-foreground/10 dark:bg-foreground/10 rounded-xl aspect-2/3",
@@ -45,7 +45,8 @@ export default function CardSkeleton({ mini = false }: Props) {
 								className={cn(
 									"text-2xl font-extralight text-primary leading-tight",
 									mini && "text-xs leading-tight"
-								)}>
+								)}
+							>
 								<span
 									className={cn(
 										"rounded-full bg-foreground/50 dark:bg-foreground/50 mr-1",
@@ -59,7 +60,8 @@ export default function CardSkeleton({ mini = false }: Props) {
 								className={cn(
 									"text-sm italic font-thin",
 									mini ? "text-xs mt-3" : "mt-3"
-								)}>
+								)}
+							>
 								<span className="rounded-full bg-foreground/20 dark:bg-foreground/20 mr-1 px-3 py-0.5 text-sm" />
 								<span className="rounded-full bg-foreground/50 px-15 ml-1" />
 								{mini && (
@@ -76,12 +78,14 @@ export default function CardSkeleton({ mini = false }: Props) {
 							className={cn(
 								"flex flex-row justify-between sm:flex-col sm:gap-4",
 								mini && "hidden"
-							)}>
+							)}
+						>
 							<div
 								className={cn(
 									"flex flex-col h-full",
 									mini && "hidden"
-								)}>
+								)}
+							>
 								<div className="mt-auto">
 									<p>
 										<span className="rounded-full px-10 bg-foreground/10 dark:bg-foreground/10 mr-1" />

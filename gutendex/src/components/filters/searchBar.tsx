@@ -8,15 +8,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 const SearchIcon = () => (
 	<div
 		className={cn(
-			"w-10",
-			"h-10",
-			"mr-2",
-			"pointer-events-auto",
-			"rounded-full",
 			"flex items-center justify-center",
+			"h-full",
+			"rounded-full",
+			"aspect-square",
+			"text-xl sm:text-md",
+			"pointer-events-auto",
 			"hover:bg-foreground/10",
-			"text-xl sm:text-md"
-		)}>
+			"",
+			""
+		)}
+	>
 		<IoSearch className={cn("pointer-events-none")} />
 	</div>
 );
@@ -72,24 +74,39 @@ export default function SearchBar({
 	}
 
 	return (
-		<form onSubmit={handleSubmit} className={cn("w-full max-w-lg")}>
+		<form
+			onSubmit={handleSubmit}
+			className={cn(
+				"w-full",
+				"lg:max-w-lg",
+
+				"",
+				""
+			)}
+		>
 			<div
 				className={cn(
 					"flex flex-row items-center",
 					"text-sm",
 					"px-3 py-0",
+					"px-3 py-2",
 					"focus:outline-none focus:ring-none ",
 					"rounded-full",
 					"w-full",
 					"border border-edge-dark",
 					"hover:border-edge-highlight",
-					"h-12",
+					// "h-12",
+					"h-15",
 					"text-lg sm:text-sm",
 					"bg-container",
-					"",
+					"gap-2",
+
+					// "lg:max-w-lg",
+
 					"",
 					""
-				)}>
+				)}
+			>
 				<SearchIcon />
 				<input
 					name="q"
@@ -103,14 +120,15 @@ export default function SearchBar({
 					placeholder="Search.."
 					aria-label="Search"
 					className={cn(
-						"w-full",
 						"bg-transparent",
 						"placeholder:italic",
 						"outline-none",
 						"focus:outline-none",
-						"py-0",
 						"leading-none",
+						"py-0",
 						"h-full",
+						// "aspect-square",
+						// "w-full",
 						"",
 						""
 					)}

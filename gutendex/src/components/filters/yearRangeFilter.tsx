@@ -19,7 +19,7 @@ export default function YearRangeFilter({
 			<div className="flex gap-1 items-center">
 				<input
 					type="number"
-					name="year_from"
+					name={yearFrom ? "year_from" : undefined}
 					aria-label="Year from"
 					placeholder="From"
 					value={yearFrom}
@@ -51,7 +51,7 @@ export default function YearRangeFilter({
 				<span className="text-sm">-</span>
 				<input
 					type="number"
-					name="year_to"
+					name={yearTo ? "year_to" : undefined}
 					aria-label="Year to"
 					placeholder="To"
 					value={yearTo}

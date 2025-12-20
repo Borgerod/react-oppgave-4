@@ -64,8 +64,13 @@ export class Rating extends Component<RatingProps> {
 					<span
 						className="text-sm text-tertiary inline-block text-center self-center justify-self-center h-full"
 						role="note"
-						aria-label={`Downloads: ${this.props.ratingCount.toLocaleString()}`}
-						title={`Downloads: ${this.props.ratingCount.toLocaleString()}`}>
+						aria-label={`Downloads: ${new Intl.NumberFormat(
+							"en"
+						).format(this.props.ratingCount)}`}
+						title={`Downloads: ${new Intl.NumberFormat("en").format(
+							this.props.ratingCount
+						)}`}
+					>
 						(
 						{new Intl.NumberFormat("en", {
 							notation: "compact",

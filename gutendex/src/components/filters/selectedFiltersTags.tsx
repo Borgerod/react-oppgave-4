@@ -11,6 +11,8 @@ type SelectedFiltersTagsProps = {
 	onRemoveFormat?: (format: string) => void;
 	onRemoveLanguage?: (language: string) => void;
 	onRemoveCopyright?: () => void;
+	onClearAll?: () => void;
+	searchQuery?: string | null;
 };
 
 export default function SelectedFiltersTags({
@@ -22,12 +24,15 @@ export default function SelectedFiltersTags({
 	onRemoveFormat,
 	onRemoveLanguage,
 	onRemoveCopyright,
+	onClearAll,
+	searchQuery,
 }: SelectedFiltersTagsProps) {
 	const hasAnyFilters =
 		Object.values(selectedTopics).some(Boolean) ||
 		Object.values(selectedFormats).some(Boolean) ||
 		Object.values(selectedLanguages).some(Boolean) ||
-		copyright;
+		copyright ||
+		Boolean(searchQuery);
 
 	if (!hasAnyFilters) {
 		return null;
@@ -36,7 +41,19 @@ export default function SelectedFiltersTags({
 	return (
 		<div
 			id="selected-filters-tags"
-			className="col-span-full w-full mt-5 sm:mt-0">
+			className="col-span-full w-full mt-5 sm:mt-0"
+		>
+			<div className="flex items-start justify-between mb-2">
+				<div className="text-sm text-tertiary">Selected filters</div>
+				<button
+					type="button"
+					aria-label="Clear all filters"
+					onClick={() => onClearAll?.()}
+					className="text-sm text-red-500 hover:underline"
+				>
+					Clear All
+				</button>
+			</div>
 			<ul className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
 				{/* Topics */}
 				{Object.entries(selectedTopics)

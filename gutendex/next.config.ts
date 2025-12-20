@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
 				hostname: "www.gutenberg.org",
 				pathname: "/**",
 			},
+			{
+				protocol: "https",
+				hostname: "upload.wikimedia.org",
+				pathname: "/**",
+			},
+			{
+				protocol: "https",
+				hostname: "ferf1mheo22r9ira.public.blob.vercel-storage.com",
+				pathname: "/**",
+			},
 		],
 	},
 };

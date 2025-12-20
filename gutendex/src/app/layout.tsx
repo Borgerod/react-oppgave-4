@@ -17,6 +17,8 @@ import { readTopicsCache, isCacheValid } from "@/utils/topicsCache";
 ?			- add highlighted Authors grid
 			- add 
 */
+// TODO [ ]: mini-productcard is broken and needs fixing.
+// TODO [ ]: book profile layout is broken (again), need fixing (again).
 // TODO [ ]: organize components
 // TODO [ ]: cleanup tailwind, remove unused components etc
 // TODO [ ]:
@@ -76,21 +78,52 @@ export default async function RootLayout({
 			<body
 				className={cn(
 					`${geistSans.variable} ${geistMono.variable} antialiased`,
-					"bg-background text-foreground",
-					"h-screen flex flex-col",
-					"max-w-4xl mx-auto",
-					"max-w-5xl mx-auto",
-					"lg:h-screen",
-					"h-fit",
-					"h-full",
-					"max-w-8xl mx-auto",
+					// "bg-background text-foreground",
+					// "h-screen flex flex-col",
+					// "max-w-4xl mx-auto",
+					// "max-w-5xl mx-auto",
+					// "lg:h-screen",
+					// "h-fit",
+					// "h-full",
+					// "max-w-8xl mx-auto",''
+					// "scale-x-75",
+					// "max-w-xl mx-auto",
+					// removed hard max-w & mx-auto from body so app can be full-bleed
+					// "max-w-7xl mx-auto",
+					// "px-10",
+					"max-w-7xl mx-auto",
+					"px-10",
+					"md:px-10",
+					"lg:px-10",
+					"min-h-0",
+					// "px-10",
+					// "xl:px-50",
+					// "xl:px-100",
+					// "min-h-screen",
+
+					// "min-w-screen",
+					// "min-w-0",
+					// "w-screen",
+					"w-200px",
+					// "max-w-7xl mx-auto",
+					// "max-w-xl",
+					// "min-w-3xs",
+					"sm:max-w-7xl",
+					// "mx-auto",
+					// "px-10",
+					"",
 					"",
 					""
-				)}>
+				)}
+			>
 				<Providers>
-					<StoreHeader topics={topics} />
-					{children}
-					<ThemeToggle />
+					{/* keep centered constraints here instead of on body */}
+					<div className="">
+						{/* <div className="max-w-7xl mx-auto px-10"> */}
+						<StoreHeader topics={topics} />
+						{children}
+						<ThemeToggle />
+					</div>
 				</Providers>
 			</body>
 		</html>

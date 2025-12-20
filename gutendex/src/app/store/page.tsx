@@ -4,12 +4,12 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/store/productCard";
 import { Book, BooksResponse } from "@/types";
-// import { usePathname } from "next/navigation";
 import CurrentPath from "@/utils/getCurrentPath";
 import CardSkeleton from "@/components/store/cardSkeleton";
 import { cn } from "@/utils/cn";
 import SelectMenu from "@/components/store/selectMenu";
 import SelectedFiltersTags from "@/components/filters/selectedFiltersTags";
+import Highlights from "@/components/highlights";
 // todo: issue, the popularity chart updates when its filtered, it should allways calculate popoularity by all books.
 function computeUpperDownloadCountLimit(
 	results: Book[],
@@ -34,17 +34,23 @@ export default function Store() {
 	const searchParamsStr = searchParams ? searchParams.toString() : "";
 	const [data, setData] = useState<BooksResponse | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [favoriteBooks, setFavoriteBooks] = useState<Book[] | null>(null);
+	const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
 	const [lastQuery, setLastQuery] = useState<string | undefined>(undefined);
 	const [pageCount, setPageCount] = useState<number>(1);
 	const isFetchingMoreRef = React.useRef<boolean>(false);
 	const lastFetchTriggerRef = React.useRef<number>(0);
 	const hasMorePagesRef = React.useRef<boolean>(true);
 	const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
-	// const [sortByQuery, setSortByQuery] = useState("");
 	const upperDownloadCountLimit =
 		data && !data.previous
 			? computeUpperDownloadCountLimit(data.results)
 			: undefined;
+
+	// When loading more pages, keep showing existing results. Only show full
+	// skeletons on the very first load.
+	const isInitialLoad = loading && pageCount === 1;
+	const hasResults = !!data && !!data.results && data.results.length > 0;
 
 	// Parse filters from URL
 	const selectedTopics = React.useMemo(() => {
@@ -113,14 +119,48 @@ export default function Store() {
 		async function load() {
 			try {
 				setLoading(true);
-				const apiUrl = `/api/books${
-					searchParamsStr
-						? `?${searchParamsStr}&page=${pageCount}`
-						: `?page=${pageCount}`
-				}`;
 
-				const res = await fetch(apiUrl);
-				const json = (await res.json()) as BooksResponse;
+				// Clean empty year range params so they are not sent to the API
+				const rawParams = new URLSearchParams(
+					searchParams?.toString() || ""
+				);
+				if (
+					rawParams.has("year_from") &&
+					rawParams.get("year_from") === ""
+				) {
+					rawParams.delete("year_from");
+				}
+				if (
+					rawParams.has("year_to") &&
+					rawParams.get("year_to") === ""
+				) {
+					rawParams.delete("year_to");
+				}
+				const cleaned = rawParams.toString();
+				const apiUrl = cleaned
+					? `/api/books?${cleaned}&page=${pageCount}`
+					: `/api/books?page=${pageCount}`;
+
+				// safe fetch + parse helper: logs non-JSON responses (HTML/error pages)
+				const fetchJson = async (url: string) => {
+					const res = await fetch(url);
+					const text = await res.text();
+					try {
+						return JSON.parse(text);
+					} catch (err) {
+						console.error(
+							"Failed to parse JSON from",
+							url,
+							"status",
+							res.status,
+							"body:",
+							text
+						);
+						throw new Error(`Invalid JSON response from ${url}`);
+					}
+				};
+
+				const json = (await fetchJson(apiUrl)) as BooksResponse;
 
 				if (!mounted) return;
 
@@ -162,6 +202,36 @@ export default function Store() {
 		};
 	}, [searchParamsStr, pageCount]);
 
+	// load favorites from localStorage on mount
+	useEffect(() => {
+		const raw = localStorage.getItem("favoriteBooks");
+		if (raw) {
+			try {
+				const parsed = JSON.parse(raw) as Book[];
+				setFavoriteBooks(parsed);
+				setFavoriteIds(parsed.map((b) => b.id));
+			} catch (e) {
+				setFavoriteBooks(null);
+				setFavoriteIds([]);
+			}
+		}
+	}, []);
+
+	function toggleFavorite(book: Book) {
+		const current = (favoriteBooks || []).slice();
+		const idx = current.findIndex((b) => b.id === book.id);
+		let updated: Book[];
+		if (idx >= 0) {
+			current.splice(idx, 1);
+			updated = current;
+		} else {
+			updated = [book, ...current];
+		}
+		setFavoriteBooks(updated);
+		setFavoriteIds(updated.map((b) => b.id));
+		localStorage.setItem("favoriteBooks", JSON.stringify(updated));
+	}
+
 	//* LOAD NEXT PAGE VIA INTERSECTION OBSERVER
 	useEffect(() => {
 		const target = loadMoreRef.current;
@@ -192,51 +262,39 @@ export default function Store() {
 			observer.disconnect();
 		};
 	}, [loading]);
-	// function sortByQuery(value: string): void {}
-
-	// function loadNextPage() {
-	// 	const scrollPosition = useScrollPosition();
-
-	// 	return <div>{scrollPosition}</div>;
-	// }
 
 	return (
-		<main
-			className={cn(
-				"min-h-screen",
-				//
-				"px-5",
-				"lg:px-0",
-				// "lg:px-0",
-				// "md:px-15",
-				// "sm:px-0",
+		<main className={cn("min-h-screen", "px-0", "lg:px-0", "", "")}>
+			{/* TEST */}
 
-				"",
-				""
-			)}>
-			{/* StoreHeader is rendered in app layout */}
-
-			{/* <div className="mx-auto flex max-w-6xl flex-col gap-8"> */}
-			{/* <div className="mx-auto flex max-w-6xl flex-col gap-1"> */}
-			<div className="mx-auto flex max-w-7xl flex-col gap-1 w-fit">
+			<div className="mx-auto flex flex-col gap-1 w-full">
+				{/* <div className="mx-auto flex max-w-7xl flex-col gap-1 w-fit"> */}
 				{/* Selected Filters Tags */}
 				<SelectedFiltersTags
 					selectedTopics={selectedTopics}
 					selectedFormats={selectedFormats}
 					selectedLanguages={selectedLanguages}
 					copyright={copyright}
+					searchQuery={searchParams?.get("search") ?? undefined}
 					onRemoveTopic={(topic) => removeFilter("topic", topic)}
 					onRemoveFormat={(format) => removeFilter("format", format)}
 					onRemoveLanguage={(language) =>
 						removeFilter("languages", language)
 					}
 					onRemoveCopyright={() => removeFilter("copyright")}
+					onClearAll={() => router.push("/store")}
 				/>
 
-				{/* <header className="flex flex-row gap-5 justify-between "> */}
 				<header className="grid grid-rows-2 grid-cols-2 items-end mb-2 ">
-					<span className="row-start-1 col-start-1">
-						{CurrentPath(lastQuery)}
+					<span className="row-start-1 col-start-1 text-tertiary flex">
+						{/* {CurrentPath(lastQuery)} */}
+						<span>Gutendex</span>
+
+						<span>
+							{lastQuery
+								? CurrentPath("Search")
+								: CurrentPath("All")}
+						</span>
 					</span>
 					<span className="row-start-2 col-start-1">
 						Search results:{" "}
@@ -244,38 +302,13 @@ export default function Store() {
 							{data?.results?.length ?? 0} out of{" "}
 							{data?.count ?? 0}
 						</span>{" "}
-						{/* <span>
-							{data?.count ?? data?.results?.length ?? ""}
-						</span>{" "} */}
 						books
-						{/* {lastQuery ? (
-							<span className="ml-2 opacity-80">{lastQuery}</span>
-						) : null} */}
 					</span>
-					{/* <option value="popularity-a">Popularity (Accending)</option>
-					<option value="popularity-d">Popularity (Decending)</option> */}
-					{/* 
-					<option value="AZ">A-Z</option>
-					<option value="ZA">Z-A</option> */}
+
 					<SelectMenu
-						// onChange={setSortByQuery}
 						className={cn(
 							"row-start-2 col-start-2 col-span-1",
-							// "w-3xs",
-							// "justify-end",
-							// "justify-items-center",
-							// "justify-items-end",
-							// "gap-2",
-							// "justify-self-end",
 							"w-full",
-							// "w-fit",
-							// "min-w-20 max-w-50",
-							// "bg-container-raised  rounded-full p-2 py-2",
-							// "border border-edge-dark",
-							// "border border-edge-dark",
-							// "hover:border-edge-highlight",
-							// "focus:outline-none focus:ring-transparent focus:border-edge-highlight",
-							// "shadow",
 							"",
 							""
 						)}
@@ -285,19 +318,15 @@ export default function Store() {
 							{
 								value: "popular",
 								name: "Popularity",
-								// name: "Popularity (Decending)",
 							},
 						]}
 						id="sortBy"
-						// label="Sort by"
 					/>
 				</header>
 
 				<div
 					className={cn(
 						"grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
-						// "mx-20",
-						// "px-2",
 						"w-full",
 						"w-fit",
 						"self-center",
@@ -305,12 +334,16 @@ export default function Store() {
 						"gap-4",
 						"",
 						""
-					)}>
-					{loading || !data || !data.results
-						? Array.from({ length: 15 }).map((_, index) => (
-								<CardSkeleton key={index} />
-						  ))
-						: data.results.map((book: Book, index: number) => (
+					)}
+				>
+					{/* If initial load or no data, show full skeleton set */}
+					{isInitialLoad || !hasResults ? (
+						Array.from({ length: 15 }).map((_, index) => (
+							<CardSkeleton key={index} />
+						))
+					) : (
+						<>
+							{data!.results.map((book: Book, index: number) => (
 								<ProductCard
 									key={`${book.id}-${index}`}
 									book={book}
@@ -318,12 +351,22 @@ export default function Store() {
 										upperDownloadCountLimit
 									}
 									index={index}
+									isFavorite={favoriteIds.includes(book.id)}
+									onToggleFavorite={toggleFavorite}
 								/>
-						  ))}
+							))}
+
+							{/* when loading additional pages, append skeletons instead of hiding results */}
+							{loading &&
+								pageCount > 1 &&
+								Array.from({ length: 8 }).map((_, i) => (
+									<CardSkeleton key={`more-${i}`} />
+								))}
+						</>
+					)}
 				</div>
 				<div ref={loadMoreRef} aria-hidden className="h-1 w-full" />
 			</div>
-			{/* TODO: when scoll hits this point. load in next page */}
 		</main>
 	);
 }

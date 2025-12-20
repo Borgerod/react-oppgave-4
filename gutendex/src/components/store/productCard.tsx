@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { cn } from "@/utils/cn";
 import type { Book } from "@/types";
 import Image from "next/image";
@@ -6,17 +7,23 @@ import Rating from "@/components/store/rating";
 import Link from "next/link";
 import { useUpperDownloadCount } from "@/providers/providers";
 import { Tag } from "@/components/filters/tag";
+import { FaHeart } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa6";
 
 type Props = {
 	book: Book;
 	index?: number;
 	upperDownloadCountLimit?: number;
 	mini?: boolean;
+	isFavorite?: boolean;
+	onToggleFavorite?: (book: Book) => void;
 };
 export default function ProductCard({
 	book,
 	upperDownloadCountLimit,
 	mini,
+	isFavorite,
+	onToggleFavorite,
 }: Props) {
 	const contextUpper = useUpperDownloadCount();
 	const formats = book.formats as Record<string, string> | undefined;
@@ -40,10 +47,53 @@ export default function ProductCard({
 					authorNames[authorNames.length - 1]
 			  }`;
 
-	// prepare title parts (main title + optional subtitle) to simplify markup
-	const _titleParts = (book.title ?? "").split(/[;:]/, 2);
-	const titleMain = _titleParts[0] || "unknown";
-	const titleSub = _titleParts[1] ? _titleParts[1].trim() : "";
+	// local favorite state fallback: if parent doesn't provide handler/prop,
+	// manage favorites in localStorage so heart is always visible and usable.
+	const [localFav, setLocalFav] = React.useState<boolean>(
+		Boolean(isFavorite)
+	);
+
+	React.useEffect(() => {
+		// prefer explicit prop when provided
+		if (typeof isFavorite === "boolean") {
+			setLocalFav(isFavorite);
+			return;
+		}
+		try {
+			const raw = localStorage.getItem("favoriteBooks");
+			if (raw) {
+				const parsed = JSON.parse(raw) as Book[];
+				setLocalFav(parsed.some((b) => b.id === book.id));
+			} else {
+				setLocalFav(false);
+			}
+		} catch (e) {
+			setLocalFav(false);
+		}
+	}, [book.id, isFavorite]);
+
+	function handleToggle(bookParam: Book) {
+		if (onToggleFavorite) {
+			onToggleFavorite(bookParam);
+			return;
+		}
+		try {
+			const raw = localStorage.getItem("favoriteBooks");
+			const arr: Book[] = raw ? JSON.parse(raw) : [];
+			const idx = arr.findIndex((b) => b.id === bookParam.id);
+			let updated: Book[];
+			if (idx >= 0) {
+				updated = arr.filter((b) => b.id !== bookParam.id);
+			} else {
+				updated = [...arr, bookParam];
+			}
+			localStorage.setItem("favoriteBooks", JSON.stringify(updated));
+			setLocalFav(updated.some((b) => b.id === bookParam.id));
+		} catch (e) {
+			// ignore localStorage errors
+		}
+	}
+
 	function formatLinkVars(prop: string) {
 		return prop
 			.trim()
@@ -54,6 +104,18 @@ export default function ProductCard({
 			.replace(/\s+/g, "-")
 			.replace(/-+/g, "-");
 	}
+
+	// derive title main and subtitle if the book title contains a separator
+	const titleRaw = book.title ?? "";
+	const titleParts = titleRaw
+		.split(/[:\-–—]/)
+		.map((p) => p.trim())
+		.filter(Boolean);
+	const titleMain =
+		titleParts.length > 0 ? titleParts[0] : titleRaw || "Untitled";
+	const titleSub =
+		titleParts.length > 1 ? titleParts.slice(1).join(" - ") : undefined;
+
 	return (
 		<Link
 			href={`/book-profile/${book.id}/${formatLinkVars(book.title)}`}
@@ -61,30 +123,33 @@ export default function ProductCard({
 				"bg-container border-edge border rounded-3xl",
 				`${
 					mini
-						? "inline-block flex-none w-80 h-fit"
-						: "block h-full w-lg sm:w-2xs"
+						? "inline-block sm:flex-none sm:w-80 w-full h-fit min-w-0"
+						: "block h-full w-full sm:w-2xs min-w-0"
 				}`,
-				"",
 				"hover:bg-container-raised hover:scale-101",
 				"shadow-xl",
 				"",
 				""
-			)}>
+			)}
+		>
 			<div
 				className={cn(
-					"overflow-hidden rounded-3xl",
+					// "overflow-hidden rounded-3xl",
 					`${mini ? "" : "h-full"}`
-				)}>
+				)}
+			>
 				<div
 					className={cn(
+						"relative",
 						`${
 							mini
-								? "flex flex-row gap-4 items-start p-4"
-								: "flex flex-row gap-4 p-4 h-full sm:flex-col w-full"
+								? "flex flex-row gap-3 items-start p-4"
+								: "flex flex-row gap-3 p-4 h-full sm:flex-col w-full"
 						}`,
 						"",
 						""
-					)}>
+					)}
+				>
 					{imgSrc ? (
 						<Image
 							src={imgSrc}
@@ -94,12 +159,13 @@ export default function ProductCard({
 							className={cn(
 								"rounded-xl aspect-2/3",
 								"h-full",
-								"w-30 ",
+								"min-w-0",
+								"w-30",
 								"",
 								`${
 									mini
 										? "h-30 w-20 object-cover"
-										: "object-cover sm:h-full sm:w-full sm:object-cover"
+										: "object-cover sm:h-full sm:w-full sm:object-cover min-w-0"
 								}`
 							)}
 							style={{
@@ -118,35 +184,80 @@ export default function ProductCard({
 						/>
 					)}
 
+					{/* Favorite button overlay (always visible) */}
+					<button
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							handleToggle(book);
+						}}
+						aria-label={
+							(
+								typeof isFavorite === "boolean"
+									? isFavorite
+									: localFav
+							)
+								? "Remove favorite"
+								: "Add favorite"
+						}
+						className={cn(
+							"absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full z-10",
+							"bg-white/10 text-white",
+							"dark:bg-transparent dark:text-zinc-200",
+							"backdrop-blur-sm",
+							"focus:outline-none",
+							"opacity-100",
+							"cursor-pointer"
+						)}
+					>
+						{(
+							typeof isFavorite === "boolean"
+								? isFavorite
+								: localFav
+						) ? (
+							<FaHeart className="w-4 h-4 text-accent-dark" />
+						) : (
+							<FaRegHeart className="w-4 h-4 text-white/90 dark:text-zinc-200/90" />
+						)}
+					</button>
+
 					<div
 						className={cn(
 							"flex flex-col",
 							"flex justify-between gap-4 h-full sm:flex-col w-full",
+							"min-w-0",
 							"",
 							""
-						)}>
+						)}
+					>
 						<div
 							className={cn(
 								`${mini ? "flex flex-col gap-2" : ""}`,
 								"sm: flex-col",
 								"",
 								""
-							)}>
+							)}
+						>
 							<h2
 								className={cn(
-									"text-2xl font-extralight text-primary p-0 m-0 ",
-									"text-2xl font-extralight text-primary p-0 m-0 leading-none",
+									"text-2xl font-extralight text-primary p-0 m-0",
 									"text-2xl font-extralight text-primary p-0 m-0 leading-tight",
-									`${mini ? "text-xs leading-[0.75]" : ""}`,
-									""
-								)}>
+									"whitespace-normal break-words pr-10",
+									`${
+										mini
+											? "text-xs leading-tight pr-10"
+											: ""
+									}`
+								)}
+							>
 								{titleMain}
 								{titleSub && (
 									<span
 										className={cn(
 											"text-sm italic font-thin text-secondary ml-2 align-baseline leading-[0.75]",
 											`${mini ? "text-xs ml-1" : ""}`
-										)}>
+										)}
+									>
 										{titleSub}
 									</span>
 								)}
@@ -155,18 +266,19 @@ export default function ProductCard({
 								className={cn(
 									"text-sm italic font-thin mt-1 align-baseline ",
 									`${mini ? "text-xs" : ""}`
-								)}>
+								)}
+							>
 								<span
-									className={cn(
-										"text-xs text-tertiary mr-1"
-									)}>
+									className={cn("text-xs text-tertiary mr-1")}
+								>
 									By:
 								</span>
 								<span
 									title={authorsText}
 									className={cn(
-										`${mini ? "truncate max-w-40" : ""}`
-									)}>
+										`${mini ? "break-words max-w-40" : ""}`
+									)}
+								>
 									{authorsText}
 								</span>
 							</p>
@@ -176,7 +288,8 @@ export default function ProductCard({
 									`${mini ? "visible" : "hidden"}`,
 									"",
 									""
-								)}>
+								)}
+							>
 								<Rating
 									ratingCount={download_count}
 									upperDownloadCountLimit={upperLimit}
@@ -184,28 +297,38 @@ export default function ProductCard({
 								/>
 							</div>
 						</div>
+
 						<div
+							id="ratingtags-readmore-row"
 							className={cn(
 								"flex flex-row justify-between",
 								"flex sm:flex-col sm:gap-4",
 								`${mini ? "hidden" : ""}`,
+								"",
 								""
-							)}>
+							)}
+						>
 							<div
+								id="raintg-tags-column"
 								className={cn(
 									"flex flex-col",
 									"h-full",
 									`${mini ? "hidden" : ""}`,
+									"",
 									""
-								)}>
+								)}
+							>
 								<div
+									// todo
+									id="rating-container"
 									className={cn(
 										`${mini ? "visible" : ""}`,
 
 										"mt-auto",
 										"",
 										""
-									)}>
+									)}
+								>
 									<Rating
 										ratingCount={download_count}
 										upperDownloadCountLimit={upperLimit}
@@ -240,25 +363,26 @@ export default function ProductCard({
 									)}
 								</p>
 							</div>
-							{/* TODO: check the versions maybe someone are kindle frieldy or not */}
-							{/* TODO: would be funny to actually add prices and make the tutor pay to review the rest. */}
 							<button
 								className={cn(
 									"rounded-full",
-									"w-fit p-1 px-5",
+									"w-fit p-1 px-3",
 									"border border-accent-dark text-accent-dark",
 									"hover:border-accent-dark hover:text-container-solid hover:bg-accent-dark",
 									"border dark:border-accent dark:ext-accent",
 									"hover:dark:border-accent-dark hover:dark:text-container-solid hover:dark:bg-accent-dark",
-									"h-10 text-nowrap self-",
+									"h-10 text-nowrap self-end",
 									"sm:h-full",
 									`${mini ? "hidden" : ""}`,
 									"",
 									""
-								)}>
+								)}
+							>
 								Read more
 							</button>
 						</div>
+						{/* TODO: check the versions maybe someone are kindle frieldy or not */}
+						{/* TODO: would be funny to actually add prices and make the tutor pay to review the rest. */}
 					</div>
 				</div>
 			</div>

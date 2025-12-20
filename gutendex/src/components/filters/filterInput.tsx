@@ -39,9 +39,11 @@ export default function FilterInput({
 				"py-5 gap-2 ",
 				"w-full",
 				"max-w-full",
+
 				"",
 				""
-			)}>
+			)}
+		>
 			<span className="p-0 m-0 text-base">{label}</span>
 			<input
 				aria-label={`Filter ${label}`}
@@ -64,6 +66,9 @@ export default function FilterInput({
 					"w-full",
 					"hover:border-edge-highlight",
 					"text-lg sm:text-sm",
+
+					"h-12",
+					"sm:h-fit",
 					"",
 					""
 				)}
@@ -79,10 +84,12 @@ export default function FilterInput({
 						"content-start",
 						"w-full",
 						"max-h-24",
-						"overflow-y-scroll",
+						"overflow-y-auto",
+						// "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
 						"",
 						""
-					)}>
+					)}
+				>
 					{filteredItems.map((item, index) => {
 						const id = itemIdGetter(item, index);
 						return (

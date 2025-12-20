@@ -36,8 +36,13 @@ export function Tag({ id, item, checked, onToggle, closeIcon, url }: TagProps) {
 					"dark:bg-divider dark:hover:bg-accent/50 hover:dark:text-primary-inv",
 					"active:bg-accent-dark/50",
 					"active:dark:bg-accent-dark/50",
-					"font-thin"
-				)}>
+					"font-thin",
+
+					"",
+					"",
+					""
+				)}
+			>
 				{item}
 			</button>
 		);
@@ -72,11 +77,20 @@ export function Tag({ id, item, checked, onToggle, closeIcon, url }: TagProps) {
 					"peer-checked:bg-accent/50 peer-checked:text-primary",
 					"peer-checked:dark:text-primary-inv",
 					"font-thin",
-
 					`${closeIcon ? "pr-1.5" : ""}`,
+
+					// "px-2 py-0 ",
+					// "py-0.5 px-2",
+					// "py-1 px-2",
+					"py-1 px-2 pt-1.5",
+					"",
+
+					// "leading-0",
+					"leading-none",
 					"",
 					""
-				)}>
+				)}
+			>
 				{item}
 				{closeIcon ? (
 					<button
@@ -91,7 +105,8 @@ export function Tag({ id, item, checked, onToggle, closeIcon, url }: TagProps) {
 							"text-secondary hover:text-primary hover:font-bold",
 							"",
 							""
-						)}>
+						)}
+					>
 						<IoMdClose className="" />
 					</button>
 				) : null}
