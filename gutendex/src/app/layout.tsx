@@ -74,7 +74,9 @@ export default async function RootLayout({
 	}
 
 	return (
-		<html lang="en">
+		// The hydrationWarnign is due to browser extentions, so I'll disable it before release.
+		// TODO: befor release - remove supression.
+		<html lang="en" suppressHydrationWarning>
 			<body
 				className={cn(
 					`${geistSans.variable} ${geistMono.variable} antialiased`,
@@ -114,8 +116,7 @@ export default async function RootLayout({
 					"",
 					"",
 					""
-				)}
-			>
+				)}>
 				<Providers>
 					{/* keep centered constraints here instead of on body */}
 					<div className="">
