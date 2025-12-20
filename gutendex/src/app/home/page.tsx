@@ -2,8 +2,8 @@
 import BookShelf from "@/components/ui/BookShelf";
 import Highlights from "@/components/ui/highlights";
 import PopularAuthorsGrid from "@/components/ui/PopularAuthorsGrid";
-import SubjectGrid from "@/components/ui/SubjectAuthorsGrid";
-import SubjectAuthorsGrid from "@/components/ui/SubjectAuthorsGrid";
+import SubjectGrid from "@/components/ui/SubjectGrid";
+// import SubjectAuthorsGrid from "@/components/ui/SubjectGrid";
 import { Book, BooksResponse } from "@/types";
 import React, { useEffect, useState } from "react";
 import { useHomeCache } from "@/providers/providers";

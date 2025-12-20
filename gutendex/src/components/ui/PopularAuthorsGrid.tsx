@@ -1,20 +1,20 @@
 "use client";
 
 import { cn } from "@/utils/cn";
-import {
-	iconBtnClass,
-	compressedBtnClass,
-	textBtnClass,
-	primaryBtnClass,
-	secondaryBtnClass,
-} from "@/components/buttonClasses";
+// import {
+// 	iconBtnClass,
+// 	compressedBtnClass,
+// 	textBtnClass,
+// 	primaryBtnClass,
+// 	secondaryBtnClass,
+// } from "@/components/buttonClasses";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-type PopularAuthorsGridProps = {};
+type PopularAuthorsGridProps = Record<string, never>;
 type AuthorItem = { author: string; count: number };
-import { FaHeart } from "react-icons/fa";
-import { FaRegHeart } from "react-icons/fa";
+// import { FaHeart } from "react-icons/fa";
+// import { FaRegHeart } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
 
 // button classes are centralized in src/components/buttonClasses.ts
@@ -52,31 +52,31 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 		};
 	}, []);
 
-	function fileNameFromAuthor(author: string) {
-		let s = String(author || "").trim();
-		// normalize whitespace
-		s = s.replace(/\s+/g, " ");
-		// If format is "Last, First Middle" move surname to the end
-		if (s.includes(",")) {
-			const parts = s
-				.split(",")
-				.map((p) => p.trim())
-				.filter(Boolean);
-			if (parts.length >= 2) {
-				const last = parts[0];
-				const rest = parts.slice(1).join(" ");
-				s = `${rest} ${last}`.trim();
-			}
-		}
-		// remove commas/periods and any leftover undesirable chars, then use underscores
-		return s.replace(/[.,]/g, "").replace(/\s+/g, "_");
-	}
+	// function fileNameFromAuthor(author: string) {
+	// 	let s = String(author || "").trim();
+	// 	// normalize whitespace
+	// 	s = s.replace(/\s+/g, " ");
+	// 	// If format is "Last, First Middle" move surname to the end
+	// 	if (s.includes(",")) {
+	// 		const parts = s
+	// 			.split(",")
+	// 			.map((p) => p.trim())
+	// 			.filter(Boolean);
+	// 		if (parts.length >= 2) {
+	// 			const last = parts[0];
+	// 			const rest = parts.slice(1).join(" ");
+	// 			s = `${rest} ${last}`.trim();
+	// 		}
+	// 	}
+	// 	// remove commas/periods and any leftover undesirable chars, then use underscores
+	// 	return s.replace(/[.,]/g, "").replace(/\s+/g, "_");
+	// }
 
 	// use built-in Intl.NumberFormat inline when rendering counts
 
 	const cards = (items ?? []).map((it, idx) => {
-		const fileName = fileNameFromAuthor(it.author);
-		const fileUrl = `https://en.wikipedia.org/wiki/File:${fileName}.tif`;
+		// const fileName = fileNameFromAuthor(it.author);
+		// const fileUrl = `https://en.wikipedia.org/wiki/File:${fileName}.tif`;
 		const href = `/store?search=${encodeURIComponent(it.author)}`;
 		return (
 			<Link href={href} key={idx} className="block">
@@ -90,12 +90,11 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 						"hover:scale-105 hover:filter hover:brightness-95  dark:hover:bg-container-raised",
 						"",
 						""
-					)}
-				>
+					)}>
 					<Image
 						width={96}
 						height={96}
-						src={(it as any).image ?? PLACEHOLDER}
+						src={it.image ?? PLACEHOLDER}
 						alt={it.author}
 						className="aspect-square rounded-full shadow-xl object-cover col-start-1"
 						priority={false}
@@ -122,8 +121,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 							"col-start-1 col-span-2 row-start-2 row-span-2",
 							"",
 							""
-						)}
-					>
+						)}>
 						<span className="text-sm text-primary whitespace-normal wrap-break-word text-wrap mr-1">
 							{(it.author.split(",")[0] || "").trim()},
 						</span>
@@ -156,8 +154,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 				<div
 					className={cn(
 						"grid grid-rows-3 grid-cols-3 gap-4 justify-center w-auto mt-4"
-					)}
-				>
+					)}>
 					{Array.from({ length: 9 }).map((_, i) => (
 						<div
 							key={i}
@@ -165,8 +162,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 								"bg-container   rounded-3xl shadow-xl ",
 								"grid grid-cols-2 grid-rows-[auto_1fr] items-start justify-start justify-items-start",
 								"p-4 text-center h-full w-full animate-pulse"
-							)}
-						>
+							)}>
 							<div className="col-start-1">
 								<div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full shadow-xl object-cover bg-foreground/10" />
 							</div>
@@ -182,8 +178,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 									"text-left",
 									"self-end items-baseline justify-start",
 									"col-start-1 col-span-2 row-start-2 row-span-2"
-								)}
-							>
+								)}>
 								<span className="text-sm text-primary whitespace-normal wrap-break-word text-wrap mr-1">
 									<span className="inline-block w-32 h-3 bg-foreground/10 rounded" />
 								</span>
@@ -198,8 +193,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 			<div
 				className={cn(
 					"grid grid-rows-3 grid-cols-3 gap-4 justify-center w-auto mt-4"
-				)}
-			>
+				)}>
 				{cards}
 			</div>
 		</div>

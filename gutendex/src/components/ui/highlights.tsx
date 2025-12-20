@@ -1,22 +1,24 @@
 //tsrfc
-import React, { Component } from "react";
-import ProductCard from "../store/productCard";
+// import React, { Component } from "react";
+import React from "react";
+// import ProductCard from "../store/productCard";
 import { FaHeart } from "react-icons/fa6";
 import { FaRegHeart } from "react-icons/fa6";
-import { BooksResponse, Book } from "@/types";
-import CardSkeleton from "../store/cardSkeleton";
+// import { BooksResponse, Book } from "@/types";
+// import CardSkeleton from "../store/cardSkeleton";
 import HighLightCard from "@/components/ui/highLightCard";
 
 // import textBtnClass from "@/components/layout/header";
 import { cn } from "@/utils/cn";
 import {
-	iconBtnClass,
+	// iconBtnClass,
 	compressedBtnClass,
 	textBtnClass,
-	primaryBtnClass,
+	// primaryBtnClass,
 	secondaryBtnClass,
 } from "@/components/buttonClasses";
 import Link from "next/link";
+import { Book } from "@/types";
 interface HighlightProps {
 	// data: BooksResponse | null;
 	data: Book[] | null;
@@ -128,7 +130,7 @@ export default function highlights({
 													"backdrop-blur-md",
 													"transition-colors duration-300",
 													"cursor-pointer",
-													"flex-shrink-0"
+													"shrink-0"
 												)}>
 												<span className="w-3 h-3 block bg-foreground/10 rounded" />
 											</div>
@@ -212,10 +214,9 @@ export default function highlights({
 														) => {
 															e.preventDefault();
 															e.stopPropagation();
-															onToggleFavorite &&
-																onToggleFavorite(
-																	book
-																);
+															if (onToggleFavorite) {
+																onToggleFavorite(book);
+															}
 														};
 														const icon = isFav ? (
 															<FaHeart

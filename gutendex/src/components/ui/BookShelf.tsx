@@ -8,7 +8,7 @@ function buildStoreUrl(topic: string) {
 	return `/store?${params.toString()}`;
 }
 
-type BookShelfProps = {};
+type BookShelfProps = Record<string, never>;
 
 export default function BookShelf({}: BookShelfProps) {
 	return (
