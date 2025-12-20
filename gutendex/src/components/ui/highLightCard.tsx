@@ -26,8 +26,7 @@ export default function HighLightCard({
 	return (
 		<Link
 			href={href}
-			className="block w-full max-w-[220px] group hover:scale-105"
-		>
+			className="block w-full max-w-[220px] group hover:scale-105">
 			<div
 				className={cn(
 					"relative overflow-hidden rounded-2xl",
@@ -39,8 +38,7 @@ export default function HighLightCard({
 					"hover:shadow-md",
 					"shadow-lg",
 					"hover:border-zinc-300/50 dark:hover:border-zinc-700/50"
-				)}
-			>
+				)}>
 				{/* <div className="relative h-[320px] overflow-hidden"> */}
 				<div
 					className={cn(
@@ -48,8 +46,7 @@ export default function HighLightCard({
 						`${image ? "" : "scale-110"}`,
 						"",
 						""
-					)}
-				>
+					)}>
 					<Image
 						src={
 							image ? image : "/Blank-Book-Cover-PNG-Picture.png"
@@ -80,8 +77,7 @@ export default function HighLightCard({
 									"backdrop-blur-md",
 									"shadow-xs",
 									"border border-white/20 dark:border-zinc-800/50"
-								)}
-							>
+								)}>
 								{badge.text}
 							</span>
 						) : (
@@ -100,18 +96,22 @@ export default function HighLightCard({
 									"cursor-pointer",
 									"shadow-xs",
 									"border border-white/10 dark:border-zinc-800/30"
-								)}
-							>
+								)}>
 								{React.isValidElement(badge.text)
 									? React.cloneElement(
-											badge.text as React.ReactElement,
+											badge.text as React.ReactElement<{
+												className?: string;
+											}>,
 											{
 												className: cn(
 													// ensure icon sizing and inherit color
 													"w-4 h-4",
 													// preserve any existing className on the element
-													(badge.text as any).props
-														?.className || ""
+													(
+														badge.text as React.ReactElement<{
+															className?: string;
+														}>
+													).props?.className ?? ""
 												),
 											}
 									  )
@@ -141,9 +141,8 @@ export default function HighLightCard({
 								"group-hover:bg-white/20 dark:group-hover:bg-zinc-700/50",
 								"transition-colors duration-300 group",
 								"cursor-pointer",
-								"flex-shrink-0"
-							)}
-						>
+								"shrink-0"
+							)}>
 							<GoArrowUpRight className="w-3 h-3 text-white group-hover:-rotate-12 transition-transform duration-300" />
 						</div>
 					</div>
