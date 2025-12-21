@@ -21,6 +21,8 @@ import { readTopicsCache, isCacheValid } from "@/utils/topicsCache";
 // TODO [ ]: book profile layout is broken (again), need fixing (again).
 // TODO [ ]: organize components
 // TODO [ ]: cleanup tailwind, remove unused components etc
+// TODO [ ]: make default book cover using logo, the current one looks bad.
+// TODO [ ]: make 'your favorites' show empty when there is no favorites.
 // TODO [ ]:
 // ! NOTE: the API is not working correctly; cannot combine topics in search.
 // ? Suggestion: do a fetch for all the different topics, and then make own algorithm to sort the items contain all topics.

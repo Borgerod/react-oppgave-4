@@ -9,6 +9,8 @@ import React, { useEffect, useState } from "react";
 import { useHomeCache } from "@/providers/providers";
 import { FaHeart } from "react-icons/fa6";
 // import { FaRegHeart } from "react-icons/fa6";
+import { getLastRead } from "@/utils/lastRead";
+import LastReadRow from "@/components/ui/lastReadRow";
 
 type HomeProps = Record<string, never>;
 
@@ -20,7 +22,7 @@ export default function Home({}: HomeProps) {
 	const [favoriteBooks, setFavoriteBooks] = useState<Book[] | null>(null);
 	const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
 	const { cache, setCache } = useHomeCache();
-
+	const [lastReadData, setLastReadData] = useState<Book[] | null>(null);
 	// populate from cache immediately to avoid showing loading state
 	useEffect(() => {
 		if (cache) {
@@ -31,7 +33,10 @@ export default function Home({}: HomeProps) {
 		// only run once on mount
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
+	useEffect(() => {
+		const list = getLastRead();
+		setLastReadData(list.length ? list : null);
+	}, []);
 	// GET POPULAR BOOKS
 	useEffect(() => {
 		let mounted = true;
@@ -197,15 +202,35 @@ export default function Home({}: HomeProps) {
 		// 	/> */}
 		// </main>
 
-		<main className="grid grid-rows-[auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center ">
-			<div className="h-100 w-full row-start-1 col-start-1 col-span-2 ">
-				<h3 className="text-2xl font-medium mb-4">BookShelf</h3>
+		// <main className="grid grid-rows-[auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center">
+		<main className="grid grid-rows-[auto_auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center">
+			{/* > NEW, TEST */}
+			<div className="w-full row-start-1 col-start-1 col-span-2 mt-15 mb-15">
+				<h3 className="text-2xl font-medium mb-4">
+					{/* Books you read last */}
+				</h3>
+				<div className="w-full ">
+					<LastReadRow
+						loading={lastReadData === null}
+						data={lastReadData}
+						title="Books you read last"
+						// todo add remove button
+						tagLabel={"continue"}
+						// onToggleFavorite={toggleFavorite}
+						// favoriteIds={favoriteIds}
+					/>
+				</div>
+			</div>
+
+			{/* <div className="h-100 w-full row-start-2 col-start-1 col-span-2 mt-15"> */}
+			<div className="h-100 w-full row-start-2 col-start-1 col-span-2 mt-0">
+				<h3 className="text-2xl font-medium mb-4">Genre bookshelf</h3>
 				<div className="scale-80 h-fit w-full relative bottom-30">
 					<BookShelf />
 				</div>
 			</div>
 
-			<div className="h-full w-full row-start-2 col-start-1 col-span-1 flex flex-col p-5 gap-5">
+			<div className="h-full w-full row-start-3 col-start-1 col-span-1 flex flex-col p-5 gap-5">
 				<div className="h-full w-full  flex">
 					<Highlights
 						loading={favBooksData === null}
@@ -223,7 +248,7 @@ export default function Home({}: HomeProps) {
 					<Highlights
 						loading={newBooksData === null}
 						data={newBooksData}
-						title="New Books"
+						title="New Realeases"
 						tagLabel="New"
 						button={{
 							text: "View All",
@@ -234,7 +259,7 @@ export default function Home({}: HomeProps) {
 					/>
 				</div>
 			</div>
-			<div className="h-full w-full row-start-2 col-start-2 col-span-1 flex flex-col p-5 gap-5">
+			<div className="h-full w-full row-start-3 col-start-2 col-span-1 flex flex-col p-5 gap-5">
 				<div className="h-full w-full  flex">
 					<Highlights
 						loading={previewData === null}

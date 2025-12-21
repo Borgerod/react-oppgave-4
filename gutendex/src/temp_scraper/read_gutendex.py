@@ -232,14 +232,19 @@ def main() -> None:
     # top10 = sorted(author_downloads.items(), key=lambda kv: kv[1], reverse=True)[:10]
     # pprint(top10)
 
-    # # Also print top subjects by occurrence count (like bookshelves)
-    # subject_counts = get_subject_counts(df)
-    # top_subjects = sorted(subject_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    # pprint(top_subjects)
+    # Also print top subjects by occurrence count (like bookshelves)
+    subject_counts = get_subject_counts(df)
+    top_subjects = sorted(subject_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
+    print("top 100 Subjects:")
+    print("_"*60)
+    pprint(top_subjects)
+
 
     # Also print top subjects by occurrence count (like bookshelves)
     bookshelf_counts = get_bookshelf_counts(df)
     top_bookshelf = sorted(bookshelf_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
+    print("top 100 Bookshelves:")
+    print("_"*60)
     pprint(top_bookshelf)
 
 

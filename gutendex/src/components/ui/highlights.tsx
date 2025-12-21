@@ -214,8 +214,12 @@ export default function highlights({
 														) => {
 															e.preventDefault();
 															e.stopPropagation();
-															if (onToggleFavorite) {
-																onToggleFavorite(book);
+															if (
+																onToggleFavorite
+															) {
+																onToggleFavorite(
+																	book
+																);
 															}
 														};
 														const icon = isFav ? (

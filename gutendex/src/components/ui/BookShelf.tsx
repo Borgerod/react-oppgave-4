@@ -98,8 +98,7 @@ export default function BookShelf({}: BookShelfProps) {
 						<Link
 							href={buildStoreUrl("Children & Young Adult")}
 							className="aspect-auto w-90 h-20 rounded-3xl shadow-xl place-self-end flex items-center justify-center text-center text-2xl bg-amber-600/60 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Children & Young Adult"
-						>
+							aria-label="Browse Children & Young Adult">
 							Children & Young Adult
 						</Link>
 					</div>
@@ -111,27 +110,23 @@ export default function BookShelf({}: BookShelfProps) {
 							"justify-self-end",
 							"place-self-end ",
 							""
-						)}
-					>
+						)}>
 						<Link
 							href={buildStoreUrl("Horror")}
 							className="aspect-auto  w-100 h-20 rounded-3xl shadow-xl place-self-end flex items-center justify-center text-center text-2xl bg-red-800/70 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Horror"
-						>
+							aria-label="Browse Horror">
 							Horror
 						</Link>
 						<Link
 							href={buildStoreUrl("Humour")}
 							className="aspect-auto  w-60 h-20 rounded-3xl shadow-xl place-self-end flex items-center justify-center text-center text-2xl bg-red-700/70 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Humour"
-						>
+							aria-label="Browse Humour">
 							Humour
 						</Link>
 						<Link
 							href={buildStoreUrl("Science Fiction")}
 							className="aspect-auto  w-90 h-20 rounded-3xl shadow-xl place-self-end flex items-center justify-center text-center text-2xl bg-slate-800/70 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Science Fiction"
-						>
+							aria-label="Browse Science Fiction">
 							Science Fiction
 						</Link>
 					</div>
@@ -139,8 +134,7 @@ export default function BookShelf({}: BookShelfProps) {
 						<Link
 							href={buildStoreUrl("Adventure")}
 							className="aspect-auto  w-90 h-20 rounded-3xl shadow-xl place-self-end flex items-center justify-center text-center text-2xl bg-emerald-800/50 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Adventure"
-						>
+							aria-label="Browse Adventure">
 							Adventure
 						</Link>
 					</div>
@@ -148,37 +142,32 @@ export default function BookShelf({}: BookShelfProps) {
 						<Link
 							href={buildStoreUrl("Romance")}
 							className="aspect-auto  w-70 h-30 rounded-3xl shadow-xl flex items-center justify-center text-center text-2xl bg-emerald-950/50 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Romance"
-						>
+							aria-label="Browse Romance">
 							Romance
 						</Link>
 						<Link
 							href={buildStoreUrl("Literary Fiction")}
 							className="aspect-auto  w-70 h-15 rounded-3xl shadow-xl relative right-5 flex items-center justify-center text-center text-2xl bg-amber-700/50 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Literary Fiction"
-						>
+							aria-label="Browse Literary Fiction">
 							Literary Fiction
 						</Link>
 						<Link
 							href={buildStoreUrl("History")}
 							className="aspect-auto  w-95 h-18 rounded-3xl shadow-xl relative right-5 flex items-center justify-center text-center text-2xl bg-indigo-950/70 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse History"
-						>
+							aria-label="Browse History">
 							History
 						</Link>
 						<Link
 							href={buildStoreUrl("Fantasy")}
 							className="aspect-auto  w-90 h-20 rounded-3xl shadow-xl flex items-center justify-center text-center text-2xl bg-rose-950/60 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Fantasy"
-						>
+							aria-label="Browse Fantasy">
 							Fantasy
 						</Link>
 
 						<Link
 							href={buildStoreUrl("Science")}
 							className="aspect-auto  w-100 h-15 rounded-3xl shadow-xl relative left-12 flex items-center justify-center text-center text-2xl bg-amber-700/50 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Science"
-						>
+							aria-label="Browse Science">
 							Science
 						</Link>
 					</div>
@@ -187,15 +176,13 @@ export default function BookShelf({}: BookShelfProps) {
 						<Link
 							href={buildStoreUrl("Thrillers and Mystery")}
 							className="aspect-auto  -rotate-5 w-80 h-25 rounded-3xl shadow-xl flex items-center justify-center text-center text-2xl justify-self-end relative bottom-4 left-7 bg-green-950/50 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Thrillers and Mystery"
-						>
+							aria-label="Browse Thrillers and Mystery">
 							Thrillers and Mystery
 						</Link>
 						<Link
 							href={buildStoreUrl("Crime")}
 							className="aspect-auto  w-90 h-20 rounded-3xl shadow-xl flex items-center justify-center text-center text-2xl bg-red-800/70 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer"
-							aria-label="Browse Crime"
-						>
+							aria-label="Browse Crime">
 							Crime
 						</Link>
 						{/* <h3 className="aspect-auto  w-90 h-20 rounded-3xl shadow-xl flex items-center justify-center text-center text-2xl bg-red-800/70 hover:scale-105 hover:text-2xl hover:font-bold cursor-pointer">

@@ -3,6 +3,8 @@ import { cn } from "@/utils/cn";
 import ProfileImage from "@/components/bookProfile/profileImage";
 import ProfileBio from "@/components/bookProfile/profileBio";
 import AuthorDiscover from "@/components/bookProfile/authorDiscover";
+import BookReadTracker from "@/components/bookProfile/bookReadTracker";
+
 async function fetchBook(id: number): Promise<Book | null> {
 	const res = await fetch(`https://gutendex.com/books/${id}`, {
 		next: { revalidate: 3600 }, // Cache for 1 hour
@@ -139,6 +141,7 @@ export default async function BookProfilePage({
 					""
 				)}>
 				<ProfileBio book={book} />
+				<BookReadTracker book={book} />
 			</section>
 
 			<section
