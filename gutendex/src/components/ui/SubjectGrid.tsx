@@ -121,19 +121,14 @@ export default function SubjectGrid({ gridSize = 6 }: SubjectGridProps) {
 		};
 	}, []);
 
-	const GridSize = Math.max(0, Math.floor(gridSize)); // default is 6
-
-	// Choose a mostly-square layout: columns ~= sqrt(N)
-	const cols = Math.max(1, Math.ceil(Math.sqrt(GridSize || 1)));
-	const rows = Math.max(1, Math.ceil(GridSize / cols));
-
+	// Use a fixed responsive layout: mobile 2x3, md+ 3x2
 	const gridClass = cn(
-		`grid grid-rows-${rows} grid-cols-${cols} gap-5 justify-center`,
+		"grid grid-cols-2 grid-rows-3 lg:grid-cols-3 lg:grid-rows-2 gap-5 justify-center",
 		"w-full"
 	);
 
 	// Prepare items from definitions (limit to GridSize)
-	const items = subjectDefinitions.slice(0, GridSize).map((def) => {
+	const items = subjectDefinitions.slice(0, gridSize).map((def) => {
 		// Use the subject name directly as the single `topic` query param
 		const href = buildStoreUrl(def.name);
 		const count = counts[def.name];
@@ -147,9 +142,13 @@ export default function SubjectGrid({ gridSize = 6 }: SubjectGridProps) {
 					"py-0",
 					"grid grid-cols-2 grid-rows-2",
 					"text-2xl",
-					"hover:bg-accent-dark"
+					"hover:scale-[1.02] transition-transform",
+					"hover:bg-accent-dark",
+					"",
+					""
 				)}
-				aria-label={`Browse ${def.name}`}>
+				aria-label={`Browse ${def.name}`}
+			>
 				{/* <span className="flex items-center gap-2"> */}
 				<span className="row-start-1 col-start-1 self-end group-hover:text-(--background)">
 					{def.name}
@@ -177,7 +176,7 @@ export default function SubjectGrid({ gridSize = 6 }: SubjectGridProps) {
 	});
 
 	// If grid is larger than available subjects, pad with placeholders
-	while (items.length < GridSize) {
+	while (items.length < gridSize) {
 		const i = items.length;
 		items.push(
 			<div
@@ -192,7 +191,15 @@ export default function SubjectGrid({ gridSize = 6 }: SubjectGridProps) {
 		<div className="w-full">
 			<style>{`.cooking-pot svg *{fill: currentColor !important; stroke: currentColor !important; opacity:1 !important}`}</style>
 			<h3 className="text-2xl font-medium mb-4">Subjects</h3>
-			<div id="subject-grid" className={gridClass}>
+			<div
+				id="subject-grid"
+				className={cn(
+					gridClass,
+
+					"",
+					""
+				)}
+			>
 				{items}
 			</div>
 		</div>

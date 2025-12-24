@@ -1,32 +1,23 @@
-//tsrfc
-// import React, { Component } from "react";
-import React, { useEffect, useState } from "react";
-// import ProductCard from "../store/productCard";
-import { FaHeart } from "react-icons/fa6";
-import { FaRegHeart } from "react-icons/fa6";
+"use client";
+import React, {
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-// import { BooksResponse, Book } from "@/types";
-// import CardSkeleton from "../store/cardSkeleton";
-import HighLightCard from "@/components/ui/highLightCard";
-
-// import textBtnClass from "@/components/layout/header";
 import { cn } from "@/utils/cn";
 import { iconBtnClass } from "@/components/buttonClasses";
-import Link from "next/link";
 import { Book } from "@/types";
 import LastReadCard from "./lastReadCard";
 
 interface LastReadRowProps {
-	// data: BooksResponse | null;
 	data: Book[] | null;
 	loading: boolean;
 	title: string;
 	tagLabel?: string | React.ReactNode;
-	// button?: string; // should really be children
-	button?: { text: string; href: string }; // should really be children
-	grid?: boolean;
-	onToggleFavorite?: (book: Book) => void;
-	favoriteIds?: number[];
+	button?: { text: string; href: string };
 }
 
 export default function LastReadRow({
@@ -34,47 +25,169 @@ export default function LastReadRow({
 	loading,
 	title,
 	tagLabel,
-	button,
-	grid,
-	onToggleFavorite,
-	favoriteIds,
 }: LastReadRowProps) {
 	const [pageIndex, setPageIndex] = useState(0);
+	const [itemsPerPage, setItemsPerPage] = useState<number>(2); // mobile-first default
+	const containerRef = useRef<HTMLDivElement | null>(null);
 
 	const totalItems = data?.length || 0;
-	const itemsPerPage = 3;
+
+	// compute maxPage based on current itemsPerPage
 	const maxPage = Math.max(0, Math.ceil(totalItems / itemsPerPage) - 1);
 
+	// Keep itemsPerPage in sync with Tailwind breakpoints using matchMedia (modern API)
 	useEffect(() => {
-		setPageIndex(0);
-	}, [data]);
+		if (typeof window === "undefined") return;
 
-	const start = pageIndex * itemsPerPage;
-	const visible = data ? data.slice(start, start + itemsPerPage) : [];
+		const mqXL = window.matchMedia("(min-width:1280px)");
+		const mqLG = window.matchMedia("(min-width:1024px)");
+		const mqMD = window.matchMedia("(min-width:768px)");
+		const mqSM = window.matchMedia("(min-width:640px)");
+		// const mqSX = window.matchMedia("(min-width:450px)");
+
+		function computeCols() {
+			// mapping: base=2, sm>=640 -> 3, md>=768 -> 2, lg>=1024 -> 3, xl>=1280 -> 3
+			// if (mqXL.matches) return 3;
+			if (mqLG.matches) return 3;
+			if (mqMD.matches) return 2;
+			if (mqSM.matches) return 3;
+			// if (mqSX.matches) return 1;
+			// if (mqSM.matches) return 1;
+			return 2;
+		}
+
+		function onChange() {
+			setItemsPerPage(computeCols());
+		}
+
+		// initial
+		setItemsPerPage(computeCols());
+
+		// attach listeners (modern API)
+		mqXL.addEventListener("change", onChange);
+		mqLG.addEventListener("change", onChange);
+		mqMD.addEventListener("change", onChange);
+		mqSM.addEventListener("change", onChange);
+
+		return () => {
+			mqXL.removeEventListener("change", onChange);
+			mqLG.removeEventListener("change", onChange);
+			mqMD.removeEventListener("change", onChange);
+			mqSM.removeEventListener("change", onChange);
+		};
+	}, []);
+
+	// reset page when data or itemsPerPage changes
+	useEffect(() => setPageIndex(0), [data, itemsPerPage]);
+
+	// visible slice for current page
+	const visible = useMemo(() => {
+		const start = pageIndex * itemsPerPage;
+		return data ? data.slice(start, start + itemsPerPage) : [];
+	}, [data, pageIndex, itemsPerPage]);
+
+	const goPrev = useCallback(
+		() => setPageIndex((p) => Math.max(0, p - 1)),
+		[]
+	);
+	const goNext = useCallback(
+		() => setPageIndex((p) => Math.min(maxPage, p + 1)),
+		[maxPage]
+	);
+
+	// keyboard navigation when component is focused
+	useEffect(() => {
+		function onKey(e: KeyboardEvent) {
+			if (!containerRef.current) return;
+			if (!containerRef.current.contains(document.activeElement)) return;
+			if (e.key === "ArrowLeft") {
+				e.preventDefault();
+				goPrev();
+			} else if (e.key === "ArrowRight") {
+				e.preventDefault();
+				goNext();
+			}
+		}
+
+		window.addEventListener("keydown", onKey);
+		return () => window.removeEventListener("keydown", onKey);
+	}, [goPrev, goNext]);
 
 	return (
-		<div
-			id="highlight container"
-			className={cn(
-				"flex flex-col",
-				"justify-items-center w-full justify-self-center gap-2",
-				"h-fit",
-				"",
-				""
-			)}>
-			<h3 className="text-2xl font-medium mb-4">Continue reading</h3>
+		<div className={cn("grid grid-rows-[1fr_auto] h-fit w-full gap-5")}>
+			{/* <h3 className="text-2xl font-medium mb-4">{title}</h3> */}
+			{/* <h3 className="text-2xl font-medium p-2.5  md:pb-0 ">{title}</h3> */}
+			<h3 className="text-2xl font-medium px-2.5 md:pb-0">{title}</h3>
 
-			<div className="flex items-center gap-3 w-full">
-				{totalItems > itemsPerPage && pageIndex > 0 && (
+			{/* <div className="flex items-start w-full"> */}
+			{/* <div className="grid grid-rows-1 grid-cols-[1fr_auto_1fr] items-start w-full"> */}
+			<div
+				className={cn(
+					"grid grid-rows-1 grid-cols-[auto_auto] items-start w-full",
+					"justify-items-center justify-self-center",
+					// "justify-items-start justify-self-start",
+					"w-full",
+					"",
+					""
+				)}
+			>
+				{/* <div className="flex items-start gap-3 w-full"> */}
+				{/* Prev */}
+				{/* {totalItems > itemsPerPage ? (
 					<button
-						onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
-						className={cn(iconBtnClass, "mt-10", "", "")}>
+						onClick={goPrev}
+						disabled={pageIndex === 0}
+						aria-label="Previous page"
+						className={cn(
+							iconBtnClass,
+							pageIndex === 0
+								? "opacity-40 cursor-not-allowed"
+								: "",
+							"col-start-1",
+							"z-20",
+
+							""
+						)}
+						type="button"
+					>
 						<FaChevronLeft size={19} className="block" />
 					</button>
-				)}
+				) : null}
+				 */}
 
-				<div className="flex flex-row gap-5 w-full">
-					{visible.map((book: Book, index: number) => {
+				{/* Grid - one row; columns change with Tailwind */}
+				<div
+					ref={containerRef}
+					tabIndex={0}
+					className={cn(
+						"col-start-1 col-span-full",
+						"col-start-1 row-start-1 col-span-full",
+
+						// "grid grid-rows-1 grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3",
+						"grid grid-rows-1 grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3",
+						// "justify-items-start items-start w-full ",
+						// "justify-items-center items-start w-full ",
+						// "justify-self-center",
+						// "items-start",
+						// "justify-self-evenly px-5 md:px-0",
+						"px-5 md:px-0",
+						// "sm:justify-self-start",
+						"justify-self-center",
+						// "md:justify-self-center",
+						// "justify-self-evenly",
+						// "justify-items-stretch",
+						// "md:justify-self-evenly px-5 md:px-0",
+						" w-fit ",
+						// " w-full ",
+						"gap-5",
+						// // "h-72 md:h-72 overflow-visible"
+						"h-fit ",
+						"md:px-15",
+						"",
+						""
+					)}
+				>
+					{visible.map((book, idx) => {
 						const formats = book.formats as
 							| Record<string, string>
 							| undefined;
@@ -85,10 +198,7 @@ export default function LastReadRow({
 
 						const authorNames = (book.authors || [])
 							.map((a) => a?.name)
-							.filter(
-								(n): n is string =>
-									typeof n === "string" && n.length > 0
-							);
+							.filter((n): n is string => !!n);
 						const subtitle =
 							authorNames.length === 0
 								? undefined
@@ -98,56 +208,103 @@ export default function LastReadRow({
 										authorNames[authorNames.length - 1]
 								  }`;
 
-						function formatLinkVars(prop: string) {
-							return prop
-								.trim()
-								.toLowerCase()
-								.normalize("NFKD")
-								.replace(/[\u0300-\u036f]/g, "")
-								.replace(/[^\w\s-]/g, "")
-								.replace(/\s+/g, "-")
-								.replace(/-+/g, "-");
-						}
-
-						const href = `/book-profile/${book.id}/${formatLinkVars(
+						const href = `/book-profile/${book.id}/${String(
 							book.title
-						)}`;
+						)
+							.trim()
+							.toLowerCase()
+							.normalize("NFKD")
+							.replace(/[\u0300-\u036f]/g, "")
+							.replace(/[^\w\s-]/g, "")
+							.replace(/\s+/g, "-")
+							.replace(/-+/g, "-")}`;
 
 						return (
 							<div
-								key={`${book.id}-${start + index}`}
-								className="w-1/3 flex items-end">
+								key={`${book.id}-${
+									pageIndex * itemsPerPage + idx
+								}`}
+							>
 								<LastReadCard
 									title={book.title}
 									subtitle={subtitle}
 									badge={{ text: tagLabel, variant: "pink" }}
-									// image={image}
-									image={
-										index === 0
-											? "/harry_potter.jpg"
-											: index === 1
-											? "/water_dancer.jpg"
-											: index === 2
-											? "/star.jpg"
-											: // ? "/alan_moore.jpg"
-											  image
-									}
+									image={image}
 									href={href}
 								/>
 							</div>
 						);
 					})}
 				</div>
+				<div
+					id="next-prev-buttons"
+					className={cn(
+						"w-full",
+						"h-full",
+						"col-start-1",
+						"row-start-1",
+						"col-span-full",
+						"grid",
+						"",
+						"grid-cols-[auto_auto]",
+						"grid-rows-1",
+						"items-center",
+						"md:translate-y-2.5",
+						// "justify-items-start",
+						"justify-between",
+						"",
+						""
+					)}
+				>
+					{/* Prev */}
+					{totalItems > itemsPerPage ? (
+						<button
+							onClick={goPrev}
+							disabled={pageIndex === 0}
+							aria-label="Previous page"
+							className={cn(
+								iconBtnClass,
+								pageIndex === 0
+									? "opacity-40 cursor-not-allowed"
+									: "",
+								"col-start-1",
+								"z-20",
+								"-ml-5",
+								"md:ml-0",
+								// "md:-ml-10",
+								""
+							)}
+							type="button"
+						>
+							<FaChevronLeft size={19} className="block" />
+						</button>
+					) : null}
 
-				{totalItems > itemsPerPage && pageIndex < maxPage && (
-					<button
-						onClick={() =>
-							setPageIndex((p) => Math.min(maxPage, p + 1))
-						}
-						className={cn(iconBtnClass, "mt-10", "", "")}>
-						<FaChevronRight size={19} className="block" />
-					</button>
-				)}
+					{/* Next */}
+					{totalItems > itemsPerPage ? (
+						<button
+							onClick={goNext}
+							disabled={pageIndex >= maxPage}
+							aria-label="Next page"
+							className={cn(
+								iconBtnClass,
+								pageIndex >= maxPage
+									? "opacity-40 cursor-not-allowed"
+									: "",
+								"-col-start-1",
+								"z-20",
+
+								"-mr-5",
+								"md:mr-0",
+								// "md:-mr-15",
+								""
+							)}
+							type="button"
+						>
+							<FaChevronRight size={19} className="block" />
+						</button>
+					) : null}
+				</div>
 			</div>
 		</div>
 	);

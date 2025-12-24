@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getDominantColors } from "@/utils/color-utils";
+import { IoMdClose } from "react-icons/io";
 
 type LastReadCardProps = {
 	title?: string;
@@ -25,64 +26,126 @@ export default function LastReadCard({
 	href = "https://kokonutui.com/",
 }: LastReadCardProps) {
 	const coverSrc = image ?? FALLBACK_COVER;
-	// const shadowColor = "rgba(10, 17, 24, 0.4)";
 	const shadowColor = "rgba(10, 17, 24, 0.4)";
-	// return (
-	// 	<div className="relative pt-12 pl-6 group transition-transform duration-300 hover:scale-[1.02]">
-	// 		{/* Book Cover - Overlapping */}
-	// 		<div
-	// 			className="absolute left-0 top-0 z-20 w-32 h-44 rounded-lg overflow-hidden transition-transform duration-300 group-hover:-translate-y-2"
-	// 			style={{ boxShadow: `0 20px 40px -10px ${shadowColor}` }}>
-	// 			<Image
-	// 				src={image || "/placeholder.svg"}
-	// 				alt={title}
-	// 				width={128}
-	// 				height={176}
-	// 				className="w-full h-full object-cover"
-	// 			/>
-	// 		</div>
-
-	// 		{/* Card Background with Blurred Image */}
-	// 		<div className="relative z-10 w-[320px] h-36 rounded-[2rem] overflow-hidden shadow-xl">
-	// 			{/* Blurred Background Layer */}
-	// 			<div className="absolute inset-0 z-0">
-	// 				<Image
-	// 					src={image || "/placeholder.svg"}
-	// 					alt=""
-	// 					fill
-	// 					className="object-cover blur-2xl scale-150 opacity-80"
-	// 				/>
-	// 				{/* Dark Overlay for Text Readability */}
-	// 				<div className="absolute inset-0 bg-black/40" />
-	// 			</div>
-
-	// 			{/* Content Layer */}
-	// 			<div className="relative z-10 h-full p-6 pl-28 flex flex-col justify-center">
-	// 				<h3 className="text-white text-lg font-bold leading-tight mb-2 pr-4">
-	// 					{title}
-	// 				</h3>
-	// 				<p className="text-white/80 text-xs font-medium tracking-wide">
-	// 					{subtitle}
-	// 				</p>
-	// 			</div>
-	// 		</div>
-	// 	</div>
-	// );
 	const [dominantColor, setDominantColor] = useState<string>("59, 94, 91");
 
 	useEffect(() => {
 		// todo: fix this
-		// getDominantColors(coverSrc).then(setDominantColor);
 	}, [image]);
 
 	return (
-		<div className="relative pt-12">
+		<div>
 			<div
-				className="relative flex h-[160px] w-full min-w-[340px] max-w-[420px] items-center rounded-[32px] p-6 shadow-2xl transition-transform hover:scale-[1.02]"
-				style={{
-					background: `linear-gradient(to right, rgb(${dominantColor}), rgb(10, 21, 28))`,
-				}}>
-				<div className="absolute -top-12 left-6 h-[180px] w-[120px] shrink-0 overflow-hidden rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+				id="small-cards"
+				className={cn(
+					"grid grid-cols-1 grid-rows-2",
+					"grid grid-cols-1 grid-rows-[3fr_1fr]",
+					"w-50 h-70",
+					"p-1 ",
+					"bg-container",
+					"rounded-3xl",
+					"shadow-lg",
+					"gap-3",
+					"md:hidden",
+					"group",
+					"transition-transform",
+					"hover:scale-[1.02]",
+					""
+				)}
+			>
+				<span
+					id="badge icon"
+					className={cn(
+						"w-8 h-8 flex items-center justify-center rounded-full z-10",
+						"bg-primary/10 text-white",
+						"bg-primary-inv/10 text-white",
+						"dark:bg-transparent dark:text-zinc-200",
+						"dark:bg-primary-inv/10 dark:text-zinc-200",
+						"hover:dark:bg-primary-inv/20 hover:dark:text-zinc-50",
+						"hover:bg-primary-inv/20 hover:text-zinc-50",
+						"transition-transform",
+						"group-hover:scale-[1.02]",
+						"backdrop-blur-sm",
+						"focus:outline-none",
+						"opacity-100",
+						"cursor-pointer",
+						"shadow-xs",
+						"border border-white/10 dark:border-zinc-800/30",
+						"col-start-1 row-start-1 justify-self-end",
+						"p-0 m-2 ",
+						""
+					)}
+				>
+					<IoMdClose className="text-xl " />
+				</span>
+				<Image
+					src={image || "/placeholder.svg"}
+					alt={title}
+					height={400}
+					width={300}
+					className={cn(
+						"rounded-xl ",
+						"rounded-2xl ",
+						"rounded-3xl ",
+						"h-full w-full",
+						"aspect-square",
+						"object-cover",
+						"row-start-1 col-start-1",
+						"shadow-md",
+						"z-1",
+						""
+					)}
+				/>
+				<div
+					id="Content Layer"
+					className={cn(
+						"w-full h-full",
+						"row-start-2 col-start-1",
+						"z-2",
+						"p-1",
+						""
+					)}
+				>
+					<h3 className="text-primary text-sm font-bold leading-tight mb-1 pr-3">
+						{title}
+					</h3>
+					<p className="text-primary/80 text-[11px] font-medium tracking-wide">
+						{subtitle}
+					</p>
+				</div>
+			</div>
+
+			{/* ______________________________________________ */}
+
+			<div
+				id="large-cards"
+				className={cn(
+					"hidden md:flex ",
+					" w-full ",
+					"min-w-[260px] max-w-[320px]",
+					"items-center rounded-[20px]",
+					"shadow-2xl",
+					"group",
+					"transition-transform",
+					"hover:scale-[1.02]",
+					"relative ",
+					"h-full",
+					"h-40",
+					"mt-5",
+					""
+				)}
+			>
+				<div
+					id="book-cover"
+					className={cn(
+						"absolute  left-4 h-[140px] w-[94px] ",
+						"shrink-0 overflow-hidden ",
+						"rounded-xl shadow-[0_14px_36px_rgba(0,0,0,0.45)] z-20",
+						"bottom-5",
+						"h-full",
+						""
+					)}
+				>
 					<Image
 						src={image || "/placeholder.svg"}
 						alt={title}
@@ -91,364 +154,262 @@ export default function LastReadCard({
 						priority
 					/>
 				</div>
-				<div className="ml-[140px] flex flex-col justify-center text-white/95">
-					<h3 className="text-lg font-bold leading-tight tracking-tight sm:text-xl">
-						{title}
-					</h3>
-					<p className="mt-2 text-xs font-medium opacity-70 sm:text-sm">
-						{subtitle}
-					</p>
+				<div
+					id="colored-container"
+					className={cn(
+						"relative z-10 ",
+						" overflow-hidden ",
+						"shadow-xl",
+						"h-[120px] w-full ",
+						"min-w-[260px] max-w-[320px] ",
+						"items-center ",
+						"rounded-3xl ",
+						"p-4 ",
+						"shadow-lg ",
+						"h-full",
+						""
+					)}
+				>
+					<div id="Blurred Background Layer">
+						<Image
+							src={image || "/placeholder.svg"}
+							alt=""
+							fill
+							className={cn(
+								"object-cover blur-2xl scale-150 ",
+								"opacity-85",
+								"dark:opacity-40",
+								"saturate-200",
+								""
+							)}
+						/>
+						<div
+							id="Dark Overlay for Text Readability"
+							className={cn(
+								"absolute inset-0 bg-black/40",
+								"dark:bg-foreground/10",
+								""
+							)}
+						/>
+					</div>
+
+					<div
+						id="Content Layer"
+						className={cn(
+							"relative z-10 h-full p-4 pl-20 flex flex-col justify-center ml-12",
+							""
+						)}
+					>
+						<h3 className="text-white text-sm font-bold leading-tight mb-1 pr-3">
+							{title}
+						</h3>
+						<p className="text-white/80 text-[11px] font-medium tracking-wide">
+							{subtitle}
+						</p>
+					</div>
+					<span
+						id="badge icon"
+						className={cn(
+							"w-8 h-8 flex items-center justify-center rounded-full z-10",
+							"bg-primary/10 text-white",
+							"bg-primary-inv/10 text-white",
+							"dark:bg-transparent dark:text-zinc-200",
+							"dark:bg-primary/10 dark:text-zinc-200",
+							"hover:dark:bg-primary-inv/20 hover:dark:text-zinc-50",
+							"hover:bg-primary-inv/20 hover:text-zinc-50",
+							"transition-transform",
+							"group-hover:scale-[1.02]",
+							"backdrop-blur-sm",
+							"focus:outline-none",
+							"opacity-100",
+							"cursor-pointer",
+							"shadow-xs",
+							"border border-white/10 dark:border-zinc-800/30",
+							"absolute top-2 right-2",
+							"p-0 m-0 ",
+							""
+						)}
+					>
+						<IoMdClose
+							className={cn(
+								"text-xl transition-transform",
+								"group-hover:scale-[1.02]",
+                                "",
+                                ""
+                            )}
+                        />
+                    </span>
 				</div>
 			</div>
 		</div>
 	);
 }
 
-// ALT 2: looks good.
-// return (
-//     <div className="relative pt-12 pl-6 group transition-transform duration-300 hover:scale-[1.02]">
-//       {/* Book Cover - Overlapping */}
-//       <div
-//         className="absolute left-0 top-0 z-20 w-32 h-44 rounded-lg overflow-hidden transition-transform duration-300 group-hover:-translate-y-2"
-//         style={{ boxShadow: `0 20px 40px -10px ${shadowColor}` }}
-//       >
-//         <Image
-//           src={image || "/placeholder.svg"}
-//           alt={title}
-//           width={128}
-//           height={176}
-//           className="w-full h-full object-cover"
-//         />
-//       </div>
-
-//       {/* Card Background with Blurred Image */}
-//       <div className="relative z-10 w-[320px] h-36 rounded-[2rem] overflow-hidden shadow-xl">
-//         {/* Blurred Background Layer */}
-//         <div className="absolute inset-0 z-0">
-//           <Image src={image || "/placeholder.svg"} alt="" fill className="object-cover blur-2xl scale-150 opacity-80" />
-//           {/* Dark Overlay for Text Readability */}
-//           <div className="absolute inset-0 bg-black/40" />
-//         </div>
-
-//         {/* Content Layer */}
-//         <div className="relative z-10 h-full p-6 pl-28 flex flex-col justify-center">
-//           <h3 className="text-white text-lg font-bold leading-tight mb-2 pr-4">{title}</h3>
-//           <p className="text-white/80 text-xs font-medium tracking-wide">{subtitle}</p>
-//         </div>
-//       </div>
-//     </div>
-//   )
-
-// ALT 1:
-// import { cn } from "@/utils/cn";
-// import Image from "next/image";
-// import Link from "next/link";
-// import React from "react";
-
-// type LastReadCardProps = {
-// 	title?: string;
-// 	subtitle?: string;
-// 	image?: string;
-// 	badge?: {
-// 		text: string | React.ReactNode;
-// 		variant: "pink" | "indigo" | "orange";
-// 	};
-// 	href?: string;
-// };
-
-// const FALLBACK_COVER = "/Blank-Book-Cover-PNG-Picture.png";
-
-// export default function LastReadCard({
-// 	title = "Modern Design Systems",
-// 	subtitle = "Explore the fundamentals of contemporary UI design",
-// 	image,
-// 	// badge = { text: "Top", variant: "pink" },
-// 	href = "https://kokonutui.com/",
-// }: LastReadCardProps) {
-// 	const coverSrc = image ?? FALLBACK_COVER;
-
-// 	return (
-// 		<Link
-// 			href={href}
-// 			className={cn(
-// 				"group hover:scale-105",
-// 				"grid grid-cols-[2fr_3fr] grid-rows-[1fr_3fr]",
-// 				"h-fit w-fit",
-// 				"max-w-md",
-// 				"max-h-50",
-// 				"h-45",
-// 				"",
-// 				""
-// 			)}>
-// 			<div
+// DO NOT DELETE THIS
+//! small cards with blurred background like large cards
+// {/* <div
+// 				id="small-cards"
 // 				className={cn(
-// 					"row-start-2 row-span-1",
-// 					"col-start-1 col-span-full",
-// 					"h-35 w-full",
+// 					// "relative flex h-[120px] w-full min-w-[260px] max-w-[320px] items-center rounded-[20px] shadow-2xl",
+// 					// "transition-transform",
+// 					// " hover:scale-[1.02]",
+// 					// "relative ",
+// 					"grid grid-cols-1 grid-rows-2",
+// 					"grid grid-cols-1 grid-rows-[3fr_1fr]",
+// 					"w-50 h-70",
+// 					// "row-start-1 col-start-1",
+
+// 					// "p-2 ",
+// 					// "p-1 ",
+// 					"bg-container",
+// 					// "rounded-xl ",
 // 					"rounded-3xl",
-// 					"overflow-hidden",
-// 					"relative",
-// 					"shadow-xl",
-// 					"place-self-end",
-// 					"h-35",
+// 					"shadow-lg",
+// 					// "shadow-[0_14px_36px_rgba(0,0,0,0.45)]",
+// 					"gap-3",
+// 					"md:hidden",
+// 					// "hidden lg:visible",
 // 					"",
 // 					""
-// 				)}>
-// 				{/* Blurred background: use the same cover as a background-image so the blur shows the cover itself */}
+// 				)}
+// 			>
 // 				<div
-// 					aria-hidden
+// 					id="blurred image container"
 // 					className={cn(
-// 						"absolute inset-0",
-// 						"-z-10",
+// 						//
+// 						"col-span-full row-span-full",
+// 						"col-start-1 row-start-1",
+// 						// "bg-amber-400",
+// 						"h-full w-full",
+// 						"m-0 p-0",
 // 						"rounded-3xl",
+
+// 						// "backdrop-blur-xl",
+// 						// "blur-2xl",
 // 						"overflow-hidden",
-// 						"bg-container-solid",
+// 						// "bg-black/70",
+// 						"",
+// 						"",
 // 						"",
 // 						""
-// 					)}>
+// 					)}
+// 				>
 // 					<Image
-// 						src={coverSrc}
-// 						alt=""
-// 						fill
-// 						priority={false}
-// 						aria-hidden
-// 						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+// 						id="background test"
 // 						className={cn(
-// 							"object-cover",
-// 							"scale-125",
-// 							"blur-3xl",
+// 							//
+// 							"col-span-full row-span-full",
+// 							"col-start-1 row-start-1",
+// 							// "bg-amber-400",
+// 							"h-full w-full",
+// 							"m-0 p-0",
+// 							"rounded-3xl",
+// 							"brightness-70",
 // 							"saturate-150",
+// 							"backdrop-blur-xl",
+// 							"blur-2xl",
+// 							""
+// 						)}
+// 						src={image || "/placeholder.svg"}
+// 						alt={title}
+// 						// fill
+// 						height={400}
+// 						width={300}
+// 					></Image>
+// 					<div
+// 						id="Dark Overlay for Text Readability"
+// 						className={cn(
+// 							"col-span-full row-span-full",
+// 							"col-start-1 row-start-1",
+// 							"h-full w-full rounded-3xl",
+// 							// "absolute",
+// 							"relative",
+// 							"inset-0",
+// 							"bg-black/40",
+// 							//
+// 							"z-2",
+// 							"",
 // 							"",
 // 							""
 // 						)}
 // 					/>
 // 				</div>
-// 				<div
-// 					aria-hidden
-// 					className={cn(
-// 						"absolute inset-0",
-// 						"bg-linear-to-r",
-// 						"from-black/5",
-// 						"via-transparent",
-// 						"to-transparent",
-// 						"",
-// 						""
-// 					)}
-// 				/>
-// 			</div>
-// 			<div
-// 				id="book-info-box"
-// 				className={cn(
-// 					"row-start-1 row-span-2",
-// 					"col-start-1 col-span-2",
-// 					"grid grid-cols-subgrid grid-rows-subgrid",
-// 					"h-full w-fit",
-// 					"p-4",
-// 					"pt-0",
-// 					"z-10",
-// 					"gap-4",
-// 					"justify-items-center",
-// 					"w-40",
-// 					"",
-// 					""
-// 				)}>
-// 				<Image
-// 					src={coverSrc}
-// 					alt={title}
-// 					width={160}
-// 					height={224}
-// 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-// 					id="book-cover"
-// 					className={cn(
-// 						"row-start-1 row-span-2",
-// 						"col-start-1 col-span-1",
-// 						"h-full w-full",
-// 						"rounded-2xl",
-// 						"m-0 p-0",
-// 						"shadow-md",
-// 						"border border-edge-dark",
-// 						"object-cover",
-// 						"",
-// 						""
-// 					)}
-// 				/>
 
-// 				<div
-// 					id="info"
+// 				<span
+// 					id="badge icon"
 // 					className={cn(
-// 						"row-start-2 row-span-1",
-// 						"col-start-2 col-span-1",
-// 						"h-full w-fit",
-// 						"text-wrap",
-// 						"py-5",
-// 						"flex flex-col",
-// 						"justify-center",
-// 						"gap-2",
+// 						"w-8 h-8 flex items-center justify-center rounded-full z-10",
+// 						"bg-white/10 text-white",
+// 						// "bg-primary/30 text-white",
+// 						"dark:bg-transparent dark:text-zinc-200",
+// 						"backdrop-blur-sm",
+// 						"focus:outline-none",
+// 						"opacity-100",
+// 						"cursor-pointer",
+// 						"shadow-xs",
+// 						"border border-white/10 dark:border-zinc-800/30",
+// 						"col-start-1 row-start-1 justify-self-end",
+// 						"p-0 m-0 ",
 // 						"",
 // 						""
-// 					)}>
-// 					<h3
-// 						className={cn(
-// 							"text-xs sm:text-base",
-// 							"font-semibold",
-// 							"text-primary-inv",
-// 							"dark:text-primary",
-// 							"leading-snug",
-// 							"line-clamp-3",
-// 							"",
-// 							""
-// 						)}>
+// 					)}
+// 				>
+// 					<IoMdClose
+// 						//
+// 						// className="row-start-1 col-start-1"
+// 						className="text-xl "
+// 					/>
+// 				</span>
+// 				<Image
+// 					src={image || "/placeholder.svg"}
+// 					alt={title}
+// 					// fill
+// 					height={400}
+// 					width={300}
+// 					className={cn(
+// 						// "absolute  left-4",
+// 						// " h-[140px] w-[94px] ",
+// 						// "shrink-0 overflow-hidden ",
+
+// 						"rounded-xl ",
+// 						"rounded-2xl ",
+// 						"rounded-3xl ",
+// 						// "shadow-[0_14px_36px_rgba(0,0,0,0.45)]",
+// 						// "bottom-5",
+// 						"h-full w-full",
+// 						"aspect-square",
+// 						"object-cover",
+// 						"row-start-1 col-start-1",
+// 						// "max-w-30 max-h-40 ",
+// 						"shadow-md",
+// 						"z-1",
+// 						"p-1",
+// 						"",
+// 						""
+// 					)}
+// 					// priority
+// 				/>
+// 				<div
+// 					id="Content Layer"
+// 					className={cn(
+// 						// "relative z-10 h-full p-4 pl-20 flex flex-col justify-center ml-12",
+// 						"w-full h-full",
+// 						"row-start-2 col-start-1",
+// 						"z-2",
+// 						"p-1",
+// 						"p-2",
+// 						"",
+
+// 						""
+// 					)}
+// 				>
+// 					{/* <h3 className="text-primary text-sm font-bold leading-tight mb-1 pr-3"> */}
+// 					<h3 className="text-white text-sm font-bold leading-tight mb-1 pr-3">
 // 						{title}
 // 					</h3>
-
-// 					<p
-// 						className={cn(
-// 							"text-sm",
-// 							"text-primary-inv/70",
-// 							"dark:text-primary/50",
-// 							"line-clamp-1",
-// 							"",
-// 							""
-// 						)}>
+// 					{/* <p className="text-primary/80 text-[11px] font-medium tracking-wide"> */}
+// 					<p className="text-white/80 text-[11px] font-medium tracking-wide">
 // 						{subtitle}
 // 					</p>
 // 				</div>
-// 			</div>
-// 		</Link>
-// 	);
-// }
-
-// ORIGINAL
-// import { cn } from "@/utils/cn";
-// import Link from "next/link";
-// import Image from "next/image";
-// import React from "react";
-
-// type LastReadCardProps = {
-// 	title?: string;
-// 	subtitle?: string;
-// 	image?: string;
-// 	badge?: {
-// 		text: string | React.ReactNode;
-// 		variant: "pink" | "indigo" | "orange";
-// 	};
-// 	href?: string;
-// };
-
-// export default function LastReadCard({
-// 	title = "Modern Design Systems",
-// 	subtitle = "Explore the fundamentals of contemporary UI design",
-// 	image,
-// 	// badge = { text: "Top", variant: "pink" },
-// 	href = "https://kokonutui.com/",
-// }: LastReadCardProps) {
-// 	return (
-// 		<Link
-// 			href={href}
-// 			className={cn(
-// 				"group hover:scale-105",
-// 				"grid grid-cols-[2fr_3fr] grid-rows-[1fr_3fr]",
-// 				"h-fit w-fit",
-// 				"max-w-md",
-// 				"max-h-50",
-// 				"h-45",
-// 				"",
-// 				""
-// 			)}>
-// 			<div
-// 				className={cn(
-// 					"row-start-2 row-span-1",
-// 					"col-start-1 col-span-full",
-// 					"h-35 w-full",
-// 					"rounded-3xl",
-// 					"overflow-hidden",
-// 					"relative",
-// 					"shadow-xl",
-// 					"place-self-end",
-// 					"h-35",
-// 					"",
-// 					""
-// 				)}>
-// 				{/* Blurred background: use the same cover as a background-image so the blur shows the cover itself */}
-// 				<div
-// 					aria-hidden
-// 					style={{
-// 						backgroundImage: `url(${
-// 							image ? image : "/Blank-Book-Cover-PNG-Picture.png"
-// 						})`,
-// 					}}
-// 					className={cn(
-// 						"absolute inset-0",
-// 						"bg-center bg-cover",
-// 						"scale-105",
-// 						"filter blur-2xl",
-// 						"brightness-90",
-// 						"-z-10",
-// 						"",
-// 						""
-// 					)}
-// 				/>
-// 			</div>
-// 			<div
-// 				id="book-info-box"
-// 				className={cn(
-// 					"row-start-1 row-span-2",
-// 					"col-start-1 col-span-2",
-// 					"grid grid-cols-subgrid grid-rows-subgrid",
-// 					"h-full w-fit",
-// 					"p-4",
-// 					"pt-0",
-// 					"z-10",
-// 					"gap-4",
-// 					"justify-items-center",
-// 					"w-40",
-// 					"",
-// 					""
-// 				)}>
-// 				<Image
-// 					src={image ? image : "/Blank-Book-Cover-PNG-Picture.png"}
-// 					alt={title}
-// 					width={160}
-// 					height={224}
-// 					sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-// 					id="book-cover"
-// 					className={cn(
-// 						"row-start-1 row-span-2",
-// 						"col-start-1 col-span-1",
-// 						"h-full w-full",
-// 						"rounded-2xl",
-// 						"m-0 p-0",
-// 						"shadow-md",
-// 						"border border-edge-dark",
-// 						"object-cover",
-// 						"",
-// 						""
-// 					)}
-// 				/>
-
-// 				<div
-// 					id="info"
-// 					className={cn(
-// 						"row-start-2 row-span-1",
-// 						"col-start-2 col-span-1",
-// 						"h-full w-fit",
-// 						"text-wrap",
-// 						"py-5",
-// 						"flex flex-col",
-// 						"justify-center",
-// 						"gap-2",
-// 						"",
-// 						""
-// 					)}>
-// 					<h3 className="text-xs sm:text-base font-semibold text-primary-inv dark:text-primary leading-snug line-clamp-3">
-// 						{title}
-// 					</h3>
-
-// 					<p className="text-sm text-primary-inv/70 dark:text-primary/50 line-clamp-1">
-// 						{subtitle}
-// 					</p>
-// 				</div>
-// 			</div>
-// 		</Link>
-// 	);
-// }
+// 			</div> */}

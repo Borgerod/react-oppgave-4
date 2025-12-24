@@ -1,5 +1,7 @@
 "use client";
 import BookShelf from "@/components/ui/BookShelf";
+import BookShelf_2 from "@/components/ui/Bookshelf_2";
+import BookShelf_3 from "@/components/ui/BookShelf_3";
 import Highlights from "@/components/ui/highlights";
 import PopularAuthorsGrid from "@/components/ui/PopularAuthorsGrid";
 import SubjectGrid from "@/components/ui/SubjectGrid";
@@ -11,6 +13,8 @@ import { FaHeart } from "react-icons/fa6";
 // import { FaRegHeart } from "react-icons/fa6";
 import { getLastRead } from "@/utils/lastRead";
 import LastReadRow from "@/components/ui/lastReadRow";
+import { cn } from "@/utils/cn";
+import BookShelf_4 from "@/components/ui/Bookshelf_4";
 
 type HomeProps = Record<string, never>;
 
@@ -89,6 +93,8 @@ export default function Home({}: HomeProps) {
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const json = (await res.json()) as BooksResponse;
 				const newBooks = json.results.slice(0, 4);
+				// const newBooks = json.results.slice(0, 3);
+				// const newBooks = json.results.slice(0, 2);
 				if (mounted) setData(json);
 				setNewBooksData(newBooks);
 				setCache({
@@ -203,9 +209,31 @@ export default function Home({}: HomeProps) {
 		// </main>
 
 		// <main className="grid grid-rows-[auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center">
-		<main className="grid grid-rows-[auto_auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center">
+		<main
+			className={cn(
+				// "grid grid-rows-[auto_auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center",
+				//
+				"",
+				"grid",
+				"grid-cols-1",
+				"grid-flow-row auto-rows-min",
+				"md:grid-rows-[auto_auto_auto] md:grid-cols-[3fr_2fr]",
+				"gap-0",
+				"gap-y-15",
+				// "gap-15",
+				"md:gap-15",
+				"h-full",
+				"w-full",
+				"justify-items-stretch",
+				"content-center",
+				"",
+				"",
+				""
+			)}
+		>
 			{/* > NEW, TEST */}
-			<div className="w-full row-start-1 col-start-1 col-span-2 mt-15 mb-15">
+			{/* <div className="w-full row-start-1 col-start-1 col-span-2 mt-15 mb-15"> */}
+			<div className="w-full row-start-1 col-start-1 col-span-2 ">
 				<h3 className="text-2xl font-medium mb-4">
 					{/* Books you read last */}
 				</h3>
@@ -223,15 +251,143 @@ export default function Home({}: HomeProps) {
 			</div>
 
 			{/* <div className="h-100 w-full row-start-2 col-start-1 col-span-2 mt-15"> */}
-			<div className="h-100 w-full row-start-2 col-start-1 col-span-2 mt-0">
-				<h3 className="text-2xl font-medium mb-4">Genre bookshelf</h3>
-				<div className="scale-80 h-fit w-full relative bottom-30">
+
+			{/* TODO: try combine bookshelf-mobile-mode and bookshelf-browser-mode */}
+			<div
+				id="bookshelf-mobile-mode"
+				className={cn(
+					// " block md:hidden",
+					" flex flex-col md:hidden",
+					" flex flex-col sm:hidden",
+					"  row-start-2 ",
+					"col-start-1 col-span-2",
+					// " mt-0 ",
+					"gap-5",
+					// "h-140 ",
+					// "w-fit",
+					// " md:w-full ",
+					// "h-full ",
+					// "pb-20",
+					"",
+					""
+				)}
+			>
+				{/* <h3 className="text-2xl font-medium md:pb-2.5 p-2.5"> */}
+				<h3 className="text-2xl font-medium px-2.5">Genre bookshelf</h3>
+				<BookShelf_4 />
+				{/* <div className="origin-top w-full h-auto mt-10 translate-y-0 gap-20 flex flex-col justify-start w-full px-10"> */}
+				{/* <div className="origin-top w-full h-auto mt-10 translate-y-0 gap-20 flex flex-col justify-start w-full px-10"> */}
+				{/* <BookShelf_2 /> */}
+				{/* <BookShelf_3 /> */}
+				{/* </div> */}
+			</div>
+
+			<div
+				id="bookshelf-browser-mode"
+				className={cn(
+					// "hidden  md:block",
+					// "hidden md:flex flex-col",
+					"hidden sm:flex sm:flex-col",
+					"w-full",
+					"row-start-2 col-start-1 col-span-2",
+					"mt-0",
+					"h-fit",
+					// "md:h-100",
+					// "lg:h-140",
+					"md:h-fit",
+					// "md:w-fit",
+					"lg:h-fit",
+					// "mb-10",f
+					"gap-5",
+
+					// "md:items-center",
+					// "md:justify-center",
+					// "md:justify-items-center",
+					// "md:content-center",
+					// "md:place-self-start",
+					// "bg-amber-100",
+					"",
+					""
+				)}
+			>
+				{/* <h3 className="text-2xl font-medium md:pb-2.5 px-2.5"> */}
+				<h3 className="text-2xl font-medium px-2.5">Genre bookshelf</h3>
+
+				{/* <h3 className="text-2xl font-medium mb-0">Genre bookshelf</h3> */}
+				<div
+					className={cn(
+						// "bg-amber-100",
+						"w-full",
+						// "w-fit",
+						// "md:w-fit",
+						"lg:w-fit",
+						// "h-full",
+						"h-fit",
+						"translate-y-0",
+						"flex flex-col",
+						// "gap-20",
+						"justify-center",
+						// // MD
+						"md:gap-0",
+						// "md:justify-start",
+						// "md:items-start",
+						// "md:scale-60",
+						// "md:origin-center",
+						// "md:h-100",
+						// "md:h-110",
+						// "bg-amber-300",
+
+						// "md:content-center",
+						// "md:place-self-start",
+						// "md:items-start",
+						// "md:items-center-safe",
+						// "md:items-end",
+						// "md:items-stretch",
+						// "md:justify-items-stretch",
+						"md:justify-center",
+
+						// "md:w-250",
+						// "md:w-200",
+
+						// "md:px-48",
+						// "md:pr-20",
+						// "md:pl-20",
+						// "md:ml-20",
+						// "md:mr-20",
+						// "md:justify-center",
+						// "md:justify-self-center",
+						// "md:place-self-start",
+						// LG
+						// "lg:scale-90",
+						"lg:items-center",
+						// "lg:origin-center",
+						// "lg:h-120",
+						// "lg:mr-15",
+						"",
+						""
+					)}
+				>
 					<BookShelf />
 				</div>
 			</div>
 
-			<div className="h-full w-full row-start-3 col-start-1 col-span-1 flex flex-col p-5 gap-5">
-				<div className="h-full w-full  flex">
+			<div
+				className={cn(
+					"h-full",
+					"w-full",
+					"row-start-3 col-start-1 col-span-1",
+					"flex flex-col",
+					// "p-5",
+					"justify-around",
+					"justify-start",
+					"md:gap-15",
+					"gap-15",
+					"",
+					""
+				)}
+			>
+				<div className="h-fit w-full flex">
+					{/* <div className="h-full w-full  flex"> */}
 					<Highlights
 						loading={favBooksData === null}
 						data={favBooksData}
@@ -241,10 +397,10 @@ export default function Home({}: HomeProps) {
 						favoriteIds={favoriteIds}
 					/>
 				</div>
-				<div className="h-full w-full  flex">
+				<div className="h-fit w-full  flex">
 					<SubjectGrid />
 				</div>
-				<div className="h-full w-full  flex mt-10">
+				<div className="h-fit w-full  flex">
 					<Highlights
 						loading={newBooksData === null}
 						data={newBooksData}
@@ -259,8 +415,26 @@ export default function Home({}: HomeProps) {
 					/>
 				</div>
 			</div>
-			<div className="h-full w-full row-start-3 col-start-2 col-span-1 flex flex-col p-5 gap-5">
-				<div className="h-full w-full  flex">
+			<div
+				className={cn(
+					"h-full ",
+					"w-full ",
+					"md:row-start-3 row-start-4",
+					" md:col-start-2 col-start-1",
+					" col-span-1",
+					" flex flex-col ",
+					// "p-5 ",
+					"md:gap-0 gap-15 ",
+					"mb-50",
+					"justify-around",
+					"justify-start",
+					"md:gap-15",
+					"gap-15",
+					"",
+					""
+				)}
+			>
+				<div className="h-fit w-full  flex">
 					<Highlights
 						loading={previewData === null}
 						data={previewData}
@@ -272,7 +446,7 @@ export default function Home({}: HomeProps) {
 						favoriteIds={favoriteIds}
 					/>
 				</div>
-				<div className="h-full w-full  flex">
+				<div className="h-fit w-full  flex">
 					<PopularAuthorsGrid />
 				</div>
 			</div>

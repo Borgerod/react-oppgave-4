@@ -26,10 +26,42 @@ export default function HighLightCard({
 	return (
 		<Link
 			href={href}
-			className="block w-full max-w-[220px] group hover:scale-105">
+			className={cn(
+				"block ",
+				"w-full",
+				// "h-full",
+				// " max-w-[220px]",
+				" group ",
+				"hover:scale-105",
+				"",
+				// experimental
+				// "w-fit",
+				// "w-full",
+				"sm:w-full",
+				// "sm:w-full",
+				// "sm:w-fit",
+				// "w-full",
+				// "min-w-40",
+				// " sm:max-w-[220px]",
+				// "sm:min-w-40",
+				// "sm:min-w-20",
+				// "sm:min-w-25",
+				"md:min-w-35",
+				" sm:min-w-40",
+				" sm:min-w-none",
+				" sm:min-w-45",
+
+				// "sm:w-fit",
+				// "sm:mx-auto",
+
+				// "w-fit sm:w-fit",
+				"",
+				""
+			)}
+		>
 			<div
 				className={cn(
-					"relative overflow-hidden rounded-2xl",
+					"relative overflow-hidden rounded-3xl",
 					"bg-white/80 dark:bg-zinc-900/80",
 					"backdrop-blur-xl",
 					"border border-zinc-200/50 dark:border-zinc-800/50",
@@ -38,7 +70,8 @@ export default function HighLightCard({
 					"hover:shadow-md",
 					"shadow-lg",
 					"hover:border-zinc-300/50 dark:hover:border-zinc-700/50"
-				)}>
+				)}
+			>
 				{/* <div className="relative h-[320px] overflow-hidden"> */}
 				<div
 					className={cn(
@@ -46,7 +79,8 @@ export default function HighLightCard({
 						`${image ? "" : "scale-110"}`,
 						"",
 						""
-					)}>
+					)}
+				>
 					<Image
 						src={
 							image ? image : "/Blank-Book-Cover-PNG-Picture.png"
@@ -77,7 +111,8 @@ export default function HighLightCard({
 									"backdrop-blur-md",
 									"shadow-xs",
 									"border border-white/20 dark:border-zinc-800/50"
-								)}>
+								)}
+							>
 								{badge.text}
 							</span>
 						) : (
@@ -96,7 +131,8 @@ export default function HighLightCard({
 									"cursor-pointer",
 									"shadow-xs",
 									"border border-white/10 dark:border-zinc-800/30"
-								)}>
+								)}
+							>
 								{React.isValidElement(badge.text)
 									? React.cloneElement(
 											badge.text as React.ReactElement<{
@@ -142,7 +178,8 @@ export default function HighLightCard({
 								"transition-colors duration-300 group",
 								"cursor-pointer",
 								"shrink-0"
-							)}>
+							)}
+						>
 							<GoArrowUpRight className="w-3 h-3 text-white group-hover:-rotate-12 transition-transform duration-300" />
 						</div>
 					</div>

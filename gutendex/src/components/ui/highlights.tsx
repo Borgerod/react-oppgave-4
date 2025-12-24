@@ -49,19 +49,26 @@ export default function highlights({
 			className={cn(
 				// `${grid ? "grid grid-cols-3 grid-rows-2" : }`,
 				"flex flex-col",
-				"justify-items-center w-full justify-self-center gap-2",
+				// "justify-items-center",
+				// "justify-self-center",
+				"w-full",
+				// "w-fit",
+				// "gap-2",
 				"h-fit",
+				// "h-full",
 				"",
 				""
-			)}>
+			)}
+		>
 			<div
-				id="popular-header"
+				id="header-row"
 				className={cn(
 					// `${
 					// 	grid ? "grid grid-cols-3 grid-rows-2" : "flex flex-row"
 					// }`,
 					// "justify-items-center w-full justify-self-center gap-2",
-					"justify-between w-full h-fit",
+					"justify-between w-full ",
+					"h-fit",
 					"flex flex-row",
 					"",
 					""
@@ -78,7 +85,8 @@ export default function highlights({
 							`${textBtnClass}`,
 							"",
 							""
-						)}>
+						)}
+					>
 						{button.text}
 					</Link>
 				) : (
@@ -86,21 +94,37 @@ export default function highlights({
 				)}
 			</div>
 			<div
-				id="highlight-row"
+				id="content-row highlight-row hightlight-grid"
 				className={cn(
+					"justify-items-center",
+					// "items-center",
+					"sm:justify-items-start",
+					"sm:justify-items-center",
+					"sm:items-center",
+					// "sm:w-full",
+					"",
+					"",
 					grid
-						? "grid grid-cols-3 gap-2 w-full"
-						: "flex flex-row gap-2 w-full "
-				)}>
+						? "grid lg:grid-cols-3 gap-5 w-full  sm:w-full grid-cols-2"
+						: "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-2 lg:grid-cols-4 md:grid-rows-2 grid-rows-2 md:grid-rows-1"
+					// : "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-4 lg:grid-cols-2 lg:grid-rows-2 grid-rows-2 md:grid-rows-1"
+					// : "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-3 lg:grid-cols-4 grid-rows-2 md:grid-rows-1"
+					// : "grid grid-cols-2 sm:grid-cols-4  sm:grid-rows-1 flex-row gap-5 w-full sm:w-fit md:w-full md:grid-cols-3 lg:grid-cols-4 grid-rows-2 md:grid-rows-1"
+					// : "grid lg:grid-cols-3 gap-5 w-full grid-cols-2"
+					// : "grid grid-cols-2 flex-row gap-2 w-full md:grid-cols-4 grid-rows-2 md:grid-rows-1"
+					// :"flex flex-row gap-2 w-full "
+				)}
+			>
 				{loading
 					? // render skeleton highlight cards while loading
 					  Array.from({ length: grid ? 6 : 4 }).map((_, i) => (
 							<div
 								key={`skeleton-${i}`}
-								className="block w-full max-w-[220px] animate-pulse">
+								className="block w-full max-w-[220px] animate-pulse"
+							>
 								<div
 									className={cn(
-										"relative overflow-hidden rounded-2xl",
+										"relative overflow-hidden rounded-3xl",
 										"bg-white/80 dark:bg-zinc-900/80",
 										"backdrop-blur-xl",
 										"border border-zinc-200/50 dark:border-zinc-800/50",
@@ -110,7 +134,8 @@ export default function highlights({
 										"shadow-lg",
 										"hover:border-zinc-300/50 dark:hover:border-zinc-700/50",
 										"p-0"
-									)}>
+									)}
+								>
 									<div className="relative h-44 overflow-hidden bg-foreground/10" />
 
 									<div className="absolute top-3 right-3">
@@ -131,7 +156,8 @@ export default function highlights({
 													"transition-colors duration-300",
 													"cursor-pointer",
 													"shrink-0"
-												)}>
+												)}
+											>
 												<span className="w-3 h-3 block bg-foreground/10 rounded" />
 											</div>
 										</div>
@@ -271,6 +297,8 @@ export default function highlights({
 								"hallo"
 					  )} */}
 			</div>
+
+			{/* ************************************************** */}
 			{/* <div
 				id="highlight-row"
 				className="grid grid-cols-3 grid-rows-2 gap-2"
