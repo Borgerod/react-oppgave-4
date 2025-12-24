@@ -1,7 +1,8 @@
 "use client";
 import BookShelf from "@/components/ui/BookShelf";
-import BookShelf_2 from "@/components/ui/Bookshelf_2";
-import BookShelf_3 from "@/components/ui/BookShelf_3";
+// import BookShelf_v2 from "@/components/ui/Bookshelf_v2";
+// import BookShelf_v3 from "@/components/ui//BookShelf_v3";
+import BookShelf_v4 from "@/components/ui/Bookshelf_v4";
 import Highlights from "@/components/ui/highlights";
 import PopularAuthorsGrid from "@/components/ui/PopularAuthorsGrid";
 import SubjectGrid from "@/components/ui/SubjectGrid";
@@ -14,7 +15,6 @@ import { FaHeart } from "react-icons/fa6";
 import { getLastRead } from "@/utils/lastRead";
 import LastReadRow from "@/components/ui/lastReadRow";
 import { cn } from "@/utils/cn";
-import BookShelf_4 from "@/components/ui/Bookshelf_4";
 
 type HomeProps = Record<string, never>;
 
@@ -274,7 +274,7 @@ export default function Home({}: HomeProps) {
 			>
 				{/* <h3 className="text-2xl font-medium md:pb-2.5 p-2.5"> */}
 				<h3 className="text-2xl font-medium px-2.5">Genre bookshelf</h3>
-				<BookShelf_4 />
+				<BookShelf_v4 />
 				{/* <div className="origin-top w-full h-auto mt-10 translate-y-0 gap-20 flex flex-col justify-start w-full px-10"> */}
 				{/* <div className="origin-top w-full h-auto mt-10 translate-y-0 gap-20 flex flex-col justify-start w-full px-10"> */}
 				{/* <BookShelf_2 /> */}
