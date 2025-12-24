@@ -1,0 +1,474 @@
+___ GRID ALIGNMENT — TAILWIND v4 ______________________________________
+
+    justify-items-*      // horizontal (X) alignment of content INSIDE each grid cell
+    justify-content-*    // horizontal (X) alignment of the ENTIRE grid inside its container
+    justify-self-*       // horizontal (X) alignment of ONE grid item
+
+    -----------------------------------------------------------------------
+
+    items-*              // vertical (Y) alignment of content INSIDE each grid cell
+    content-*            // vertical (Y) alignment of the ENTIRE grid inside its container
+    self-*               // vertical (Y) alignment of ONE grid item
+
+    -----------------------------------------------------------------------
+
+    place-items-*        // both axes (X+Y) alignment INSIDE each grid cell
+    place-content-*      // both axes (X+Y) alignment of the ENTIRE grid
+    place-self-*         // both axes (X+Y) alignment of ONE grid item
+
+______________________________________________________________________
+
+
+___ FLEX ALIGNMENT — TAILWIND v4 ______________________________________
+
+    justify-*            // main axis alignment (ROW = horizontal, COL = vertical)
+    items-*              // cross axis alignment of items
+    content-*            // cross axis alignment of multi-line flex (wrap only)
+    self-*               // cross axis alignment of ONE flex item
+
+    -----------------------------------------------------------------------
+
+    place-items-*        // ❌ NOT USED IN FLEX
+    place-content-*      // ❌ NOT USED IN FLEX
+    place-self-*         // ❌ NOT USED IN FLEX
+
+    -----------------------------------------------------------------------
+    Flex rule (memorize):
+        justify-* = main axis
+        items/content/self = cross axis
+______________________________________________________________________
+
+___ grid ALIGNMENT — TAILWIND v4 ______________________________________
+
+
+
+
+    CELL PLACEMENT  (content INSIDE a grid cell)
+
+        vertical:
+            |----X----|
+            |    X    | → items-*
+            |----X----|
+
+        horizontal:
+            |---------|
+            |X   X   X| → justify-items-*
+            |---------|
+
+        both:
+            |----X----|
+            |X   X   X| → place-items-*
+
+
+
+    PLACING ONE ITEM (override per cell)
+
+        vertical:
+            |----X----|
+            |    X    | → self-*
+            |----X----|
+
+        horizontal:
+            |---------|
+            |    X    | → justify-self-*
+            |---------|
+
+        both:
+            |----X----|
+            |    X    | → place-self-*
+
+
+
+    PLACING ITEMS INSIDE GRID (cells as a GROUP inside the grid)
+
+        horizontal: 
+            |   ← [_][_][_] →  | → justify-content-*
+
+            |[_][_][_]         |  → justify-content-start
+            |    [_][_][_]     |  → justify-content-center
+            |         [_][_][_]|  → justify-content-end
+            |[_]   [_]   [_]   |  → justify-content-between
+            |  [_] [_] [_]     |  → justify-content-around
+            |   [_] [_] [_]    |  → justify-content-evenly
+
+        vertical:
+            |--------↑--------|
+            |    [_][_][_]    | → content-*
+            |--------↓--------|
+
+        both:
+            |--------↑--------|
+            | ←  [_][_][_]  → | → place-content-*
+            |--------↓--------|
+
+
+
+    PLACING GRID IN PARENT
+
+        horizontal:
+            |P|~~~~|[_][_][_]|~~~~|P| → justify-content-*
+
+        vertical:
+            |---------------|
+            |   [_][_][_]   | → content-*
+            |---------------|
+
+        both:
+            |P|~~~~|[_][_][_]|~~~~|P|
+                ↑ both axes → place-content-*
+
+
+    LEGEND
+        X   = cell content
+        [_] = grid cell
+        | - = walls / ceiling / floor
+
+
+___ COMPREHENSIVE GRID ALIGNMENT — TAILWIND v4 ______________________________________
+
+    CELL PLACEMENT  (content INSIDE a grid cell)
+
+        vertical:
+            |----X----|
+            |    X    |  → items-start
+            |----X----|
+
+            |----X----|
+            |    X    |  → items-center
+            |----X----|
+
+            |----X----|
+            |    X    |  → items-end
+            |----X----|
+
+            |----X----|
+            |XXXXXXXXX|  → items-stretch
+
+
+        horizontal:
+            |---------|
+            |X        |  → justify-items-start
+            |---------|
+
+            |---------|
+            |    X    |  → justify-items-center
+            |---------|
+
+            |---------|
+            |        X|  → justify-items-end
+            |---------|
+
+            |---------|
+            |XXXXXXXXX|  → justify-items-stretch
+
+
+        both:
+            |XXXXXXXXX|
+            |XXXXXXXXX|  → place-items-start
+            |XXXXXXXXX|
+
+            |XXXXXXXXX|
+            |    X    |  → place-items-center
+            |XXXXXXXXX|
+
+            |XXXXXXXXX|
+            |        X|  → place-items-end
+            |XXXXXXXXX|
+
+            |XXXXXXXXX|
+            |XXXXXXXXX|  → place-items-stretch
+
+
+
+    PLACING ONE ITEM  (override per grid cell)
+
+        vertical:
+            |----X----|
+            |    X    |  → self-start
+            |----X----|
+
+            |----X----|
+            |    X    |  → self-center
+            |----X----|
+
+            |----X----|
+            |    X    |  → self-end
+            |----X----|
+
+            |----X----|
+            |XXXXXXXXX|  → self-stretch
+
+
+        horizontal:
+            |---------|
+            |X        |  → justify-self-start
+            |---------|
+
+            |---------|
+            |    X    |  → justify-self-center
+            |---------|
+
+            |---------|
+            |        X|  → justify-self-end
+            |---------|
+
+            |---------|
+            |XXXXXXXXX|  → justify-self-stretch
+
+
+        both:
+            |XXXXXXXXX|
+            |    X    |  → place-self-start
+            |XXXXXXXXX|
+
+            |XXXXXXXXX|
+            |    X    |  → place-self-center
+            |XXXXXXXXX|
+
+            |XXXXXXXXX|
+            |        X|  → place-self-end
+            |XXXXXXXXX|
+
+            |XXXXXXXXX|
+            |XXXXXXXXX|  → place-self-stretch
+
+
+
+    PLACING ITEMS INSIDE GRID  (cells as a GROUP inside the grid)
+
+        horizontal:
+       |   ← [_][_][_] →  | → justify-content-*
+
+        |[_][_][_]         |  → justify-content-start
+        |    [_][_][_]     |  → justify-content-center
+        |         [_][_][_]|  → justify-content-end
+        |[_]   [_]   [_]   |  → justify-content-between
+        |  [_] [_] [_]     |  → justify-content-around
+        |   [_] [_] [_]    |  → justify-content-evenly
+
+
+        vertical:
+            |--------↑--------|
+            |    [_][_][_]    | → content-*
+            |--------↓--------|
+
+            |----[_][_][_]----|
+            |                 | → content-start
+            |-----------------|
+           
+            |-----------------|
+            |    [_][_][_]    | → content-center
+            |-----------------|
+           
+            |-----------------|
+            |                 | → content-end
+            |----[_][_][_]----|
+            
+            
+            |-----[_]-----|
+            |     [_]     | → content-end/around/evenly
+            |-----[_]-----|
+
+            |-------------|
+            |[_][_][_]    |  → content-between
+            |[_][_][_]    |
+            |-------------|
+
+            |-------------|
+            |  [_][_][_]  |  → content-around
+            |-------------|
+
+            |-------------|
+            |   [_][_][_] |  → content-evenly
+            |-------------|
+
+
+        both:
+            |-------------|
+            |[_][_][_]    |  → place-content-start
+            |-------------|
+
+            |-------------|
+            |    [_][_][_] | → place-content-center
+            |-------------|
+
+            |-------------|
+            |             |
+            |[_][_][_]    |  → place-content-end
+            |-------------|
+
+            |-------------|
+            |[_][_][_]    |  → place-content-between
+            |[_][_][_]    |
+            |-------------|
+
+            |-------------|
+            |  [_][_][_]  |  → place-content-around
+            |-------------|
+
+            |-------------|
+            |   [_][_][_] |  → place-content-evenly
+            |-------------|
+
+
+
+    PLACING GRID IN PARENT  (grid is smaller than parent)
+
+        horizontal:
+            |P|[_][_][_]         |P|  → justify-content-start
+            |P|    [_][_][_]     |P|  → justify-content-center
+            |P|         [_][_][_]|P|  → justify-content-end
+            |P|[_]   [_]   [_]   |P|  → justify-content-between
+            |P|  [_] [_] [_]     |P|  → justify-content-around
+            |P|   [_] [_] [_]    |P|  → justify-content-evenly
+
+
+        vertical:
+            |-------------|
+            |[_][_][_]    |  → content-start
+            |             |
+            |-------------|
+
+            |-------------|
+            |    [_][_][_] | → content-center
+            |-------------|
+
+            |-------------|
+            |             |
+            |[_][_][_]    |  → content-end
+            |-------------|
+
+
+        both:
+            |P|    [_][_][_]     |P|
+                → place-content-center
+
+
+
+    LEGEND
+        X   = cell content
+        [_] = grid cell
+        |   = walls
+        -   = ceiling / floor
+        P   = parent
+
+
+
+
+
+___ grid ALIGNMENT — TAILWIND v4 ______________________________________
+
+    horizontal:
+                    |----X----|
+        items-*  →  |    X    | → items-*
+                    |----X----|
+
+    horizontal:
+                            |----X----|
+        justify-items-*  →  |X   X   X|  → justify-items-*
+                            |----X----|
+
+
+
+    CELL PLACEMENT  (content INSIDE a grid cell)
+
+        vertical:
+            |----X----|
+            |    X    | → items-*
+            |----X----|
+
+        horizontal:
+            |---------|
+            |X   X   X|  → justify-items-*
+            |---------|
+
+        both:
+            |----X----|
+            |X   X   X|  → place-items-*
+            |----X----|
+
+    PLACING ITEMS INSIDE GRID (cells as a GROUP inside the grid)
+        horizontal: → justify-content-*
+        | [_]   [_]   [_] | → justify-content-around
+        |[_]    [_]    [_]| → justify-content-between
+        
+        etc etc etc...
+
+
+
+
+
+
+
+    CELL PLACEMENT
+        |----X----|
+        |X   X   X|
+        |----X----|
+
+        horizontal:
+        |----X----|
+        |    X    |
+        |----X----|
+
+        vertical:
+        |---------|
+        |X   X   X|
+        |---------|
+
+        decr:
+            X : represent the cell content.
+            | : represents the ceiling/floot of the cell. 
+            - : represents the walls of the cell. 
+            |---------| : represents the grid cell itself.
+            |    X    | 
+            |---------|
+
+    PLACING GRID 
+        horizontal:
+        | [_]   [_]   [_] |
+        |[_]    [_]    [_]|
+        |  [_]  [_]  [_]  |
+        |    [_][_][_]    |
+        |[_][_][_]        |
+        |        [_][_][_]|
+        
+        decr:
+            [_] : represents a grid cell 
+            | *something* | : represents the grid itself
+            | : represents the walls of the grid. 
+
+
+        vertical:
+        |--[_][_][_]--|
+        |             |
+        |-------------|
+
+        |-------------|
+        |  [_][_][_]  |
+        |-------------|
+        
+        |-------------|
+        |             |
+        |--[_][_][_]--|
+        
+        decr:
+            [_] : represents a grid cell 
+            | *something* | : represents the grid itself
+            | : represents the walls of the grid.
+            - : represents the ceiling or floor of the grid
+            
+            |-------------| (upper  side of grid)
+            |             | (middle side of grid)
+            |-------------| (lower  side of grid)
+
+    PLACING GRID IN PARENT: 
+        |P|                   |P|
+        |P|~~~~|[_][_][_]|~~~~|P|
+        |P|                   |P|
+        
+        decr:
+            grid component is: |[_][_][_]|
+            body is component is: |P|                   |P|
+            |P| : represents the body walls
+            ~  : represents the spacing
+
