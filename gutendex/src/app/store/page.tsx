@@ -141,9 +141,63 @@ export default function Store() {
 					? `/api/books?${cleaned}&page=${pageCount}`
 					: `/api/books?page=${pageCount}`;
 
-				// safe fetch + parse helper: logs non-JSON responses (HTML/error pages)
-				const fetchJson = async (url: string) => {
+				// safe fetch + parse helper: handles non-JSON responses (HTML/error pages)
+				// and retries on 429 Too Many Requests with exponential backoff.
+				const fetchJson = async (
+					url: string,
+					retries = 3,
+					backoff = 1000
+				): Promise<any> => {
 					const res = await fetch(url);
+
+					// Handle 429 with Retry-After or exponential backoff
+					if (res.status === 429) {
+						const retryAfter = res.headers.get("retry-after");
+						const wait = retryAfter
+							? Number(retryAfter) * 1000
+							: backoff;
+						if (retries > 0) {
+							console.warn(
+								"Received 429, retrying after",
+								wait,
+								"ms",
+								url
+							);
+							await new Promise((r) => setTimeout(r, wait));
+							return fetchJson(url, retries - 1, backoff * 2);
+						}
+						const text = await res.text();
+						console.error(
+							"Too Many Requests from",
+							url,
+							"body:",
+							text
+						);
+						throw new Error(`Too Many Requests from ${url}`);
+					}
+
+					// If response not OK, log body for debugging and throw
+					if (!res.ok) {
+						const text = await res.text();
+						console.error(
+							"Fetch error",
+							url,
+							"status",
+							res.status,
+							"body:",
+							text
+						);
+						throw new Error(
+							`Fetch error ${res.status} from ${url}`
+						);
+					}
+
+					const contentType = res.headers.get("content-type") || "";
+					if (contentType.includes("application/json")) {
+						return res.json();
+					}
+
+					// Fallback: try to parse text as JSON (some APIs misconfigure headers)
 					const text = await res.text();
 					try {
 						return JSON.parse(text);
@@ -334,7 +388,8 @@ export default function Store() {
 						"gap-4",
 						"",
 						""
-					)}>
+					)}
+				>
 					{/* If initial load or no data, show full skeleton set */}
 					{isInitialLoad || !hasResults ? (
 						Array.from({ length: 15 }).map((_, index) => (
