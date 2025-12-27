@@ -4,16 +4,20 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { getDominantColors } from "@/utils/color-utils";
 import { IoMdClose } from "react-icons/io";
+import { Title } from "@/types";
 
 type LastReadCardProps = {
-	title?: string;
+	title?: string | undefined;
 	subtitle?: string;
+	authors?: string[] | string;
 	image?: string;
 	badge?: {
 		text: string | React.ReactNode;
 		variant: "pink" | "indigo" | "orange";
 	};
-	href?: string;
+	href: string;
+	bookId?: number;
+	onRemove?: (bookId: number) => void;
 };
 
 const FALLBACK_COVER = "/Blank-Book-Cover-PNG-Picture.png";
@@ -21,9 +25,13 @@ const FALLBACK_COVER = "/Blank-Book-Cover-PNG-Picture.png";
 export default function LastReadCard({
 	title = "Modern Design Systems",
 	subtitle = "Explore the fundamentals of contemporary UI design",
+	authors = "By Uknown Author",
 	image,
 	// badge = { text: "Top", variant: "pink" },
-	href = "https://kokonutui.com/",
+	// href = "https://kokonutui.com/",
+	bookId,
+	href,
+	onRemove,
 }: LastReadCardProps) {
 	const coverSrc = image ?? FALLBACK_COVER;
 	const shadowColor = "rgba(10, 17, 24, 0.4)";
@@ -34,7 +42,19 @@ export default function LastReadCard({
 	}, [image]);
 
 	return (
-		<div>
+		<Link
+			href={href}
+			className={cn(
+				// "group",
+				// "hover:scale-[1.02]",
+
+				// "transition-transform",
+				// "transition-cpu",
+				"",
+				""
+			)}
+		>
+			{/* <div className="hover:scale-105"> */}
 			<div
 				id="small-cards"
 				className={cn(
@@ -47,37 +67,91 @@ export default function LastReadCard({
 					"shadow-lg",
 					"gap-3",
 					"md:hidden",
-					"group",
-					"transition-transform",
+					// "group",
 					"hover:scale-[1.02]",
+					"transition-transform",
+					"transition-cpu",
+
 					""
 				)}
 			>
-				<span
-					id="badge icon"
+				<button
+					id="close-button"
+					type="button"
+					onClick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						bookId && onRemove?.(bookId);
+					}}
 					className={cn(
 						"w-8 h-8 flex items-center justify-center rounded-full z-10",
-						"bg-primary/10 text-white",
-						"bg-primary-inv/10 text-white",
-						"dark:bg-transparent dark:text-zinc-200",
-						"dark:bg-primary-inv/10 dark:text-zinc-200",
-						"hover:dark:bg-primary-inv/20 hover:dark:text-zinc-50",
-						"hover:bg-primary-inv/20 hover:text-zinc-50",
-						"transition-transform",
-						"group-hover:scale-[1.02]",
+						"col-start-1 row-start-1 justify-self-end",
+						"p-0 m-2 ",
+						"bg-zinc-800/40",
+						"hover:bg-zinc-600/50",
+						" dark:bg-zinc-800/50",
+						"backdrop-blur-md",
+						" hover:dark:bg-zinc-700/50",
+						"text-primary-inv/80",
+						"dark:text-primary/80",
+						"hover:text-primary-inv",
+						"dark:hover:text-primary",
+						"transition-colors duration-300 group",
+						"cursor-pointer",
+						"shrink-0",
+						"shadow-xs",
+
+						"",
+						// ""
+						// "absolute",
+						// "top-3",
+						// "right-3",
+						// "top-4",
+						// "right-4",
+						// "top-5",
+						// "right-5",
+						"w-8",
+						"h-8",
+						// "p-2",
+						"flex",
+						"items-center",
+						"justify-center",
+						"rounded-full",
+						"z-10",
+
+						"bg-white/10 text-white",
+						"dark:bg-zinc-800/40 dark:text-zinc-200",
+						"bg-zinc-800/10 dark:text-zinc-200",
+						"hover:dark:bg-zinc-900/60 hover:dark:text-zinc-300",
+						"hover:bg-zinc-900/30 hover:dark:text-zinc-300",
+						// "border",
+						"border-edge",
+						// "border-edge-dark",
+						// "border-edge-highlight",
+						// "border-t-edge-highlight",
+						// "border-t-edge",
+						// "border-l-edge-highlight",
+						// "border-b-edge-dark",
+						// "border-r-edge-dark",
 						"backdrop-blur-sm",
 						"focus:outline-none",
 						"opacity-100",
 						"cursor-pointer",
-						"shadow-xs",
-						"border border-white/10 dark:border-zinc-800/30",
-						"col-start-1 row-start-1 justify-self-end",
-						"p-0 m-2 ",
+						// "z-30",
+						"overflow-visible",
+						// "place-items-center",
+						// "justify-items-center",
+						// "items-center",
+						// "justify-center",
+						// "content-center",
+						"hover:scale-105",
+						// className,
+						"",
 						""
 					)}
 				>
-					<IoMdClose className="text-xl " />
-				</span>
+					<IoMdClose className="text-xl" />
+				</button>
 				<Image
 					src={image || "/placeholder.svg"}
 					alt={title}
@@ -103,14 +177,18 @@ export default function LastReadCard({
 						"row-start-2 col-start-1",
 						"z-2",
 						"p-1",
+						"px-3",
 						""
 					)}
 				>
 					<h3 className="text-primary text-sm font-bold leading-tight mb-1 pr-3">
 						{title}
 					</h3>
-					<p className="text-primary/80 text-[11px] font-medium tracking-wide">
+					{/* <p className="text-primary/80 text-[11px] font-medium tracking-wide">
 						{subtitle}
+					</p> */}
+					<p className="text-primary/80 text-[11px] font-medium tracking-wide">
+						{authors}
 					</p>
 				</div>
 			</div>
@@ -120,28 +198,51 @@ export default function LastReadCard({
 			<div
 				id="large-cards"
 				className={cn(
+					"group",
 					"hidden md:flex ",
 					" w-full ",
 					"min-w-[260px] max-w-[320px]",
-					"items-center rounded-[20px]",
+					"min-w-64",
+					// "max-w-80",
+					"max-w-100",
+					"items-center ",
+					// "rounded-[20px]",
+					"rounded-3xl",
 					"shadow-2xl",
-					"group",
-					"transition-transform",
-					"hover:scale-[1.02]",
 					"relative ",
-					"h-full",
 					"h-40",
 					"mt-5",
+					// "group",
+					// "hover:scale-[1.02]",
+					// "transition-transform",
+					// "hover:scale-[1.02]",
+
+					"hover:scale-[1.02]",
+					// "transition-transform",
+					"transition-cpu",
+
+					// "bg-amber-200",
+					// "hover:bg-amber-600",
+					"z-10",
+					"pointer-events-auto",
+					"",
+					"",
 					""
 				)}
 			>
 				<div
 					id="book-cover"
 					className={cn(
-						"absolute  left-4 h-[140px] w-[94px] ",
+						"group",
+						"absolute left-4 ",
+						// "h-[140px]",
+						// "w-[94px] ",
+						"h-40",
+						"w-29",
 						"shrink-0 overflow-hidden ",
-						"rounded-xl shadow-[0_14px_36px_rgba(0,0,0,0.45)] z-20",
+						"rounded-xl z-20",
 						"bottom-5",
+						"shadow-xl",
 						"h-full",
 						""
 					)}
@@ -150,23 +251,39 @@ export default function LastReadCard({
 						src={image || "/placeholder.svg"}
 						alt={title}
 						fill
-						className="object-cover"
+						className={cn(
+							"object-cover",
+							"origin-left",
+							"transform-gpu",
+							"",
+							""
+						)}
 						priority
 					/>
 				</div>
 				<div
 					id="colored-container"
 					className={cn(
+						"group",
 						"relative z-10 ",
 						" overflow-hidden ",
 						"shadow-xl",
-						"h-[120px] w-full ",
-						"min-w-[260px] max-w-[320px] ",
+						"h-[120px]",
+						"w-full ",
+						// "min-w-[260px] ",
+						// "max-w-[320px] ",
+						"min-w-64",
+						// "max-w-80",
+						"max-w-100",
 						"items-center ",
 						"rounded-3xl ",
 						"p-4 ",
 						"shadow-lg ",
 						"h-full",
+
+						"",
+						"",
+						"",
 						""
 					)}
 				>
@@ -176,6 +293,7 @@ export default function LastReadCard({
 							alt=""
 							fill
 							className={cn(
+								"group",
 								"object-cover blur-2xl scale-150 ",
 								"opacity-85",
 								"dark:opacity-40",
@@ -186,6 +304,7 @@ export default function LastReadCard({
 						<div
 							id="Dark Overlay for Text Readability"
 							className={cn(
+								"group",
 								"absolute inset-0 bg-black/40",
 								"dark:bg-foreground/10",
 								""
@@ -196,52 +315,156 @@ export default function LastReadCard({
 					<div
 						id="Content Layer"
 						className={cn(
-							"relative z-10 h-full p-4 pl-20 flex flex-col justify-center ml-12",
+							// "group",
+							// "group-hover:scale-[1.00]",
+							"relative",
+							"z-10",
+							"h-full",
+							"p-4",
+							// "pl-20",
+							// "ml-12",
+							"ml-30",
+							// "pl-34",
+							"flex flex-col justify-center",
+							"antialiased",
+							"subpixel-antialiased",
+							"",
 							""
 						)}
 					>
-						<h3 className="text-white text-sm font-bold leading-tight mb-1 pr-3">
+						<h3
+							className={cn(
+								"text-white text-sm font-bold leading-tight mb-1 pr-3",
+								// ensure proper font smoothing to avoid "bolder" rasterization on transform
+								"antialiased",
+								"subpixel-antialiased",
+								"",
+								""
+							)}
+						>
 							{title}
+							<span
+								className={cn(
+									"ml-2 text-white/50  font-medium tracking-wide italic",
+									"antialiased",
+									// "text-[11px]",
+									"text-xs",
+									// "text-base",
+									"subpixel-antialiased",
+									"",
+									""
+								)}
+							>
+								{subtitle}
+							</span>
 						</h3>
-						<p className="text-white/80 text-[11px] font-medium tracking-wide">
-							{subtitle}
+						<p
+							className={cn(
+								"text-white/80 font-medium tracking-wide",
+								"antialiased",
+								"text-[11px] ",
+								"text-xs",
+								"subpixel-antialiased",
+								"",
+								""
+							)}
+						>
+							{authors}
 						</p>
 					</div>
-					<span
-						id="badge icon"
+					<button
+						id="close-button"
+						type="button"
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							bookId && onRemove?.(bookId);
+						}}
+						// className={cn(
+						// 	"w-8 h-8 flex items-center justify-center rounded-full z-10",
+						// 	"col-start-1 row-start-1 justify-self-end",
+						// 	"p-0 m-2 ",
+						// 	"absolute top-2 right-2",
+						// 	"w-8 h-8 flex items-center justify-center rounded-full",
+						// 	"bg-zinc-800/40",
+						// 	"hover:bg-zinc-600/50",
+						// 	" dark:bg-zinc-800/50",
+						// 	"backdrop-blur-md",
+						// 	" hover:dark:bg-zinc-700/50",
+						// 	"text-primary-inv/80",
+						// 	"dark:text-primary/80",
+						// 	"hover:text-primary-inv",
+						// 	"dark:hover:text-primary",
+						// 	"transition-colors duration-300 group",
+						// 	"cursor-pointer",
+						// 	"shrink-0",
+						// 	"shadow-xs",
+						// 	"",
+						// 	""
+
+						// )}
+
+						aria-label={""}
 						className={cn(
-							"w-8 h-8 flex items-center justify-center rounded-full z-10",
-							"bg-primary/10 text-white",
-							"bg-primary-inv/10 text-white",
-							"dark:bg-transparent dark:text-zinc-200",
-							"dark:bg-primary/10 dark:text-zinc-200",
-							"hover:dark:bg-primary-inv/20 hover:dark:text-zinc-50",
-							"hover:bg-primary-inv/20 hover:text-zinc-50",
-							"transition-transform",
-							"group-hover:scale-[1.02]",
+							"absolute",
+							"top-3",
+							"right-3",
+							// "top-4",
+							// "right-4",
+							// "top-5",
+							// "right-5",
+							"w-8",
+							"h-8",
+							// "p-2",
+							"flex",
+							"items-center",
+							"justify-center",
+							"rounded-full",
+							"z-10",
+
+							"bg-white/10 text-white",
+							"dark:bg-zinc-800/40 dark:text-zinc-200",
+							"bg-zinc-800/10 dark:text-zinc-200",
+							"hover:dark:bg-zinc-900/60 hover:dark:text-zinc-300",
+							"hover:bg-zinc-900/30 hover:dark:text-zinc-300",
+							// "border",
+							"border-edge",
+							// "border-edge-dark",
+							// "border-edge-highlight",
+							// "border-t-edge-highlight",
+							// "border-t-edge",
+							// "border-l-edge-highlight",
+							// "border-b-edge-dark",
+							// "border-r-edge-dark",
 							"backdrop-blur-sm",
 							"focus:outline-none",
 							"opacity-100",
 							"cursor-pointer",
-							"shadow-xs",
-							"border border-white/10 dark:border-zinc-800/30",
-							"absolute top-2 right-2",
-							"p-0 m-0 ",
+							// "z-30",
+							"overflow-visible",
+							// "place-items-center",
+							// "justify-items-center",
+							// "items-center",
+							// "justify-center",
+							// "content-center",
+							"hover:scale-105",
+							// className,
+							"",
 							""
 						)}
 					>
 						<IoMdClose
 							className={cn(
+								"group",
 								"text-xl transition-transform",
-								"group-hover:scale-[1.02]",
-                                "",
-                                ""
-                            )}
-                        />
-                    </span>
+								"",
+								""
+							)}
+						/>
+					</button>
 				</div>
 			</div>
-		</div>
+		</Link>
 	);
 }
 
@@ -336,7 +559,7 @@ export default function LastReadCard({
 // 				</div>
 
 // 				<span
-// 					id="badge icon"
+// 					id="close-button"
 // 					className={cn(
 // 						"w-8 h-8 flex items-center justify-center rounded-full z-10",
 // 						"bg-white/10 text-white",

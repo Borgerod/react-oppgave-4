@@ -73,7 +73,10 @@ export default function SelectedFiltersTags({
 				{Object.entries(selectedFormats)
 					.filter(([, v]) => v)
 					.map(([format]) => (
-						<li key={`selected-format-${format}`}>
+						<li
+							key={`selected-format-${format}`}
+							className="place-self-center"
+						>
 							<Tag
 								id={`selected-format-${format}`}
 								item={format}
@@ -87,7 +90,10 @@ export default function SelectedFiltersTags({
 				{Object.entries(selectedLanguages)
 					.filter(([, v]) => v)
 					.map(([language]) => (
-						<li key={`selected-language-${language}`}>
+						<li
+							key={`selected-language-${language}`}
+							className="place-self-center"
+						>
 							<Tag
 								id={`selected-language-${language}`}
 								item={language}
@@ -99,7 +105,7 @@ export default function SelectedFiltersTags({
 					))}
 				{/* Copyright */}
 				{copyright && (
-					<li key="selected-copyright">
+					<li key="selected-copyright" className="place-self-center">
 						<Tag
 							id="selected-copyright"
 							item="Copyright Only"

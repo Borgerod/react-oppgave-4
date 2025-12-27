@@ -1,3 +1,4 @@
+import { cn } from "@/utils/cn";
 import { LiaToggleOnSolid } from "react-icons/lia";
 
 type CopyrightToggleProps = {
@@ -12,7 +13,18 @@ export default function CopyrightToggle({
 	return (
 		<label
 			htmlFor="copyright"
-			className="cursor-pointer grid grid-cols-2 w-full gap-2 items-center justify-between ">
+			className={cn(
+				"cursor-pointer",
+				"grid grid-cols-2",
+				"w-full",
+				"gap-2",
+				"items-center",
+				"justify-between",
+				"text-xl",
+				"",
+				""
+			)}
+		>
 			Copyright
 			<input
 				id="copyright"
@@ -21,19 +33,51 @@ export default function CopyrightToggle({
 				value="on"
 				aria-label="Filter by copyright status"
 				title="copyright"
-				className="sr-only peer "
+				className={cn("sr-only", "peer", "", "")}
 				checked={checked}
 				onChange={() => onChange(!checked)}
 			/>
 			{checked ? (
-				<div className="flex justify-end">
-					<LiaToggleOnSolid size={32} className="text-accent-dark" />
+				<div
+					className={cn(
+						"flex",
+						"justify-end",
+
+						"",
+						""
+					)}
+				>
+					<LiaToggleOnSolid
+						size={42}
+						className={cn(
+							"text-accent-dark",
+							"size-13",
+
+							"",
+							""
+						)}
+					/>
 				</div>
 			) : (
-				<div className="flex justify-end">
+				<div
+					className={cn(
+						"flex",
+						"justify-end",
+
+						"",
+						""
+					)}
+				>
 					<LiaToggleOnSolid
-						size={32}
-						className="rotate-180 text-divider"
+						size={42}
+						className={cn(
+							"size-13",
+							"rotate-180",
+							"text-divider",
+
+							"",
+							""
+						)}
 					/>
 				</div>
 			)}

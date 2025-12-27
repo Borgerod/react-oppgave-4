@@ -13,6 +13,7 @@ import { PiSlidersHorizontalFill } from "react-icons/pi";
 import Filter from "@/components/filters/filter";
 import { useTheme } from "@/providers/providers";
 import { HiLibrary } from "react-icons/hi";
+import Filter_v2 from "../filters/filter_v2";
 
 type StoreHeaderProps = {
 	onResults?: (data: BooksResponse, queryString?: string) => void;
@@ -380,11 +381,17 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 				</button>
 			</div>
 			{openFilter && (
+				// TODO chose between these
 				<Filter
 					searchQuery={searchQuery}
 					topics={topics}
 					onClose={() => toggleFilter(false)}
 				/>
+				// <Filter_v2
+				// 	searchQuery={searchQuery}
+				// 	topics={topics}
+				// 	onClose={() => toggleFilter(false)}
+				// />
 			)}
 		</header>
 	);

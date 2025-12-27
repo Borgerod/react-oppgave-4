@@ -39,9 +39,23 @@ export async function GET(request: NextRequest) {
 		}
 	}
 
-	// Upstream OK: try to parse JSON, but fall back to text if parsing fails
+	// Upstream OK: parse JSON and normalize titles to the `Title` shape
 	try {
 		const data = await res.json();
+		try {
+			// lazy-import the parser to avoid server/client crossover
+			const { parseTitle } = await import("@/utils/title");
+			if (data && Array.isArray(data.results)) {
+				data.results = data.results.map((r: any) => ({
+					...r,
+					title: parseTitle(r.title),
+				}));
+			}
+		} catch (e) {
+			// if normalization fails, still return upstream data
+			console.warn("/api/books: title normalization failed", e);
+		}
+
 		return NextResponse.json(data);
 	} catch {
 		try {

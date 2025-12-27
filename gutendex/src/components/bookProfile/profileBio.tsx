@@ -3,6 +3,8 @@ import { cn } from "@/utils/cn";
 import { FaRegCopyright } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
 import Tabs from "@/components/ui/tabs";
+import { Tag } from "@/components/filters/tag";
+import FavoriteButton from "@/components/ui/favoriteButton";
 
 // friendly labels for common MIME types
 const FORMAT_LABELS: Record<string, string> = {
@@ -36,19 +38,27 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 		<>
 			{/* Book ID: {book.id} */}
 			{/* TITLE */}
+
 			{(() => {
-				const _title = (book.title ?? "").split(/[;:]/, 2);
+				const t = book.title ?? { main: "unknown" };
 				return (
-					<>
+					<div className="flex items-start gap-3 ">
 						<h1 className="text-2xl font-extralight text-primary p-0 m-0 leading-none">
-							{_title[0] || "unknown"}
-							{_title[1] && (
+							{t.main || "unknown"}
+							{t.sub && (
 								<span className="text-sm italic font-thin text-secondary ml-2 mt-0 align-baseline ">
-									{_title[1]}
+									{t.sub}
 								</span>
 							)}
 						</h1>
-					</>
+						<FavoriteButton
+							book={book}
+							compact
+							// className="text-secondary/20 w-5 h-5 ml-auto"
+							// className="text-secondary/20 w-5 h-5 ml-auto md:ml-0 mr-2"
+							className="text-secondary/20 w-5 h-5 ml-auto mr-2"
+						/>
+					</div>
 				);
 			})()}
 			{/* AUTHORS */}
@@ -79,20 +89,23 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 				return (
 					<div
 						className="py-5 text-secondary text-md lg:text-sm"
-						key={i}>
+						key={i}
+					>
 						{paragraphs.length === 0
 							? "unknown"
 							: paragraphs.map((p, idx) =>
 									idx === 0 ? (
 										<p
 											className="italic font-thin"
-											key={`summary-${i}-${idx}`}>
+											key={`summary-${i}-${idx}`}
+										>
 											{p}
 										</p>
 									) : (
 										<p
 											className="py-5"
-											key={`summary-${i}-${idx}`}>
+											key={`summary-${i}-${idx}`}
+										>
 											{p}
 										</p>
 									)
@@ -115,7 +128,8 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 					"",
 					"gap-y-2",
 					"gap-x-4"
-				)}>
+				)}
+			>
 				{/* editors */}
 				<div className="grid grid-cols-2 gap-2">
 					<span id="key" className="text-sm font-medium">
@@ -218,26 +232,17 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 							<p className="flex flex-row flex-wrap gap-2">
 								{Object.entries(book.formats || {}).map(
 									([mime, url], i) => (
-										<a
+										<Tag
 											key={i}
-											href={url}
-											className={cn(
-												"text-xs font-thin",
-												"text-nowrap",
-												"px-2 py-0.5",
-												"rounded-full",
-												"text-secondary",
-												"text-primary/80",
-												"bg-foreground/10 hover:bg-foreground/30",
-												"dark:bg-foreground/20 dark:hover:bg-foreground/30",
-												"dark:bg-foreground/25 dark:hover:bg-foreground/35"
-											)}
-											target="_blank"
-											rel="noopener noreferrer">
-											{prettyMime(mime)}
-										</a>
+											id={`download-${i}`}
+											item={prettyMime(mime)}
+											url={String(url)}
+											isDownload
+											checked={false}
+										/>
 									)
 								)}
+								{/* <BookReadTracker book={book} /> */}
 							</p>
 						),
 					},
@@ -248,23 +253,15 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 							<div className="flex flex-row flex-wrap gap-2">
 								{(book.subjects || []).map(
 									(subject: string, i: number) => (
-										<a
+										<Tag
 											key={i}
-											className={cn(
-												"text-xs font-thin",
-												"text-nowrap",
-												"px-2 py-0.5",
-												"rounded-full",
-												"text-secondary",
-												"text-primary/80",
-												"w-fit",
-												"bg-foreground/10 hover:bg-foreground/30",
-												"dark:bg-foreground/20 dark:hover:bg-foreground/30"
+											id={`subject-${i}`}
+											url={String(
+												`/store?topic=${subject}`
 											)}
-											target="_blank"
-											rel="noopener noreferrer">
-											{subject}
-										</a>
+											item={subject}
+											checked={false}
+										/>
 									)
 								)}
 							</div>
@@ -277,24 +274,15 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 							<div className="flex flex-row flex-wrap gap-2">
 								{(book.bookshelves || []).map(
 									(bookshelf: string, i: number) => (
-										<a
+										<Tag
 											key={i}
-											className={cn(
-												"text-xs font-thin",
-												"text-nowrap",
-												"px-2 py-0.5",
-												"rounded-full",
-												"text-secondary",
-												"text-primary/80",
-												"w-fit",
-												"bg-foreground/10 hover:bg-foreground/30",
-												"dark:bg-foreground/20 dark:hover:bg-foreground/30",
-												"dark:bg-foreground/25 dark:hover:bg-foreground/35"
+											id={`bookshelf-${i}`}
+											url={String(
+												`/store?topic=${bookshelf}`
 											)}
-											target="_blank"
-											rel="noopener noreferrer">
-											{bookshelf}
-										</a>
+											item={bookshelf}
+											checked={false}
+										/>
 									)
 								)}
 							</div>

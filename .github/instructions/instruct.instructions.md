@@ -18,3 +18,7 @@ Provide project context and coding guidelines that AI should follow when generat
 
 -   do not do anything other that what is instructed.
 -   when makeing changes, make sure that it does not disrupt other components in the project.
+
+-   whenever i ask a simple yes/no or this/that question i expect a one word answer. a small sentance at most. 
+-   the answer should be as simple as humanly possible. 
+-   If i need more elaboration i will ask for it, do not assume i want anything more than what i specifically ask for.

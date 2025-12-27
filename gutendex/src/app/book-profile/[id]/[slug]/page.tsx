@@ -1,4 +1,5 @@
 import type { Book } from "@/types";
+import { parseTitle } from "@/utils/title";
 import { cn } from "@/utils/cn";
 import ProfileImage from "@/components/bookProfile/profileImage";
 import ProfileBio from "@/components/bookProfile/profileBio";
@@ -11,7 +12,13 @@ async function fetchBook(id: number): Promise<Book | null> {
 	});
 
 	if (!res.ok) return null;
-	return res.json();
+	const data = await res.json();
+	try {
+		data.title = parseTitle(data.title);
+	} catch (e) {
+		// ignore parsing error, return raw
+	}
+	return data;
 }
 export default async function BookProfilePage({
 	params,
@@ -45,6 +52,16 @@ export default async function BookProfilePage({
 	}); //other works of this author
 	// const json = await res.json();
 	const data = await res.json();
+	try {
+		if (data && Array.isArray(data.results)) {
+			data.results = data.results.map((r: any) => ({
+				...r,
+				title: parseTitle(r.title),
+			}));
+		}
+	} catch (e) {
+		// ignore
+	}
 	// if (mounted) setData(json);
 	return (
 		<main
@@ -72,21 +89,24 @@ export default async function BookProfilePage({
 				"md:grid-cols-[1fr_auto]",
 				"md:px-20",
 				"pb-20",
+				"gap-20",
+				"gap-10",
 				// lg
-				"lg:flex-none",
-				"lg:w-auto",
-				"lg:grid-cols-[auto_1fr_auto]",
-				"lg:grid-rows-1",
-				"lg:gap-0",
-				"lg:h-[70vh]",
-				"lg:overflow-hidden",
-				"lg:px-10",
-				"lg:py-0",
-				"lg:my-auto",
-				"lg:mx-auto",
+				// "lg:flex-none",
+				// "lg:w-auto",
+				// "lg:grid-cols-[auto_1fr_auto]",
+				// "lg:grid-rows-1",
+				// "lg:gap-0",
+				// "lg:h-[70vh]",
+				// "lg:overflow-hidden",
+				// "lg:px-10",
+				// "lg:py-0",
+				// "lg:my-auto",
+				// "lg:mx-auto",
 				"",
 				""
-			)}>
+			)}
+		>
 			<section
 				id="profile-image left-side 1"
 				className={cn(
@@ -99,15 +119,19 @@ export default async function BookProfilePage({
 					"flex items-center justify-center",
 					"md:px-0",
 					// lg
-					"lg:w-auto",
-					"lg:w-full",
-					"lg:min-w-64",
-					"lg:h-full",
+					// "lg:w-auto",
+					// "lg:w-full",
+					// "lg:min-w-64",
+					// "lg:h-full",
 					// "bg-amber-100",
 					"",
 					""
-				)}>
-				<ProfileImage imgSrc={imgSrc} title={book.title ?? "cover"} />
+				)}
+			>
+				<ProfileImage
+					imgSrc={imgSrc}
+					title={book.title.main ?? "cover"}
+				/>
 			</section>
 
 			<section
@@ -127,27 +151,37 @@ export default async function BookProfilePage({
 					"md:w-150",
 					"md:h-fit",
 					// lg
-					"lg:row-span-1 lg:row-start-1 lg:col-start-2 lg:col-span-1",
-					"lg:h-auto",
-					"lg:h-full",
-					"lg:h-auto",
-					"lg:w-full",
-					"lg:px-5",
-					"lg:self-start",
+					// "lg:row-span-1 lg:row-start-1 lg:col-start-2 lg:col-span-1",
+					// "lg:h-auto",
+					// "lg:h-full",
+					// "lg:h-auto",
+					// "lg:w-full",
+					// "lg:px-5",
+					// "lg:self-start",
 
 					"px-0",
+					// "gap-10",
 					// "bg-amber-300",
 					"",
 					""
-				)}>
+				)}
+			>
 				<ProfileBio book={book} />
 				<BookReadTracker book={book} />
+				<hr
+					className="flex md:hidden border-t w-full border-divider mt-5"
+					aria-hidden="true"
+				/>
 			</section>
+			<hr
+				className=" flex row-start-3 md:row-start-2 md:col-span-full border-t w-full border-divider"
+				aria-hidden="true"
+			/>
 
 			<section
 				id="author-discover right-side 3 "
 				className={cn(
-					"mt-5",
+					// "mt-5",
 					"md:mt-0",
 					"p-5 text-wrap",
 					"min-h-0",
@@ -160,16 +194,20 @@ export default async function BookProfilePage({
 					//md
 					"md:row-start-2 md:row-span-1 md:col-start-1 md:col-span-full",
 					//lg
-					"lg:row-start-1 lg:row-span-1 lg:col-start-3 lg:col-span-1",
-					"lg:grid-rows-[auto_1fr]",
-					"lg:h-full",
-					"lg:w-90",
-					"lg:self-start",
-					"lg:p-0",
+
+					//! TEMP DISABLE maybe perm
+					// "lg:row-start-1 lg:row-span-1 lg:col-start-3 lg:col-span-1",
+					// "lg:grid-rows-[auto_1fr]",
+					// "lg:h-full",
+					// "lg:w-90",
+					// "lg:self-start",
+					// "lg:p-0",
 					// "bg-amber-600",
+					// "gap-5",
 					"",
 					""
-				)}>
+				)}
+			>
 				<AuthorDiscover data={data} currentBookId={book.id} />
 			</section>
 		</main>

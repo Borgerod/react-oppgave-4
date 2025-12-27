@@ -2,11 +2,11 @@
 // import React, { Component } from "react";
 import React from "react";
 // import ProductCard from "../store/productCard";
-import { FaHeart } from "react-icons/fa6";
-import { FaRegHeart } from "react-icons/fa6";
+import FavoriteButton from "@/components/ui/favoriteButton";
 // import { BooksResponse, Book } from "@/types";
 // import CardSkeleton from "../store/cardSkeleton";
 import HighLightCard from "@/components/ui/highLightCard";
+import { formatLinkVars } from "@/components/store/cardSharedUtils";
 
 // import textBtnClass from "@/components/layout/header";
 import { cn } from "@/utils/cn";
@@ -19,6 +19,7 @@ import {
 } from "@/components/buttonClasses";
 import Link from "next/link";
 import { Book } from "@/types";
+import { parseTitle } from "@/utils/title";
 interface HighlightProps {
 	// data: BooksResponse | null;
 	data: Book[] | null;
@@ -174,13 +175,33 @@ export default function highlights({
 								formats?.["image/jpg"] ||
 								undefined;
 
+							// const authorNames = (book.authors || [])
+							// 	.map((a) => a?.name)
+							// 	.filter(
+							// 		(n): n is string =>
+							// 			typeof n === "string" && n.length > 0
+							// 	);
+							// const subtitle =
+							// 	authorNames.length === 0
+							// 		? undefined
+							// 		: authorNames.length === 1
+							// 		? authorNames[0]
+							// 		: `${authorNames
+							// 				.slice(0, -1)
+							// 				.join("; ")} & ${
+							// 				authorNames[authorNames.length - 1]
+							// 		  }`;
+
+							// const href = `/book-profile/${
+							// 	book.id
+							// }/${formatLinkVars(book.title)}`;
+
+							//
+
 							const authorNames = (book.authors || [])
 								.map((a) => a?.name)
-								.filter(
-									(n): n is string =>
-										typeof n === "string" && n.length > 0
-								);
-							const subtitle =
+								.filter((n): n is string => !!n);
+							const authors =
 								authorNames.length === 0
 									? undefined
 									: authorNames.length === 1
@@ -191,26 +212,33 @@ export default function highlights({
 											authorNames[authorNames.length - 1]
 									  }`;
 
-							function formatLinkVars(prop: string) {
-								return prop
-									.trim()
-									.toLowerCase()
-									.normalize("NFKD")
-									.replace(/[\u0300-\u036f]/g, "")
-									.replace(/[^\w\s-]/g, "")
-									.replace(/\s+/g, "-")
-									.replace(/-+/g, "-");
-							}
+							const href = `/book-profile/${book.id}/${String(
+								book.title
+							)
+								.trim()
+								.toLowerCase()
+								.normalize("NFKD")
+								.replace(/[\u0300-\u036f]/g, "")
+								.replace(/[^\w\s-]/g, "")
+								.replace(/\s+/g, "-")
+								.replace(/-+/g, "-")}`;
 
-							const href = `/book-profile/${
-								book.id
-							}/${formatLinkVars(book.title)}`;
+							const { main, sub } = parseTitle(book.title.main);
 
 							return (
 								<HighLightCard
 									key={`${book.id}-${index}`}
-									title={book.title}
-									subtitle={subtitle}
+									// title={book.title.main}
+									// subtitle={sub}
+									// authors={authors}
+
+									title={
+										book.title.main
+											? main
+											: book.title.toString()
+									}
+									subtitle={sub ? sub : ""}
+									authors={authors}
 									badge={
 										tagLabel
 											? (() => {
@@ -235,34 +263,19 @@ export default function highlights({
 																	book.id
 																)
 														);
-														const handleClick = (
-															e: React.MouseEvent
-														) => {
-															e.preventDefault();
-															e.stopPropagation();
-															if (
-																onToggleFavorite
-															) {
-																onToggleFavorite(
-																	book
-																);
-															}
-														};
-														const icon = isFav ? (
-															<FaHeart
-																onClick={
-																	handleClick
-																}
-															/>
-														) : (
-															<FaRegHeart
-																onClick={
-																	handleClick
-																}
-															/>
-														);
 														return {
-															text: icon,
+															text: (
+																<FavoriteButton
+																	book={book}
+																	isFavorite={
+																		isFav
+																	}
+																	onToggleFavorite={
+																		onToggleFavorite
+																	}
+																	compact
+																/>
+															),
 															variant: "orange",
 														};
 													}

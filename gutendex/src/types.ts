@@ -8,7 +8,7 @@ export type Author = Person;
 
 export type Book = {
 	id: number;
-	title: string;
+	title: Title;
 	authors: Author[];
 	summaries: string[];
 	editors: string[];
@@ -27,4 +27,9 @@ export type BooksResponse = {
 	next: string | null;
 	previous: string | null;
 	results: Book[];
+};
+
+export type Title = {
+	main: string;
+	sub?: string | undefined;
 };

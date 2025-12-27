@@ -11,6 +11,7 @@ import { cn } from "@/utils/cn";
 import { iconBtnClass } from "@/components/buttonClasses";
 import { Book } from "@/types";
 import LastReadCard from "./lastReadCard";
+import { parseTitle } from "@/utils/title";
 
 interface LastReadRowProps {
 	data: Book[] | null;
@@ -18,6 +19,7 @@ interface LastReadRowProps {
 	title: string;
 	tagLabel?: string | React.ReactNode;
 	button?: { text: string; href: string };
+	onRemove?: (bookId: number) => void;
 }
 
 export default function LastReadRow({
@@ -25,6 +27,7 @@ export default function LastReadRow({
 	loading,
 	title,
 	tagLabel,
+	onRemove,
 }: LastReadRowProps) {
 	const [pageIndex, setPageIndex] = useState(0);
 	const [itemsPerPage, setItemsPerPage] = useState<number>(2); // mobile-first default
@@ -199,7 +202,7 @@ export default function LastReadRow({
 						const authorNames = (book.authors || [])
 							.map((a) => a?.name)
 							.filter((n): n is string => !!n);
-						const subtitle =
+						const authors =
 							authorNames.length === 0
 								? undefined
 								: authorNames.length === 1
@@ -219,6 +222,8 @@ export default function LastReadRow({
 							.replace(/\s+/g, "-")
 							.replace(/-+/g, "-")}`;
 
+						const { main, sub } = parseTitle(book.title.main);
+
 						return (
 							<div
 								key={`${book.id}-${
@@ -226,11 +231,21 @@ export default function LastReadRow({
 								}`}
 							>
 								<LastReadCard
-									title={book.title}
-									subtitle={subtitle}
+									// title={book.title ? book.title : main}
+									// title={main ? main : "bobobobo"}
+									// title={main}
+									title={
+										book.title.main
+											? main
+											: book.title.toString()
+									}
+									subtitle={sub ? sub : ""}
+									authors={authors}
 									badge={{ text: tagLabel, variant: "pink" }}
 									image={image}
 									href={href}
+									bookId={book.id}
+									onRemove={onRemove}
 								/>
 							</div>
 						);

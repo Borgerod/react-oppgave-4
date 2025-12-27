@@ -1,3 +1,5 @@
+CARD BACKUP 
+
 "use client";
 import React from "react";
 import { cn } from "@/utils/cn";
@@ -5,108 +7,141 @@ import type { Book, Title } from "@/types";
 import Image from "next/image";
 import Rating from "@/components/store/rating";
 import Link from "next/link";
-import MiniProductCard from "./miniCard";
 import { useUpperDownloadCount } from "@/providers/providers";
 import { Tag } from "@/components/filters/tag";
-import FavoriteButton from "@/components/ui/favoriteButton";
-import PlaceholderBookCover from "@/components/ui/PlaceholderBookCover";
-import {
-	formatLinkVars,
-	useFavorite,
-	getAuthorsText,
-	getImageSrc,
-} from "./cardSharedUtils";
-import { IoLibrary } from "react-icons/io5";
-import { FaBook, FaBookOpen, FaBookReader, FaReadme } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
+import { FaRegHeart } from "react-icons/fa6";
+
 type Props = {
 	book: Book;
 	index?: number;
 	upperDownloadCountLimit?: number;
 	mini?: boolean;
 	isFavorite?: boolean;
-	onToggleFavorite?: (book: Book) => void;
-};
-export default function ProductCard({
-	book,
-	upperDownloadCountLimit,
-	mini,
-	isFavorite,
-	onToggleFavorite,
-}: Props) {
+	const title: Title = book.title;
 	const contextUpper = useUpperDownloadCount();
 	const formats = book.formats as Record<string, string> | undefined;
-	const imgSrc = getImageSrc(formats);
+	const imgSrc = formats?.["image/jpeg"] || formats?.["image/jpg"] || "";
 
 	// prefer explicit prop, otherwise fall back to context value, then 1
 	const upperLimit = upperDownloadCountLimit ?? contextUpper ?? 1;
 
 	const download_count = book.download_count;
-
-	// if (mini) {
-	// 	return (
-	// 		<MiniProductCard
-	// 			book={book}
-	// 			upperDownloadCountLimit={upperLimit}
-	// 			isFavorite={isFavorite}
-	// 			onToggleFavorite={onToggleFavorite}
-	// 		/>
-	// 	);
-	// }
-
+	const href = `/book-profile/${book.id}/${formatLinkVars(book.title)}`;
 	// prepare authors as a single formatted string (easier markup, avoids extra spans)
-	const authorsText = getAuthorsText(book);
+	const authorNames = (book.authors || [])
+		.map((a) => a?.name)
+		.filter((n): n is string => typeof n === "string" && n.length > 0);
+	const authorsText =
+		authorNames.length === 0
+			? "unknown"
+			: authorNames.length === 1
+			? authorNames[0]
+			: `${authorNames.slice(0, -1).join("; ")} & ${
+					authorNames[authorNames.length - 1]
+			  }`;
 
 	// local favorite state fallback: if parent doesn't provide handler/prop,
 	// manage favorites in localStorage so heart is always visible and usable.
-	const { localFav, toggle, ariaLabel } = useFavorite(
-		book,
-		isFavorite,
-		onToggleFavorite
+	const [localFav, setLocalFav] = React.useState<boolean>(
+		Boolean(isFavorite)
 	);
 
-	// `book.title` is already normalized to `Title`
-	const title: Title = book.title;
+	React.useEffect(() => {
+		// prefer explicit prop when provided
+		if (typeof isFavorite === "boolean") {
+			setLocalFav(isFavorite);
+			return;
+		}
+		try {
+							src={imgSrc}
+							alt={title.main ?? "cover"}
+				const parsed = JSON.parse(raw) as Book[];
+				setLocalFav(parsed.some((b) => b.id === book.id));
+			} else {
+				setLocalFav(false);
+			}
+		} catch (e) {
+			setLocalFav(false);
+		}
+	}, [book.id, isFavorite]);
+
+	function handleToggle(bookParam: Book) {
+		if (onToggleFavorite) {
+			onToggleFavorite(bookParam);
+			return;
+		}
+		try {
+			const raw = localStorage.getItem("favoriteBooks");
+			const arr: Book[] = raw ? JSON.parse(raw) : [];
+			const idx = arr.findIndex((b) => b.id === bookParam.id);
+			let updated: Book[];
+			if (idx >= 0) {
+				updated = arr.filter((b) => b.id !== bookParam.id);
+			} else {
+				updated = [...arr, bookParam];
+			}
+			localStorage.setItem("favoriteBooks", JSON.stringify(updated));
+			setLocalFav(updated.some((b) => b.id === bookParam.id));
+		} catch (e) {
+			// ignore localStorage errors
+		}
+	}
+
+	function formatLinkVars(prop: string) {
+		return prop
+			.trim()
+			.toLowerCase()
+			.normalize("NFKD")
+			.replace(/[\u0300-\u036f]/g, "")
+			.replace(/[^\w\s-]/g, "")
+			.replace(/\s+/g, "-")
+			.replace(/-+/g, "-");
+	}
+
+	// derive title object with `main` and optional `sub`
+	const titleRaw = book.title ?? "";
+	const titleParts = titleRaw
+		.split(/[:\-–—]/)
+		.map((p) => p.trim())
+		.filter(Boolean);
+	const title: Title = {
+		main: titleParts.length > 0 ? titleParts[0] : titleRaw || "Untitled",
+		sub: titleParts.length > 1 ? titleParts.slice(1).join(" - ") : undefined,
+	};
 
 	return (
 		<Link
 			href={`/book-profile/${book.id}/${formatLinkVars(book.title)}`}
 			className={cn(
-				"relative group bg-container border-edge border rounded-3xl",
+				"bg-container border-edge border rounded-3xl",
 				`${
 					mini
-						? "inline-block sm:flex-none w-auto max-w-full md:max-w-2xl lg:max-w-xs h-auto overflow-visible"
+						? // ? "inline-block sm:flex-none sm:w-80 w-full h-fit min-w-0"
+						  "inline-block sm:flex-none sm:w-80 w-full h-fit min-w-0"
 						: "block h-full w-full sm:w-2xs min-w-0"
 				}`,
-				"hover:bg-container-raised",
+				"hover:bg-container-raised hover:scale-101",
 				"shadow-xl",
-				// "min-w-120",
-				// "min-w-100",
-				"sm:min-w-0",
 				"",
 				""
 			)}
 		>
-			{/* Favorite button placed directly under Link so it is outside the scaled wrapper */}
-			<FavoriteButton
-				book={book}
-				isFavorite={isFavorite}
-				onToggleFavorite={onToggleFavorite}
-				className=""
-			/>
-
-			<div className={cn(`${mini ? "" : "h-full"}`)}>
+			<div
+				className={cn(
+					// "overflow-hidden rounded-3xl",
+					`${mini ? "" : "h-full"}`
+				)}
+			>
 				<div
 					id="content-container"
 					className={cn(
-						"transform transition-transform duration-200 ease-out will-change-transform",
-						"group-hover:scale-101",
-						"flex flex-row gap-3 p-4 h-full sm:flex-col w-full min-h-0",
-						"grid gap-3 p-4 h-full w-full min-h-0",
-						"sm:flex-col",
-						"grid-cols-[auto_1fr] grid-rows-1",
-						// "grid-cols-[1fr_auto] grid-rows-1",
-						"sm:grid-cols-1 sm:grid-rows-[auto_1fr]",
-						"w-full h-full",
+						"relative",
+						`${
+							mini
+								? "flex flex-row gap-3 items-start p-4 h-full"
+								: "flex flex-row gap-3 p-4 h-full sm:flex-col w-full"
+						}`,
 						"",
 						""
 					)}
@@ -114,49 +149,81 @@ export default function ProductCard({
 					{imgSrc ? (
 						<Image
 							src={imgSrc}
-							alt={book.title?.main ?? "cover"}
-							// width={64}
-							// height={96}
-							width={250}
-							height={200}
+							alt={book.title ?? "cover"}
+							width={220}
+							height={330}
 							className={cn(
+								"rounded-xl aspect-2/3",
 								"h-full",
-								"w-full",
-								"object-cover",
-
-								"grid grid-rows-[auto_1fr_auto]",
-								"justify-items-center",
-								"content-start",
-								"max-w-30 sm:max-w-none",
-								"min-h-40 sm:min-h-none",
-								"aspect-2/3",
-								"rounded-xl",
-								"rounded-2xl",
-								"overflow-hidden",
-
+								"min-w-0",
+								"w-30",
 								"",
-								"",
-								""
+								`${
+									mini
+										? // ? "h-30 w-20 object-cover"
+										  "h-full object-cover"
+										: "object-cover sm:h-full sm:w-full sm:object-cover min-w-0"
+								}`
 							)}
+							style={{
+								maxWidth: "100%",
+							}}
 						/>
 					) : (
-						<PlaceholderBookCover
-							title={title}
-							authorsText={authorsText}
+						<div
+							className={cn(
+								`${
+									mini
+										? "w-full rounded-xl aspect-2/3 bg-gray-100"
+										: "w-full rounded-xl aspect-2/3 bg-gray-100"
+								}`
+							)}
 						/>
 					)}
 
+					{/* Favorite button overlay (always visible) */}
+					<button
+						onClick={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							handleToggle(book);
+						}}
+						aria-label={
+							(
+								typeof isFavorite === "boolean"
+									? isFavorite
+									: localFav
+							)
+								? "Remove favorite"
+								: "Add favorite"
+						}
+						className={cn(
+							"absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full z-10",
+							"bg-white/10 text-white",
+							"dark:bg-transparent dark:text-zinc-200",
+							"backdrop-blur-sm",
+							"focus:outline-none",
+							"opacity-100",
+							"cursor-pointer"
+						)}
+					>
+						{(
+							typeof isFavorite === "boolean"
+								? isFavorite
+								: localFav
+						) ? (
+							<FaHeart className="w-4 h-4 text-accent-dark" />
+						) : (
+							<FaRegHeart className="w-4 h-4 text-white/90 dark:text-zinc-200/90" />
+						)}
+					</button>
+
 					<div
-						id="text-container"
 						className={cn(
 							"flex flex-col",
-							`${
-								mini
-									? "flex justify-between gap-4 h-auto sm:flex-col w-full"
-									: "flex justify-between gap-4 h-full sm:flex-col w-full"
-							}`,
+							"flex justify-between gap-4 h-full sm:flex-col w-full",
 							"min-w-0",
-							// "bg-amber-300",
+							"",
 							"",
 							""
 						)}
@@ -165,10 +232,13 @@ export default function ProductCard({
 							className={cn(
 								`${
 									mini
-										? "flex flex-col gap-2 h-auto flex-1 min-w-0 wrap-break-word pr-6"
-										: ""
+										? "flex flex-col gap-2 h-fit min-w-80 max-w-200 text-wrap pr-22"
+										: // ? "flex flex-col gap-2 h-fit min-w-80 max-w-200 text-wrap pr-12"
+										  // ? "flex flex-col gap-2"
+
+										  ""
 								}`,
-								"sm:flex-col",
+								"sm: flex-col",
 								"",
 								""
 							)}
@@ -177,13 +247,10 @@ export default function ProductCard({
 								className={cn(
 									"text-2xl font-extralight text-primary p-0 m-0",
 									"text-2xl font-extralight text-primary p-0 m-0 leading-tight",
-									"leading-none",
-
-									"whitespace-normal wrap-break-word pr-10",
+									"whitespace-normal break-words pr-10",
 									`${
-										mini
-											? "text-xs leading-tight pr-0 wrap-break-word"
-											: ""
+										mini ? "text-xs leading-tight pr-0" : ""
+										// mini ? "text-xs leading-tight pr-10" : ""
 									}`
 								)}
 							>
@@ -192,10 +259,6 @@ export default function ProductCard({
 									<span
 										className={cn(
 											"text-sm italic font-thin text-secondary ml-2 align-baseline leading-[0.75]",
-											"leading-none",
-											"",
-											"",
-											"",
 											`${mini ? "text-xs ml-1" : ""}`
 										)}
 									>
@@ -217,11 +280,7 @@ export default function ProductCard({
 								<span
 									title={authorsText}
 									className={cn(
-										`${
-											mini
-												? "wrap-break-word max-w-[120px] pr-10"
-												: ""
-										}`
+										`${mini ? "break-words max-w-40" : ""}`
 									)}
 								>
 									{authorsText}
@@ -229,7 +288,7 @@ export default function ProductCard({
 							</p>
 							<div
 								className={cn(
-									// "mt-auto",
+									"mt-auto",
 									`${mini ? "visible" : "hidden"}`,
 									"",
 									""
@@ -320,34 +379,10 @@ export default function ProductCard({
 									"sm:h-full",
 									`${mini ? "hidden" : ""}`,
 									"",
-									"",
-									"",
 									""
 								)}
 							>
-								{/* Read more */}
-								{/* <FaReadme /> */}
-								{/* <FaBookReader /> */}
-								<FaBookOpen
-									className={cn(
-										"inline-block",
-										"min-[450px]:hidden",
-										"w-4",
-										"h-4",
-										""
-									)}
-								/>
-								<span
-									className={cn(
-										"hidden",
-										"min-[450px]:inline-block",
-										"ml-2",
-										"align-middle",
-										""
-									)}
-								>
-									Read more
-								</span>
+								Read more
 							</button>
 						</div>
 						{/* TODO: check the versions maybe someone are kindle frieldy or not */}

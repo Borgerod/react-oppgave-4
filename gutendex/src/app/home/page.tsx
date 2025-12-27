@@ -12,7 +12,7 @@ import React, { useEffect, useState } from "react";
 import { useHomeCache } from "@/providers/providers";
 import { FaHeart } from "react-icons/fa6";
 // import { FaRegHeart } from "react-icons/fa6";
-import { getLastRead } from "@/utils/lastRead";
+import { getLastRead, removeLastRead } from "@/utils/lastRead";
 import LastReadRow from "@/components/ui/lastReadRow";
 import { cn } from "@/utils/cn";
 
@@ -246,6 +246,14 @@ export default function Home({}: HomeProps) {
 						tagLabel={"continue"}
 						// onToggleFavorite={toggleFavorite}
 						// favoriteIds={favoriteIds}
+						onRemove={(bookId) => {
+							removeLastRead(bookId);
+							setLastReadData((prev) =>
+								prev
+									? prev.filter((b) => b.id !== bookId)
+									: null
+							);
+						}}
 					/>
 				</div>
 			</div>

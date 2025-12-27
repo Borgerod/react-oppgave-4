@@ -400,7 +400,6 @@ export default function Filter({
 		}
 		// No topics/formats/languages/copyright/year params -> cleared
 		router.push(`/store?${params.toString()}`);
-		onClose?.();
 	};
 
 	// Non-destructive runtime portal: move existing #form-container into a
@@ -450,7 +449,7 @@ export default function Filter({
 		document.body.style.overflow = "hidden";
 
 		// Drag-to-close on handlebar
-		const handlebar = document.getElementById("handle-bar");
+		const handlebar = document.getElementById("divier handle");
 		let dragStartY = 0;
 		let dragStartTime = 0;
 		let isDragging = false;
@@ -534,23 +533,6 @@ export default function Filter({
 		};
 		document.addEventListener("keydown", onKey);
 
-		// Click outside to close (for mobile portal)
-		const onClickOutside = (e: MouseEvent) => {
-			if (!el.contains(e.target as Node)) {
-				if (hasFilterChanges()) {
-					const form = document.getElementById(
-						"filter"
-					) as HTMLFormElement | null;
-					if (form) form.submit();
-				} else {
-					revertFiltersToApplied();
-				}
-				setOverlayOpen(false);
-				onClose?.();
-			}
-		};
-		document.addEventListener("mousedown", onClickOutside);
-
 		return () => {
 			if (handlebar) {
 				handlebar.removeEventListener("pointerdown", onPointerDown);
@@ -560,7 +542,6 @@ export default function Filter({
 			document.removeEventListener("pointermove", onPointerMove);
 			document.removeEventListener("pointerup", onPointerUp);
 			document.removeEventListener("keydown", onKey);
-			document.removeEventListener("mousedown", onClickOutside);
 			document.body.style.overflow = prevOverflow;
 
 			// move element back to its original location to avoid leaving DOM mutated
@@ -582,25 +563,6 @@ export default function Filter({
 		revertFiltersToApplied,
 		onClose,
 	]);
-
-	// Click outside to close for non-mobile mode
-	useEffect(() => {
-		if (typeof window === "undefined" || isMobile) return;
-
-		const el = document.getElementById("form-container");
-		if (!el) return;
-
-		const onClickOutside = (e: MouseEvent) => {
-			if (!el.contains(e.target as Node)) {
-				onClose?.();
-			}
-		};
-
-		document.addEventListener("mousedown", onClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", onClickOutside);
-		};
-	}, [isMobile, onClose]);
 
 	const filterContent = (
 		// <Form
@@ -641,6 +603,7 @@ export default function Filter({
 		// 		""
 		// 	)}
 		// >
+
 		<div
 			id="form-container"
 			className={cn(
@@ -660,57 +623,272 @@ export default function Filter({
 							"fixed",
 							"bottom-0 left-0",
 							// "h-180",
-							"h-full",
-							"max-h-250",
-							"",
 							"z-999",
 							"rounded-t-3xl",
 							"shadow-xl",
 							"bg-container-solid",
-							"p-0 pt-0 lg:px-10",
-							"pb-25",
-							// "overflow-y-auto",
-
-							//
+							"p-0 pt-0 lg:px-0",
 							!overlayOpen && "hidden"
 					  )
 					: cn(
+							// "relative",
+							// "bg-container",
+							// "shadow-xl",
+							// "rounded-2xl",
+							// "rounded-3xl",
+							// "p-5",
+							// "mt-5",
+
+							//* OPTION 2
 							"relative",
 							"absolute",
+							"top-25",
+							// "right-60",
+
+							"w-screen",
+							// "w-full",
 							"z-30",
-							"top-20",
 							"bg-container-solid",
-							"shadow-3xl",
+							// "bg-container",
+							// "shadow-xl",
+							// "rounded-2xl",
 							"rounded-3xl",
-							"p-5",
-							"mt-5"
+							"",
+							"-ml-10",
+							"max-w-7xl",
+							// "w-2000",
+							// "overflow-visible",
+							// "p-5",
+							// "mt-5",
+							// "w-dvh",
+							// "bg-container-lowered/30",
+							""
 					  ),
-				"shadow-md",
-				"shadow-2xl",
-				"rounded-3xl",
+				// "shadow-md",
+				// "shadow-2xl",
+				// "bg-container-raised",
 				// "shadow-none",
 				// "bg-amber-400",
-
+				// "bg-container",
 				"",
 				""
 			)}
 		>
-			<div id="handle-bar-container" className={cn("w-full", "")}>
+			{/* <div
+				id="arrow ALT_1"
+				className={cn(
+					"absolute",
+					"relative",
+					"fixed",
+					"top-20",
+					"right-95",
+					"right-92.5",
+					"right-90.5",
+
+					"z-99",
+					"size-15",
+					"rotate-45",
+
+					"bg-container-solid",
+					"",
+					""
+				)}
+			></div> */}
+			{/* <div
+				id="arrow ALT_1"
+				className={cn(
+					"fixed",
+					"absolute",
+					"top-15",
+					"right-90.5",
+					"absolute",
+					"-top-15",
+					"-top-12.5",
+					"-top-10",
+					"right-69.5",
+					// "-z-99",
+					// "z-0",
+					"size-15",
+					"size-10",
+					// "rotate-45",
+					"bg-container-solid",
+					"bg-amber-300",
+					"grid grid-cols-2 grid-rows-2",
+					// "grid grid-cols-2",
+					"justify-items-center",
+					"justify-between",
+					"items-center",
+					"",
+					""
+				)}
+			>
 				<div
-					id="handle-bar"
+					id="mask circle"
 					className={cn(
-						"w-15 h-1 rounded-2xl",
-						"bg-container-lowered",
-						"bg-edge-dark",
-						"justify-self-center self-start my-5",
-						"touch-none",
-						"py-3",
-						"py-2",
-						"px-5",
-						"cursor-grab",
-						!isMobile && "hidden",
+						"relative",
+						// "right-3",
+						// "right-4",
+						"bottom-3",
+						"rounded-full",
+						// "size-15",
+						"size-12",
+						// "mask-alpha",
+						"col-start-1 col-span-2",
+						"row-start-1 row-span-1",
+						"bg-container-raised",
+						// "bg-red-500",
+						"z-0",
 						"",
 						""
+					)}
+				></div>
+				<div
+					id="mask circle"
+					className={cn(
+						"relative",
+						"right-3",
+						"right-4",
+						"right-5",
+						"rounded-full",
+						"size-15",
+						"size-10",
+						// "mask-alpha",
+						"bg-red-500",
+						"bg-background",
+						"z-0",
+						"",
+						""
+					)}
+				></div>
+				<div
+					id="mask circle"
+					className={cn(
+						"relative",
+						"left-3",
+						"left-4",
+						"rounded-full",
+						"size-15",
+						"size-10",
+						// "mask-alpha",
+						"bg-red-500",
+						"bg-background",
+						"z-0",
+						"",
+						""
+					)}
+				></div>
+			</div> */}
+			<div
+				id="arrow ALT_1"
+				className={cn(
+					"fixed",
+					"absolute",
+					"top-15",
+					"right-90.5",
+					"absolute",
+					"-top-15",
+					"-top-12.5",
+					"-top-10",
+					"-top-20",
+					"right-69.5",
+					"right-67",
+					// "-z-99",
+
+					// "bg-amber-300",
+					// "grid grid-cols-2 grid-rows-2",
+					// "grid grid-cols-[1fr_2fr_1fr] grid-rows-2",
+					// "grid grid-cols-[1fr_1fr_1fr] grid-rows-2",
+					"grid grid-cols-[1fr_auto_1fr] grid-rows-2",
+					// "grid grid-cols-2",
+					"justify-items-center",
+					// "justify-between",
+					"gap-0",
+					"w-fit",
+					"items-end",
+					"",
+					""
+				)}
+			>
+				<div
+					className={cn(
+						// "col-start-2",
+						// "row-span-2",
+						"col-start-2 col-span-1",
+
+						"row-start-1 row-span-2 ",
+
+						"rounded-t-full",
+						// "z-0",
+						// "size-10",
+						// "-mr-1",
+						// "m-1",
+						"h-30 w-15 ",
+						"h-30 w-20 ",
+						// "rotate-45",
+						"bg-container-solid",
+						"",
+						""
+					)}
+				></div>
+				<div
+					className={cn(
+						"col-start-1 col-span-3",
+						"row-start-2 row-span-1",
+						// "rounded-bl-3xl",
+						// "z-0",
+						// "size-15",
+						"w-30 h-15",
+						// "rotate-45",
+						// "w-full",
+						"bg-container-solid",
+						// "bg-red-800",
+						"",
+						""
+					)}
+				></div>
+				<div
+					className={cn(
+						"col-start-1 col-span-1",
+						// "row-span-1 row-start-2",
+						"row-start-2 row-span-1 ",
+						"rounded-br-3xl",
+						// "z-0",
+						"size-15",
+						// "h-40 w-15 ",
+						// "rotate-45",
+						"bg-background",
+						// "bg-red-300",
+						"",
+						""
+					)}
+				></div>
+				<div
+					className={cn(
+						"col-start-3 col-span-1",
+
+						"row-start-2 row-span-1 ",
+						"rounded-bl-3xl",
+						// "z-0",
+						"size-15",
+						// "h-40 w-15 ",
+						// "rotate-45",
+						"bg-background",
+						// "bg-red-300",
+						"",
+						""
+					)}
+				></div>
+			</div>
+			<div id="divier handle container" className="w-full">
+				<div
+					id="divier handle"
+					className={cn(
+						"w-10 h-1 rounded-2xl",
+						"bg-container-lowered",
+						"bg-divider",
+						"bg-edge-dark",
+						"justify-self-center self-start my-5",
+						!isMobile && "hidden"
 					)}
 				/>
 			</div>
@@ -780,8 +958,6 @@ export default function Filter({
 						"flex sm:hidden",
 						"col-start-3 justify-self-end",
 						"text-nowrap rounded-full w-full sm:w-fit px-6 py-1 transition-colors",
-						// "border border-secondary text-secondary",
-						// "hover:border-accent-dark hover:text-accent-dark",
 						"border border-secondary text-secondary",
 						"hover:border-accent-dark hover:text-accent-dark",
 						"w-fit",
@@ -790,9 +966,6 @@ export default function Filter({
 						`${textBtnClass}`,
 						`${secondaryBtnClass}`,
 						`${compressedBtnClass}`,
-
-						"hover:border-red-500 hover:text-red-500",
-						"active:border-red-500 active:text-red-500",
 						"",
 						"",
 						"",
@@ -809,7 +982,7 @@ export default function Filter({
 				action="/store"
 				className={cn(
 					"w-full",
-					// "grid grid-cols-1 md:grid-cols-2 gap-4",
+					"grid grid-cols-1 md:grid-cols-2 gap-4",
 					"items-start",
 					"justify-between ",
 					// "items-center gap-0 max-w-6xl mx-auto  py-0 px-5 lg:px-10 lg:max-w-7xl",
@@ -828,12 +1001,8 @@ export default function Filter({
 					"p-5",
 					"pt-0",
 					"sm:pt-0",
-					// "pb-25",
-					"pb-10",
-					"sm:pb-0",
-					"sm:mb-0",
-
-					//
+					"pb-25",
+					"sm:pb-5",
 					// "max-w-6xl ",
 					// "lg:max-w-7xl",
 					// "mx-auto",
@@ -870,7 +1039,6 @@ export default function Filter({
 					// "bg-red-400",
 					"",
 					"gap-5",
-
 					// "items-start!",
 					"",
 					""
@@ -926,11 +1094,8 @@ export default function Filter({
 						"mt-0",
 						// "py-5",
 						"sm:mt-0",
-						"lg:h-fit",
 						// "border-t border-divider",
 						// "border-b border-edge-dark",
-						"mb-5",
-						"",
 						"",
 						""
 					)}
@@ -951,6 +1116,21 @@ export default function Filter({
 						getItemId={(topic, index) => `topic-${index}-${topic}`}
 					/>
 					<FilterInput
+						label="Format"
+						value={formatQuery}
+						onChange={setFormatQuery}
+						placeholder="Search formats..."
+						items={allFormats}
+						selectedItems={selectedFormats}
+						onToggleItem={(fmt) =>
+							setSelectedFormats((s) => ({
+								...s,
+								[fmt]: !s[fmt],
+							}))
+						}
+						getItemId={(fmt, index) => `format-${index}-${fmt}`}
+					/>
+					<FilterInput
 						label="Languages"
 						value={languageQuery}
 						onChange={setLanguageQuery}
@@ -966,21 +1146,6 @@ export default function Filter({
 						getItemId={(language, index) =>
 							`language-${index}-${language}`
 						}
-					/>
-					<FilterInput
-						label="Format"
-						value={formatQuery}
-						onChange={setFormatQuery}
-						placeholder="Search formats..."
-						items={allFormats}
-						selectedItems={selectedFormats}
-						onToggleItem={(fmt) =>
-							setSelectedFormats((s) => ({
-								...s,
-								[fmt]: !s[fmt],
-							}))
-						}
-						getItemId={(fmt, index) => `format-${index}-${fmt}`}
 					/>
 
 					<div
@@ -999,7 +1164,6 @@ export default function Filter({
 							"mt-0",
 							"sm:py-0",
 							"items-baseline",
-
 							"",
 							""
 						)}
@@ -1046,18 +1210,13 @@ export default function Filter({
 						"w-full",
 						"bg-container-solid p-5",
 						"fixed",
-						// "sm:relative",
 						"bottom-0 left-0 right-0",
 						//  *new stuff
 						"col-span-full",
 						"",
 						"",
-						// "absolute",
-						"bottom-10",
-						"sm:bottom-0",
 						// SX
 						"sx:col-span-2 sx:mr-auto",
-						"sx:bottom-0",
 
 						// SM
 						"sm:w-full",
@@ -1083,8 +1242,6 @@ export default function Filter({
 							textBtnClass,
 							secondaryBtnClass,
 							// compressedBtnClass,
-							"border border-divider text-secondary",
-							"hover:border-red-500 hover:text-red-500",
 							"hidden sm:flex",
 							"",
 							""
@@ -1095,22 +1252,6 @@ export default function Filter({
 					</button>
 					<button
 						type="submit"
-						onClick={() => {
-							const form = document.getElementById(
-								"filter"
-							) as HTMLFormElement | null;
-							if (form) {
-								if (
-									typeof (form as any).requestSubmit ===
-									"function"
-								) {
-									(form as any).requestSubmit();
-								} else {
-									form.submit();
-								}
-							}
-							onClose?.();
-						}}
 						className={cn(
 							"text-nowrap rounded-full w-full",
 							"sm:w-fit",

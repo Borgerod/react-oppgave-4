@@ -39,3 +39,32 @@ export const secondaryBtnClass = cn(
 	"",
 	""
 );
+
+export const toggleButtoncls = cn(
+	"fixed right-5 bottom-5 z-50",
+	//
+	"hover:scale-105 ",
+	"hover:bg-container-inv/90",
+	"hover:text-secondary",
+	"hover:text-primary-inv/90",
+	"hover:shadow",
+	"hover:border",
+	"hover:border-x-edge",
+	"hover:border-t-edge-highlight",
+	"hover:border-b-edge-dark",
+	//
+	"active:scale-105",
+	"active:bg-container-inv/90",
+	"active:text-secondary",
+	"active:text-primary-inv/90",
+	"active:shadow",
+	"active:border",
+	"active:border-x-edge",
+	"active:border-t-edge-highlight",
+	"active:border-b-edge-dark",
+	//
+	"dark:bg-container-inv dark:text-primary-inv",
+	"bg-container-inv text-primary-inv",
+	"",
+	""
+);

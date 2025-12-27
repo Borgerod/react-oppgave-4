@@ -8,24 +8,35 @@ import StoreHeader from "@/components/layout/header";
 import getTopicsServer from "@/utils/getTopicsServer";
 import { readTopicsCache, isCacheValid } from "@/utils/topicsCache";
 
-/* TODO [ ]: Add stylized frontpage;
-			- add popular pics section
- 			- add bookshelf section (kategories)
- 			- add subjects section (kategories)
-? 			- add previous reads / downloads
-			- add add hot / trending (newcommers with many downloads)(algorithm - popular / newest)
-?			- add highlighted Authors grid
-			- add 
-*/
-// TODO [ ]: mini-productcard is broken and needs fixing.
-// TODO [ ]: book profile layout is broken (again), need fixing (again).
-// TODO [ ]: organize components
-// TODO [ ]: cleanup tailwind, remove unused components etc
-// TODO [ ]: make default book cover using logo, the current one looks bad.
-// TODO [ ]: make 'your favorites' show empty when there is no favorites.
-// TODO [ ]:
 // ! NOTE: the API is not working correctly; cannot combine topics in search.
 // ? Suggestion: do a fetch for all the different topics, and then make own algorithm to sort the items contain all topics.
+/* // TODO [ ]: Add stylized frontpage;
+			-[x] add popular pics section
+ 			-[x] add bookshelf section (kategories)
+ 			-[x] add subjects section (kategories)
+? 			-[x] add previous reads / downloads
+			-[ ] add add hot / trending (newcommers with many downloads)(algorithm - popular / newest)
+?			-[x] add highlighted Authors grid
+			-[ ] add 
+*/
+// TODO [x]: mini-productcard is broken and needs fixing.
+// TODO [x]: book profile layout is broken (again), need fixing (again).
+// TODO [x]: organize components
+// TODO [ ]: cleanup tailwind, remove unused components etcs
+// TODO [x]: make default book cover using logo, the current one looks bad.
+// TODO [ ]: make 'your favorites' show empty when there is no favorites.
+// TODO [ ]: fix popular authors; layout is shifting, image is expanding too much.
+// TODO [ ]: look up tailwind group function -> apply to lastread cards
+// TODO [ ]: /store filter tags have bad layout
+// TODO [ ]: productcards fav-button has bad layout
+// TODO [ ]: /home fav-icon has also bad layout
+// TODO [ ]: highlight cards needs the default image.
+// TODO [ ]: popularauthercard download counter is too big in md or something
+// TODO [ ]: Fix grid layout for lastreadcards
+// TODO [ ]: bookshelved has a weird scale-up, fix that.
+// TODO [ ]: filter md and lg has bad layout. extra padding
+// TODO [ ]: lastread cards closeicon will also open the book profile. bad
+// TODO [ ]: opening book profile adds the book to last read, not actully reading as it should.
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -118,7 +129,8 @@ export default async function RootLayout({
 					"",
 					"",
 					""
-				)}>
+				)}
+			>
 				<Providers>
 					{/* keep centered constraints here instead of on body */}
 					<div className="">

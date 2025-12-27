@@ -25,3 +25,14 @@ export function getLastRead(): Book[] {
 		return [];
 	}
 }
+
+export function removeLastRead(bookId: number) {
+	try {
+		const raw = localStorage.getItem(KEY);
+		const list: Entry[] = raw ? JSON.parse(raw) : [];
+		const filtered = list.filter((e) => e.id !== bookId);
+		localStorage.setItem(KEY, JSON.stringify(filtered));
+	} catch (e) {
+		console.error("removeLastRead error", e);
+	}
+}
