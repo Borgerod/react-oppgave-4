@@ -1,8 +1,0 @@
-{
-	"scripts": {
-		"lhci:healthcheck": "lhci healthcheck --config=./lighthouserc.js",
-		"lhci:collect": "lhci collect --config=./lighthouserc.js",
-		"lhci:assert": "lhci assert --config=./lighthouserc.js",
-		"lhci": "lhci autorun --config=./lighthouserc.js"
-	}
-}
