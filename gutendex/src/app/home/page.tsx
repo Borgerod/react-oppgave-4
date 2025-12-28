@@ -1,18 +1,14 @@
 "use client";
 import BookShelf from "@/components/ui/BookShelf";
-// import BookShelf_v2 from "@/components/ui/Bookshelf_v2";
-// import BookShelf_v3 from "@/components/ui//BookShelf_v3";
 import BookShelf_v4 from "@/components/ui/Bookshelf_v4";
 import Highlights from "@/components/ui/highlights";
 import PopularAuthorsGrid from "@/components/ui/PopularAuthorsGrid";
 import SubjectGrid from "@/components/ui/SubjectGrid";
 import { Suspense } from "react";
-// import SubjectAuthorsGrid from "@/components/ui/SubjectGrid";
 import { Book, BooksResponse } from "@/types";
 import React, { useEffect, useState } from "react";
 import { useHomeCache } from "@/providers/providers";
 import { FaHeart } from "react-icons/fa6";
-// import { FaRegHeart } from "react-icons/fa6";
 import { getLastRead, removeLastRead } from "@/utils/lastRead";
 import LastReadRow from "@/components/ui/lastReadRow";
 import { cn } from "@/utils/cn";
@@ -20,7 +16,6 @@ import { cn } from "@/utils/cn";
 type HomeProps = Record<string, never>;
 
 export default function Home({}: HomeProps) {
-	const [data, setData] = useState<BooksResponse | null>(null);
 	const [previewData, setPreviewData] = useState<Book[] | null>(null);
 	const [newBooksData, setNewBooksData] = useState<Book[] | null>(null);
 	const [favBooksData, setFavBooksData] = useState<Book[] | null>(null);
@@ -36,16 +31,13 @@ export default function Home({}: HomeProps) {
 			if (cache.favBooksData) setFavBooksData(cache.favBooksData || null);
 		}
 		// only run once on mount
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [cache, setCache]);
 	useEffect(() => {
 		const list = getLastRead();
 		setLastReadData(list.length ? list : null);
 	}, []);
 	// GET POPULAR BOOKS
 	useEffect(() => {
-		let mounted = true;
-
 		async function load() {
 			// skip load if we already have previewData cached
 			if (cache && cache.previewData) return;
@@ -57,7 +49,7 @@ export default function Home({}: HomeProps) {
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const json = (await res.json()) as BooksResponse;
 				const preview = json.results.slice(0, 6);
-				if (mounted) setData(json);
+				// if (mounted) setData(json);
 				setPreviewData(preview);
 				setCache({
 					...(cache || {}),
@@ -70,16 +62,10 @@ export default function Home({}: HomeProps) {
 		}
 
 		load();
-
-		return () => {
-			mounted = false;
-		};
-	}, []);
+	}, [cache, setCache]);
 
 	// GET NEW BOOKS
 	useEffect(() => {
-		let mounted = true;
-
 		async function load() {
 			// skip load if we already have newBooksData cached
 			if (cache && cache.newBooksData) return;
@@ -96,7 +82,6 @@ export default function Home({}: HomeProps) {
 				const newBooks = json.results.slice(0, 4);
 				// const newBooks = json.results.slice(0, 3);
 				// const newBooks = json.results.slice(0, 2);
-				if (mounted) setData(json);
 				setNewBooksData(newBooks);
 				setCache({
 					...(cache || {}),
@@ -110,10 +95,8 @@ export default function Home({}: HomeProps) {
 
 		load();
 
-		return () => {
-			mounted = false;
-		};
-	}, []);
+		// No cleanup needed
+	}, [cache, setCache]);
 
 	// GET FAVs (TEMP)
 	useEffect(() => {
@@ -128,6 +111,7 @@ export default function Home({}: HomeProps) {
 			} catch (e) {
 				setFavoriteBooks(null);
 				setFavBooksData(null);
+				console.log(e);
 			}
 		} else {
 			setFavoriteBooks(null);
@@ -173,8 +157,6 @@ export default function Home({}: HomeProps) {
 				"",
 				""
 			)}>
-			{/* > NEW, TEST */}
-			{/* <div className="w-full row-start-1 col-start-1 col-span-2 mt-15 mb-15"> */}
 			<div
 				className={cn(
 					"relative",

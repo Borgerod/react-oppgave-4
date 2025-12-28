@@ -61,6 +61,16 @@ export default function LastReadCard({
 					"transition-cpu",
 					"transform-cpu",
 					"transition-transform transform-gpu",
+					"bg-container-raised",
+					"pb-2",
+					// "min-w-20",
+					// "max-w-40",
+					"sm:w-50",
+					"w-full",
+					"max-w-50",
+					// "sm:max-w-none",
+					"",
+					"",
 
 					""
 				)}>
@@ -182,7 +192,18 @@ export default function LastReadCard({
 						"rounded-xl ",
 						"rounded-2xl ",
 						"rounded-3xl ",
-						"h-full w-full",
+						"h-full",
+						"w-full",
+						// -----
+						// "h-fit",
+						// "h-full",
+						// "sm:h-full",
+						// "sm:w-full",
+						// "w-full",
+						// "w-fit",
+						// -----
+						// "max-h-50",
+						// "max-w-50",
 						"aspect-square",
 						"object-cover",
 						"row-start-1 col-start-1",
@@ -198,22 +219,46 @@ export default function LastReadCard({
 						"w-full h-full",
 						"row-start-2 col-start-1",
 						"z-2",
-						"p-1",
+						// "p-1",
+						// "p-2",
 						"px-3",
-						"overflow-hidden wrap-break-word",
+						"overflow-hidden",
+						"wrap-break-word",
 						"transition-transform transform-gpu",
-
+						"",
 						""
 					)}>
-					<h3 className="text-primary text-sm font-bold leading-none mb-1 pr-3 transition-transform transform-gpu">
+					{/* <h3 className="text-primary text-sm font-bold leading-none mb-1 pr-3 transition-transform transform-gpu"> */}
+					<h3
+						className={cn(
+							"text-primary text-sm font-bold leading-none mb-1 pr-3",
+							"transition-transform transform-gpu",
+							"line-clamp-2",
+							"",
+							""
+						)}>
 						{title}
 					</h3>
-					<p className="text-secondary text-xs font-medium tracking-wide leading-none italic transition-transform transform-gpu">
+					<p
+						className={cn(
+							"text-secondary text-xs font-medium tracking-wide leading-none italic",
+							"transition-transform transform-gpu",
+							"line-clamp-1",
+							"",
+							""
+						)}>
 						{subtitle}
 					</p>
 					{/* <p className="text-primary/80 text-[11px] font-medium tracking-wide"> */}
 					{/* <p className="text-primary/80 text-base font-medium tracking-wide overflow-hidden wrap-break-word"> */}
-					<p className="text-secondary text-xs font-medium tracking-wide overflow-hidden wrap-break-word transition-transform transform-gpu">
+					<p
+						className={cn(
+							"text-secondary text-xs font-medium tracking-wide overflow-hidden wrap-break-word",
+							"transition-transform transform-gpu",
+							"line-clamp-1",
+							"",
+							""
+						)}>
 						{authors}
 					</p>
 				</div>

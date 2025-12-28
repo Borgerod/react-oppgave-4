@@ -192,6 +192,7 @@ export default function LastReadRow({
 						// // "h-72 md:h-72 overflow-visible"
 						"h-fit ",
 						"md:px-15",
+
 						"",
 						""
 					)}>
@@ -262,14 +263,14 @@ export default function LastReadRow({
 						"grid-cols-[auto_auto]",
 						"grid-rows-1",
 						"items-center",
-						"md:translate-y-2.5",
+						// "md:translate-y-2.5",
 						// "justify-items-start",
 						"justify-between",
 						"",
 						""
 					)}>
 					{/* Prev */}
-					{totalItems > itemsPerPage ? (
+					{totalItems > 1 ? (
 						<button
 							onClick={goPrev}
 							disabled={pageIndex === 0}
@@ -292,7 +293,7 @@ export default function LastReadRow({
 					) : null}
 
 					{/* Next */}
-					{totalItems > itemsPerPage ? (
+					{totalItems > 1 ? (
 						<button
 							onClick={goNext}
 							disabled={pageIndex >= maxPage}

@@ -30,8 +30,11 @@
 	--foreground: #f1f5f9;
 	--container: oklab(21.612% 0.00342 0.00506);
 	--container: oklab(25% -0.00037 0.00116);
+	/* --container: oklab(27% -0.00037 0.00116); */
+	/* --container: oklab(30% -0.00037 0.00116); */
 	/* --container: oklab(25% 0.00412 0.00335); */
 	--container-inv: #ffffff;
+	/* --container-inv: oklab(75% -0.00037 0.00116); */
 
 	/* --accent: #c086ea;
 	--accent: #dcb6f7; */

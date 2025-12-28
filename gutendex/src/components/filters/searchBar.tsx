@@ -17,8 +17,7 @@ const SearchIcon = () => (
 			"hover:bg-foreground/10",
 			"",
 			""
-		)}
-	>
+		)}>
 		<IoSearch className={cn("pointer-events-none")} />
 	</div>
 );
@@ -82,8 +81,7 @@ export default function SearchBar({
 
 				"",
 				""
-			)}
-		>
+			)}>
 			<div
 				className={cn(
 					"flex flex-row items-center",
@@ -105,8 +103,7 @@ export default function SearchBar({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				<SearchIcon />
 				<input
 					name="q"
