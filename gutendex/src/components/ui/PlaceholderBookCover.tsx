@@ -6,7 +6,8 @@ type Props = {
 	authorsText?: string;
 };
 
-export default function PlaceholderBookCover({ title, authorsText }: Props) {
+export default function PlaceholderBookCover({ title }: Props) {
+	// export default function PlaceholderBookCover({ title, authorsText }: Props) {
 	return (
 		<div
 			className={cn(
@@ -26,8 +27,7 @@ export default function PlaceholderBookCover({ title, authorsText }: Props) {
 				"overflow-hidden",
 				"",
 				""
-			)}
-		>
+			)}>
 			<Image
 				id="logo"
 				src="/gutendex_short_dark.png"
@@ -63,8 +63,7 @@ export default function PlaceholderBookCover({ title, authorsText }: Props) {
 					"px-1",
 					"",
 					""
-				)}
-			>
+				)}>
 				<span
 					className={cn(
 						"text-[clamp(0.5rem,3vw,1rem)]",
@@ -82,8 +81,7 @@ export default function PlaceholderBookCover({ title, authorsText }: Props) {
 						"w-full",
 						"",
 						""
-					)}
-				>
+					)}>
 					{title?.main}
 				</span>
 				<span
@@ -97,8 +95,7 @@ export default function PlaceholderBookCover({ title, authorsText }: Props) {
 						"sm:block",
 						"",
 						""
-					)}
-				>
+					)}>
 					{title?.sub}
 				</span>
 			</div>

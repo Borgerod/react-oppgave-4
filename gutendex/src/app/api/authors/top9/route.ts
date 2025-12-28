@@ -1,98 +1,188 @@
 import { promises as fs } from "fs";
 import path from "path";
 
-// Simple in-memory cache for image lookups during dev/runtime
+// Disk-backed cache for image lookups
 const imageCache: Map<string, string | null> = new Map();
+const IMAGE_CACHE_PATH = path.join(
+	process.cwd(),
+	"src",
+	"temp_scraper",
+	"author_image_cache.json"
+);
 
-function fileNameFromAuthor(author: string) {
-	let s = String(author || "").trim();
-	s = s.replace(/\s+/g, " ");
-	if (s.includes(",")) {
-		const parts = s
-			.split(",")
-			.map((p) => p.trim())
-			.filter(Boolean);
-		if (parts.length >= 2) {
-			const last = parts[0];
-			const rest = parts.slice(1).join(" ");
-			s = `${rest} ${last}`.trim();
+// Load cache from disk on startup
+async function loadImageCacheFromDisk() {
+	try {
+		const data = await fs.readFile(IMAGE_CACHE_PATH, "utf8");
+		const obj = JSON.parse(data);
+		for (const [k, v] of Object.entries(obj)) {
+			imageCache.set(k, v as string | null);
 		}
-	}
-	return s.replace(/[.,]/g, "").replace(/\s+/g, "_");
+	} catch {}
 }
 
+// Write cache to disk
+async function writeImageCacheToDisk() {
+	try {
+		const obj: Record<string, string | null> = {};
+		for (const [k, v] of imageCache.entries()) {
+			obj[k] = v;
+		}
+		await fs.writeFile(
+			IMAGE_CACHE_PATH,
+			JSON.stringify(obj, null, 2),
+			"utf8"
+		);
+	} catch {}
+}
+
+// Ensure cache is loaded at module load
+let imageCacheLoaded = false;
+async function ensureImageCacheLoaded() {
+	if (!imageCacheLoaded) {
+		await loadImageCacheFromDisk();
+		imageCacheLoaded = true;
+	}
+}
+
+// function fileNameFromAuthor(author: string) {
+// 	let s = String(author || "").trim();
+// 	s = s.replace(/\s+/g, " ");
+// 	if (s.includes(",")) {
+// 		const parts = s
+// 			.split(",")
+// 			.map((p) => p.trim())
+// 			.filter(Boolean);
+// 		if (parts.length >= 2) {
+// 			const last = parts[0];
+// 			const rest = parts.slice(1).join(" ");
+// 			s = `${rest} ${last}`.trim();
+// 		}
+// 	}
+// 	return s.replace(/[.,]/g, "").replace(/\s+/g, "_");
+// }
+
 async function fetchWikimediaImage(author: string): Promise<string | null> {
+	await ensureImageCacheLoaded();
 	if (imageCache.has(author)) return imageCache.get(author) ?? null;
 	try {
-		// 1) search for an author page
-		const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
-			author
-		)}&format=json`;
-		const sres = await fetch(searchUrl);
-		if (!sres.ok) {
-			imageCache.set(author, null);
-			return null;
-		}
-		const sjson = await sres.json();
-		const first = sjson?.query?.search?.[0];
-		let pageTitle = first?.title;
-		if (!pageTitle) {
-			pageTitle = `File:${fileNameFromAuthor(author)}`;
-		}
+		// Try both the original and apostrophe variant for best match
+		const searchVariants = [author, author + "'"];
+		for (const variant of searchVariants) {
+			// 1. Search for the best Wikipedia page title
+			const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+				variant
+			)}&format=json`;
+			const sres = await fetch(searchUrl);
+			if (!sres.ok) continue;
+			const sjson = await sres.json();
+			const first = sjson?.query?.search?.[0];
+			const pageTitle = first?.title;
+			if (!pageTitle) continue;
 
-		// 2) request page images (thumbnail/original)
-		const infoUrl = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(
-			pageTitle
-		)}&prop=pageimages|images&piprop=original|thumbnail&pithumbsize=300&format=json`;
-		const ires = await fetch(infoUrl);
-		if (!ires.ok) {
-			imageCache.set(author, null);
-			return null;
-		}
-		const ijson = await ires.json();
-		const pages = ijson?.query?.pages;
-		if (!pages) {
-			imageCache.set(author, null);
-			return null;
-		}
-		const page = Object.values(pages)[0] as any;
-		const thumb = page?.thumbnail?.source;
-		const orig = page?.original?.source;
-		if (thumb) {
-			imageCache.set(author, thumb);
-			return thumb;
-		}
-		if (orig) {
-			imageCache.set(author, orig);
-			return orig;
-		}
-
-		// 3) fallback: use first image on the page and request its imageinfo
-		const imagesArr = page?.images;
-		if (Array.isArray(imagesArr) && imagesArr.length > 0) {
-			const imgTitle = imagesArr[0].title;
-			const fileApi = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(
-				imgTitle
-			)}&prop=imageinfo&iiprop=url&format=json`;
-			const fres = await fetch(fileApi);
-			if (!fres.ok) {
-				imageCache.set(author, null);
-				return null;
+			// 2. Use the REST API summary endpoint to get a thumbnail
+			const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+				pageTitle
+			)}`;
+			const summaryRes = await fetch(summaryUrl);
+			if (!summaryRes.ok) continue;
+			const summaryJson = await summaryRes.json();
+			const thumb = summaryJson?.thumbnail?.source;
+			if (thumb) {
+				imageCache.set(author, thumb);
+				await writeImageCacheToDisk();
+				return thumb;
 			}
-			const fjson = await fres.json();
-			const fpages = fjson?.query?.pages;
-			const fpage = Object.values(fpages)[0] as any;
-			const info = fpage?.imageinfo?.[0];
-			const url = info?.url ?? null;
-			imageCache.set(author, url);
-			return url;
 		}
-
+		// Open Library fallback
+		// Wikimedia Commons MediaSearch fallback
+		const commonsUrl = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(
+			author
+		)}&gsrlimit=10&gsrnamespace=6&prop=imageinfo&iiprop=url&format=json&origin=*`;
+		try {
+			const commonsRes = await fetch(commonsUrl, {
+				headers: {
+					"User-Agent":
+						"gutendex-bot/1.0 (https://github.com/Borgerod/react-oppgave-4)",
+				},
+			});
+			if (commonsRes.ok) {
+				const commonsJson = await commonsRes.json();
+				const pages = commonsJson?.query?.pages as
+					| Record<string, unknown>
+					| undefined;
+				if (pages) {
+					// Filter for non-tif images and prefer common web formats
+					const preferredExts = ["jpg", "jpeg", "png", "gif", "webp"];
+					const forbiddenExts = ["tif", "tiff"];
+					const images = Object.values(pages)
+						.map((page) => {
+							if (
+								typeof page === "object" &&
+								page !== null &&
+								"imageinfo" in page &&
+								Array.isArray(
+									(page as { imageinfo?: unknown }).imageinfo
+								)
+							) {
+								const info = (page as { imageinfo: unknown[] })
+									.imageinfo[0];
+								if (
+									info &&
+									typeof info === "object" &&
+									info !== null &&
+									"url" in info &&
+									typeof (info as { url?: unknown }).url ===
+										"string"
+								) {
+									return (info as { url: string }).url;
+								}
+							}
+							return undefined;
+						})
+						.filter((url): url is string => {
+							if (!url) return false;
+							const lower = url.toLowerCase();
+							// Exclude forbidden extensions
+							if (
+								forbiddenExts.some((ext) => lower.endsWith(ext))
+							)
+								return false;
+							// Only allow preferred web formats
+							return preferredExts.some((ext) =>
+								lower.endsWith(ext)
+							);
+						});
+					if (images.length > 0) {
+						const imgUrl = images[0];
+						imageCache.set(author, imgUrl);
+						await writeImageCacheToDisk();
+						return imgUrl;
+					}
+				}
+				// Log the full response for debugging if no image found
+				console.log(
+					`Commons API response for ${author}:`,
+					JSON.stringify(commonsJson, null, 2)
+				);
+			} else {
+				console.log(
+					`Commons API fetch failed for ${author}:`,
+					commonsRes.status,
+					commonsRes.statusText
+				);
+			}
+		} catch (e) {
+			console.log(`Commons API error for ${author}:`, e);
+		}
 		imageCache.set(author, null);
+		await writeImageCacheToDisk();
 		return null;
 	} catch (e) {
 		imageCache.set(author, null);
+		await writeImageCacheToDisk();
 		return null;
+		console.log(e);
 	}
 }
 
@@ -175,7 +265,7 @@ function parseAuthorsField(a: string): string[] {
 			const parsed = JSON.parse(s);
 			if (Array.isArray(parsed))
 				return parsed.map((p) => String(p).trim()).filter(Boolean);
-		} catch (e) {
+		} catch {
 			// fallthrough
 		}
 	}
@@ -204,7 +294,7 @@ export async function GET() {
 	let text: string;
 	try {
 		text = await fs.readFile(csvPath, "utf8");
-	} catch (err) {
+	} catch {
 		return new Response(
 			JSON.stringify({ error: `CSV not found: ${csvPath}` }),
 			{ status: 500, headers: { "Content-Type": "application/json" } }
@@ -227,7 +317,7 @@ export async function GET() {
 			const s = dlField.replace(/,/g, "").trim();
 			if (s === "" || /nan|none/i.test(s)) dl = 0;
 			else dl = Math.floor(Number(s) || 0);
-		} catch (e) {
+		} catch {
 			dl = 0;
 		}
 		const parts = parseAuthorsField(authorsField);
@@ -254,12 +344,17 @@ export async function GET() {
 		.map(([author, count]) => ({ author, count }));
 
 	// enrich with image URLs server-side (parallel)
+	await ensureImageCacheLoaded();
 	const enriched = await Promise.all(
 		top.map(async (it) => {
+			// Use cached image if present (even if null), only fetch if not in cache
+			if (imageCache.has(it.author)) {
+				return { ...it, image: imageCache.get(it.author) };
+			}
 			try {
 				const img = await fetchWikimediaImage(it.author);
 				return { ...it, image: img };
-			} catch (e) {
+			} catch {
 				return { ...it, image: null };
 			}
 		})

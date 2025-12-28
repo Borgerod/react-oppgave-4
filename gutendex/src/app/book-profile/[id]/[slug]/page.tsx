@@ -16,7 +16,7 @@ async function fetchBook(id: number): Promise<Book | null> {
 	try {
 		data.title = parseTitle(data.title);
 	} catch (e) {
-		// ignore parsing error, return raw
+		console.error("Error parsing book title:", e);
 	}
 	return data;
 }
@@ -54,13 +54,13 @@ export default async function BookProfilePage({
 	const data = await res.json();
 	try {
 		if (data && Array.isArray(data.results)) {
-			data.results = data.results.map((r: any) => ({
+			data.results = data.results.map((r: Book) => ({
 				...r,
 				title: parseTitle(r.title),
 			}));
 		}
 	} catch (e) {
-		// ignore
+		console.error("Error parsing author book results:", e);
 	}
 	// if (mounted) setData(json);
 	return (
@@ -105,8 +105,7 @@ export default async function BookProfilePage({
 				// "lg:mx-auto",
 				"",
 				""
-			)}
-		>
+			)}>
 			<section
 				id="profile-image left-side 1"
 				className={cn(
@@ -126,8 +125,7 @@ export default async function BookProfilePage({
 					// "bg-amber-100",
 					"",
 					""
-				)}
-			>
+				)}>
 				<ProfileImage
 					imgSrc={imgSrc}
 					title={book.title.main ?? "cover"}
@@ -164,8 +162,7 @@ export default async function BookProfilePage({
 					// "bg-amber-300",
 					"",
 					""
-				)}
-			>
+				)}>
 				<ProfileBio book={book} />
 				<BookReadTracker book={book} />
 				<hr
@@ -206,8 +203,7 @@ export default async function BookProfilePage({
 					// "gap-5",
 					"",
 					""
-				)}
-			>
+				)}>
 				<AuthorDiscover data={data} currentBookId={book.id} />
 			</section>
 		</main>

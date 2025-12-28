@@ -6,7 +6,7 @@ import FavoriteButton from "@/components/ui/favoriteButton";
 // import { BooksResponse, Book } from "@/types";
 // import CardSkeleton from "../store/cardSkeleton";
 import HighLightCard from "@/components/ui/highLightCard";
-import { formatLinkVars } from "@/components/store/cardSharedUtils";
+// import { formatLinkVars } from "@/components/store/cardSharedUtils";
 
 // import textBtnClass from "@/components/layout/header";
 import { cn } from "@/utils/cn";
@@ -59,8 +59,7 @@ export default function highlights({
 				// "h-full",
 				"",
 				""
-			)}
-		>
+			)}>
 			<div
 				id="header-row"
 				className={cn(
@@ -86,8 +85,7 @@ export default function highlights({
 							`${textBtnClass}`,
 							"",
 							""
-						)}
-					>
+						)}>
 						{button.text}
 					</Link>
 				) : (
@@ -107,22 +105,20 @@ export default function highlights({
 					"",
 					grid
 						? "grid lg:grid-cols-3 gap-5 w-full  sm:w-full grid-cols-2"
-						: "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-2 lg:grid-cols-4 md:grid-rows-2 grid-rows-2 md:grid-rows-1"
+						: "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-2 lg:grid-cols-4  grid-rows-2 md:grid-rows-1"
 					// : "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-4 lg:grid-cols-2 lg:grid-rows-2 grid-rows-2 md:grid-rows-1"
 					// : "grid gap-5 w-full sm:w-fit md:w-full grid-cols-2 sm:grid-cols-4  sm:grid-rows-1   md:grid-cols-3 lg:grid-cols-4 grid-rows-2 md:grid-rows-1"
 					// : "grid grid-cols-2 sm:grid-cols-4  sm:grid-rows-1 flex-row gap-5 w-full sm:w-fit md:w-full md:grid-cols-3 lg:grid-cols-4 grid-rows-2 md:grid-rows-1"
 					// : "grid lg:grid-cols-3 gap-5 w-full grid-cols-2"
 					// : "grid grid-cols-2 flex-row gap-2 w-full md:grid-cols-4 grid-rows-2 md:grid-rows-1"
 					// :"flex flex-row gap-2 w-full "
-				)}
-			>
+				)}>
 				{loading
 					? // render skeleton highlight cards while loading
 					  Array.from({ length: grid ? 6 : 4 }).map((_, i) => (
 							<div
 								key={`skeleton-${i}`}
-								className="block w-full max-w-[220px] animate-pulse"
-							>
+								className="block w-full max-w-[220px] animate-pulse">
 								<div
 									className={cn(
 										"relative overflow-hidden rounded-3xl",
@@ -135,8 +131,7 @@ export default function highlights({
 										"shadow-lg",
 										"hover:border-zinc-300/50 dark:hover:border-zinc-700/50",
 										"p-0"
-									)}
-								>
+									)}>
 									<div className="relative h-44 overflow-hidden bg-foreground/10" />
 
 									<div className="absolute top-3 right-3">
@@ -157,8 +152,7 @@ export default function highlights({
 													"transition-colors duration-300",
 													"cursor-pointer",
 													"shrink-0"
-												)}
-											>
+												)}>
 												<span className="w-3 h-3 block bg-foreground/10 rounded" />
 											</div>
 										</div>

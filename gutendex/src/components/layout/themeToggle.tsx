@@ -3,14 +3,7 @@ import { useState, useEffect, startTransition } from "react";
 import { IoSunny, IoMoon } from "react-icons/io5";
 import { cn } from "@/utils/cn";
 import { useTheme } from "@/providers/providers";
-import {
-	compressedBtnClass,
-	iconBtnClass,
-	primaryBtnClass,
-	secondaryBtnClass,
-	textBtnClass,
-	toggleButtoncls,
-} from "../buttonClasses";
+import { textBtnClass, toggleButtoncls } from "../buttonClasses";
 
 export default function ThemeToggle() {
 	const { isDark, toggleTheme } = useTheme();
@@ -33,8 +26,7 @@ export default function ThemeToggle() {
 
 					"",
 					""
-				)}
-			>
+				)}>
 				<IoMoon />
 				<span className="leading-none">Theme</span>
 			</button>
@@ -53,8 +45,7 @@ export default function ThemeToggle() {
 
 				"",
 				""
-			)}
-		>
+			)}>
 			{isDark ? <IoSunny /> : <IoMoon />}
 			<span className="leading-none">{isDark ? "Dark" : "Light"}</span>
 		</button>

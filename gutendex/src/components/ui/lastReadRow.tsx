@@ -24,7 +24,7 @@ interface LastReadRowProps {
 
 export default function LastReadRow({
 	data,
-	loading,
+	// loading,
 	title,
 	tagLabel,
 	onRemove,
@@ -37,7 +37,6 @@ export default function LastReadRow({
 
 	// compute maxPage based on current itemsPerPage
 	const maxPage = Math.max(0, Math.ceil(totalItems / itemsPerPage) - 1);
-
 	// Keep itemsPerPage in sync with Tailwind breakpoints using matchMedia (modern API)
 	useEffect(() => {
 		if (typeof window === "undefined") return;
@@ -63,8 +62,10 @@ export default function LastReadRow({
 			setItemsPerPage(computeCols());
 		}
 
-		// initial
-		setItemsPerPage(computeCols());
+		// initial (defer to avoid synchronous setState inside effect)
+		const initTimeout = window.setTimeout(() => {
+			setItemsPerPage(computeCols());
+		}, 0);
 
 		// attach listeners (modern API)
 		mqXL.addEventListener("change", onChange);
@@ -73,6 +74,9 @@ export default function LastReadRow({
 		mqSM.addEventListener("change", onChange);
 
 		return () => {
+			if (initTimeout !== undefined) {
+				window.clearTimeout(initTimeout);
+			}
 			mqXL.removeEventListener("change", onChange);
 			mqLG.removeEventListener("change", onChange);
 			mqMD.removeEventListener("change", onChange);
@@ -81,7 +85,10 @@ export default function LastReadRow({
 	}, []);
 
 	// reset page when data or itemsPerPage changes
-	useEffect(() => setPageIndex(0), [data, itemsPerPage]);
+	useEffect(() => {
+		const id = setTimeout(() => setPageIndex(0), 0);
+		return () => clearTimeout(id);
+	}, [data, itemsPerPage]);
 
 	// visible slice for current page
 	const visible = useMemo(() => {
@@ -132,8 +139,7 @@ export default function LastReadRow({
 					"w-full",
 					"",
 					""
-				)}
-			>
+				)}>
 				{/* <div className="flex items-start gap-3 w-full"> */}
 				{/* Prev */}
 				{/* {totalItems > itemsPerPage ? (
@@ -188,8 +194,7 @@ export default function LastReadRow({
 						"md:px-15",
 						"",
 						""
-					)}
-				>
+					)}>
 					{visible.map((book, idx) => {
 						const formats = book.formats as
 							| Record<string, string>
@@ -211,35 +216,28 @@ export default function LastReadRow({
 										authorNames[authorNames.length - 1]
 								  }`;
 
-						const href = `/book-profile/${book.id}/${String(
-							book.title
-						)
+						const { main, sub } = parseTitle(book.title);
+
+						const slug = String(main)
 							.trim()
 							.toLowerCase()
 							.normalize("NFKD")
 							.replace(/[\u0300-\u036f]/g, "")
 							.replace(/[^\w\s-]/g, "")
 							.replace(/\s+/g, "-")
-							.replace(/-+/g, "-")}`;
+							.replace(/-+/g, "-");
 
-						const { main, sub } = parseTitle(book.title.main);
+						const href = `/book-profile/${book.id}/${slug}`;
 
 						return (
 							<div
 								key={`${book.id}-${
 									pageIndex * itemsPerPage + idx
 								}`}
-							>
+								className={cn("relative", "")}>
 								<LastReadCard
-									// title={book.title ? book.title : main}
-									// title={main ? main : "bobobobo"}
-									// title={main}
-									title={
-										book.title.main
-											? main
-											: book.title.toString()
-									}
-									subtitle={sub ? sub : ""}
+									title={main}
+									subtitle={sub ?? ""}
 									authors={authors}
 									badge={{ text: tagLabel, variant: "pink" }}
 									image={image}
@@ -269,8 +267,7 @@ export default function LastReadRow({
 						"justify-between",
 						"",
 						""
-					)}
-				>
+					)}>
 					{/* Prev */}
 					{totalItems > itemsPerPage ? (
 						<button
@@ -289,8 +286,7 @@ export default function LastReadRow({
 								// "md:-ml-10",
 								""
 							)}
-							type="button"
-						>
+							type="button">
 							<FaChevronLeft size={19} className="block" />
 						</button>
 					) : null}
@@ -314,8 +310,7 @@ export default function LastReadRow({
 								// "md:-mr-15",
 								""
 							)}
-							type="button"
-						>
+							type="button">
 							<FaChevronRight size={19} className="block" />
 						</button>
 					) : null}

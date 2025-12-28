@@ -43,6 +43,10 @@ export default function YearRangeFilter({
 		"text-lg",
 		"sm:text-lg",
 
+		"lg:flex-col",
+		// "lg:grid-rows-2 lg:grid-cols-1",
+		// "lg:rows-start-2 lg:cols-start-1",
+
 		"",
 		"",
 	];
@@ -59,15 +63,15 @@ export default function YearRangeFilter({
 				// OPTION 1
 				"flex-row",
 				"items-center",
-
+				"lg:flex-col",
+				"lg:items-start ",
 				// OPTION 2
-				// "flex-col",
-				// "items-start ",
+				"flex-col",
+				"items-start ",
 
 				"",
 				""
-			)}
-		>
+			)}>
 			<span
 				className={cn(
 					"p-0",
@@ -78,8 +82,7 @@ export default function YearRangeFilter({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				{/* Author year range */}
 				{/* Author's alive between */}
 				Books written between
@@ -94,8 +97,7 @@ export default function YearRangeFilter({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				<input
 					type="number"
 					name={yearFrom ? "year_from" : undefined}
@@ -122,8 +124,7 @@ export default function YearRangeFilter({
 
 						"",
 						""
-					)}
-				>
+					)}>
 					-
 				</span>
 				<input

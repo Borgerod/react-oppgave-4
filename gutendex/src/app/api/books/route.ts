@@ -46,9 +46,14 @@ export async function GET(request: NextRequest) {
 			// lazy-import the parser to avoid server/client crossover
 			const { parseTitle } = await import("@/utils/title");
 			if (data && Array.isArray(data.results)) {
-				data.results = data.results.map((r: any) => ({
+				type BookResult = {
+					title?: string;
+					[key: string]: unknown;
+				};
+				data.results = data.results.map((r: BookResult) => ({
 					...r,
-					title: parseTitle(r.title),
+					title:
+						typeof r.title === "string" ? parseTitle(r.title) : r.title,
 				}));
 			}
 		} catch (e) {

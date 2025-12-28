@@ -1,6 +1,5 @@
 import type { Book } from "@/types";
 import { cn } from "@/utils/cn";
-import ProductCard from "@/components/store/productCard";
 import CardSkeleton from "@/components/store/cardSkeleton";
 import MiniProductCard from "../store/miniCard";
 
@@ -29,8 +28,7 @@ export default function AuthorDiscover({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				<h2 className="text-wrap">Discover</h2>
 				<span className="text-xs text-secondary">
 					other works by this author
@@ -59,8 +57,7 @@ export default function AuthorDiscover({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				{!data?.results
 					? Array.from({ length: 5 }).map((_, index) => (
 							<CardSkeleton key={index} mini />

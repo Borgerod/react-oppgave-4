@@ -5,7 +5,7 @@ import type { Book, Title } from "@/types";
 import Image from "next/image";
 import Rating from "@/components/store/rating";
 import Link from "next/link";
-import MiniProductCard from "./miniCard";
+// import MiniProductCard from "./miniCard";
 import { useUpperDownloadCount } from "@/providers/providers";
 import { Tag } from "@/components/filters/tag";
 import FavoriteButton from "@/components/ui/favoriteButton";
@@ -16,8 +16,7 @@ import {
 	getAuthorsText,
 	getImageSrc,
 } from "./cardSharedUtils";
-import { IoLibrary } from "react-icons/io5";
-import { FaBook, FaBookOpen, FaBookReader, FaReadme } from "react-icons/fa";
+import { FaBookOpen } from "react-icons/fa";
 type Props = {
 	book: Book;
 	index?: number;
@@ -42,15 +41,16 @@ export default function ProductCard({
 
 	const download_count = book.download_count;
 
+	// If you want to use MiniProductCard for mini view, uncomment below:
 	// if (mini) {
-	// 	return (
-	// 		<MiniProductCard
-	// 			book={book}
-	// 			upperDownloadCountLimit={upperLimit}
-	// 			isFavorite={isFavorite}
-	// 			onToggleFavorite={onToggleFavorite}
-	// 		/>
-	// 	);
+	//   return (
+	//     <MiniProductCard
+	//       book={book}
+	//       upperDownloadCountLimit={upperLimit}
+	//       isFavorite={isFavorite}
+	//       onToggleFavorite={onToggleFavorite}
+	//     />
+	//   );
 	// }
 
 	// prepare authors as a single formatted string (easier markup, avoids extra spans)
@@ -58,11 +58,7 @@ export default function ProductCard({
 
 	// local favorite state fallback: if parent doesn't provide handler/prop,
 	// manage favorites in localStorage so heart is always visible and usable.
-	const { localFav, toggle, ariaLabel } = useFavorite(
-		book,
-		isFavorite,
-		onToggleFavorite
-	);
+	useFavorite(book, isFavorite, onToggleFavorite);
 
 	// `book.title` is already normalized to `Title`
 	const title: Title = book.title;
@@ -84,14 +80,12 @@ export default function ProductCard({
 				"sm:min-w-0",
 				"",
 				""
-			)}
-		>
+			)}>
 			{/* Favorite button placed directly under Link so it is outside the scaled wrapper */}
 			<FavoriteButton
 				book={book}
 				isFavorite={isFavorite}
 				onToggleFavorite={onToggleFavorite}
-				className=""
 			/>
 
 			<div className={cn(`${mini ? "" : "h-full"}`)}>
@@ -109,35 +103,29 @@ export default function ProductCard({
 						"w-full h-full",
 						"",
 						""
-					)}
-				>
+					)}>
 					{imgSrc ? (
 						<Image
 							src={imgSrc}
 							alt={book.title?.main ?? "cover"}
-							// width={64}
-							// height={96}
 							width={250}
 							height={200}
 							className={cn(
 								"h-full",
 								"w-full",
 								"object-cover",
-
 								"grid grid-rows-[auto_1fr_auto]",
 								"justify-items-center",
 								"content-start",
 								"max-w-30 sm:max-w-none",
 								"min-h-40 sm:min-h-none",
 								"aspect-2/3",
-								"rounded-xl",
 								"rounded-2xl",
 								"overflow-hidden",
-
-								"",
 								"",
 								""
 							)}
+							priority={mini ? false : true}
 						/>
 					) : (
 						<PlaceholderBookCover
@@ -159,8 +147,7 @@ export default function ProductCard({
 							// "bg-amber-300",
 							"",
 							""
-						)}
-					>
+						)}>
 						<div
 							className={cn(
 								`${
@@ -171,8 +158,7 @@ export default function ProductCard({
 								"sm:flex-col",
 								"",
 								""
-							)}
-						>
+							)}>
 							<h2
 								className={cn(
 									"text-2xl font-extralight text-primary p-0 m-0",
@@ -185,8 +171,7 @@ export default function ProductCard({
 											? "text-xs leading-tight pr-0 wrap-break-word"
 											: ""
 									}`
-								)}
-							>
+								)}>
 								{title.main}
 								{title.sub && (
 									<span
@@ -197,8 +182,7 @@ export default function ProductCard({
 											"",
 											"",
 											`${mini ? "text-xs ml-1" : ""}`
-										)}
-									>
+										)}>
 										{title.sub}
 									</span>
 								)}
@@ -207,11 +191,11 @@ export default function ProductCard({
 								className={cn(
 									"text-sm italic font-thin mt-1 align-baseline ",
 									`${mini ? "text-xs" : ""}`
-								)}
-							>
+								)}>
 								<span
-									className={cn("text-xs text-tertiary mr-1")}
-								>
+									className={cn(
+										"text-xs text-tertiary mr-1"
+									)}>
 									By:
 								</span>
 								<span
@@ -222,19 +206,16 @@ export default function ProductCard({
 												? "wrap-break-word max-w-[120px] pr-10"
 												: ""
 										}`
-									)}
-								>
+									)}>
 									{authorsText}
 								</span>
 							</p>
 							<div
 								className={cn(
-									// "mt-auto",
 									`${mini ? "visible" : "hidden"}`,
 									"",
 									""
-								)}
-							>
+								)}>
 								<Rating
 									ratingCount={download_count}
 									upperDownloadCountLimit={upperLimit}
@@ -251,8 +232,7 @@ export default function ProductCard({
 								`${mini ? "hidden" : ""}`,
 								"",
 								""
-							)}
-						>
+							)}>
 							<div
 								id="raintg-tags-column"
 								className={cn(
@@ -261,28 +241,29 @@ export default function ProductCard({
 									`${mini ? "hidden" : ""}`,
 									"",
 									""
-								)}
-							>
+								)}>
 								<div
-									// todo
 									id="rating-container"
 									className={cn(
 										`${mini ? "visible" : ""}`,
-
 										"mt-auto",
 										"",
 										""
-									)}
-								>
+									)}>
 									<Rating
 										ratingCount={download_count}
 										upperDownloadCountLimit={upperLimit}
 										mini={mini}
 									/>
 								</div>
-								<p className="flex flex-row gap-1 text-nowrap flex-wrap">
+								<p
+									className={cn(
+										"flex flex-row gap-1 text-nowrap flex-wrap",
+										"",
+										""
+									)}>
 									{(book.bookshelves || []).map(
-										(shelf: string, index: number) => {
+										(shelf: string, idx: number) => {
 											if (
 												!shelf.includes("Category:") ||
 												shelf.includes("Literature")
@@ -297,8 +278,8 @@ export default function ProductCard({
 											return (
 												<Tag
 													url={`/store?topic=${topic}`}
-													key={`${shelf}-${index}`}
-													id={`${book.id}-${shelf}-${index}`}
+													key={`${shelf}-${idx}`}
+													id={`${book.id}-${shelf}-${idx}`}
 													item={category}
 													checked={false}
 													onToggle={() => {}}
@@ -309,6 +290,9 @@ export default function ProductCard({
 								</p>
 							</div>
 							<button
+								type="button"
+								tabIndex={-1}
+								aria-label="Read more about this book"
 								className={cn(
 									"rounded-full",
 									"w-fit p-1 px-3",
@@ -324,10 +308,7 @@ export default function ProductCard({
 									"",
 									""
 								)}
-							>
-								{/* Read more */}
-								{/* <FaReadme /> */}
-								{/* <FaBookReader /> */}
+								onClick={(e) => e.preventDefault()}>
 								<FaBookOpen
 									className={cn(
 										"inline-block",
@@ -344,8 +325,7 @@ export default function ProductCard({
 										"ml-2",
 										"align-middle",
 										""
-									)}
-								>
+									)}>
 									Read more
 								</span>
 							</button>

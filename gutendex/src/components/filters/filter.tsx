@@ -1,1117 +1,225 @@
 "use client";
-import { cn } from "@/utils/cn";
-import {
-	startTransition,
-	useCallback,
-	useEffect,
-	useLayoutEffect,
-	useState,
-} from "react";
-import Form from "next/form";
-import FilterInput from "@/components/filters/filterInput";
-import CopyrightToggle from "@/components/filters/copyrightToggle";
-import YearRangeFilter from "@/components/filters/yearRangeFilter";
-import { useSearchParams } from "next/navigation";
-import fetchCategories from "@/utils/fetchCategories";
+import { Drawer } from "@geist-ui/core";
+import FilterInput from "./filterInput";
+import CopyrightToggle from "./copyrightToggle";
+import YearRangeFilter from "./yearRangeFilter";
+import { useState } from "react";
 import { ALL_LANGUAGES } from "@/utils/languages";
-import { useRouter } from "next/navigation";
-import {
-	compressedBtnClass,
-	iconBtnClass,
-	primaryBtnClass,
-	secondaryBtnClass,
-	textBtnClass,
-} from "../buttonClasses";
-
+import { cn } from "@/utils/cn";
+import Form from "next/form";
+import { primaryBtnClass, textBtnClass } from "../buttonClasses";
 type FilterProps = {
+	open: boolean;
+	setOpen: (open: boolean) => void;
 	searchQuery?: string;
-	sortBy?: string;
-	onSelectedFiltersCountChange?: (n: number) => void;
-	topics?: string[]; // provided from server layout
+	topics?: string[];
 	onClose?: () => void;
 };
 
-export default function Filter({
-	searchQuery,
-	onSelectedFiltersCountChange,
-	topics,
-	onClose,
-}: FilterProps) {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-
-	const [isMobile, setIsMobile] = useState(() => {
-		if (typeof window === "undefined") return false;
-		return window.matchMedia("(max-width: 639px)").matches;
-		// return window.matchMedia("(max-width: 639px)").matches;
-	});
-
-	const [copyright, toggleCopyRight] = useState(
-		() => searchParams?.get("copyright") === "on"
-	);
-
-	// Sync copyright with URL params
-	useEffect(() => {
-		startTransition(() => {
-			toggleCopyRight(searchParams?.get("copyright") === "on");
-		});
-	}, [searchParams]);
-
-	// Topic search + selection state
-	const [topicQuery, setTopicQuery] = useState("");
-	const [allTopics, setAllTopics] = useState<string[]>(() => {
-		const fromProps = Array.from(
-			new Set((topics || []).map((t) => String(t).trim()))
-		).filter(Boolean);
-		if (fromProps.length > 0) return fromProps;
-		// If no server topics, attempt to synchronously read client cache during render.
-		if (typeof window === "undefined") return [];
-		try {
-			const raw = localStorage.getItem("gutendex:topics");
-			if (!raw) return [];
-			const parsed = JSON.parse(raw) as string[];
-			if (Array.isArray(parsed) && parsed.length > 0) {
-				return Array.from(
-					new Set(parsed.map((t) => String(t).trim()))
-				).filter(Boolean);
-			}
-		} catch (e) {
-			console.warn("Filter: failed to read local topics cache", e);
-		}
-		return [];
-	});
-
-	useEffect(() => {
-		if (typeof window === "undefined") return;
-		try {
-			const token = sessionStorage.getItem("gutendex:topicsUpdated");
-			if (token === "1") return;
-		} catch {
-			// ignore sessionStorage errors
-		}
-
-		let mounted = true;
-		(async () => {
-			try {
-				const cats = await fetchCategories({ startPage: 2 });
-				if (!mounted) return;
-				const merged = Array.from(
-					new Set(
-						[...(topics || []), ...(cats || [])].map((t) =>
-							String(t).trim()
-						)
-					)
-				).filter(Boolean);
-				setAllTopics(merged);
-				try {
-					if (typeof window !== "undefined") {
-						localStorage.setItem(
-							"gutendex:topics",
-							JSON.stringify(merged)
-						);
-						// Only mark session as updated if we actually fetched additional categories
-						if (Array.isArray(cats) && cats.length > 0) {
-							sessionStorage.setItem(
-								"gutendex:topicsUpdated",
-								"1"
-							);
-						}
-					}
-				} catch (e) {
-					console.warn(
-						"Filter: failed to write local topics cache",
-						e
-					);
-				}
-			} catch (err) {
-				console.error("background fetchCategories error:", err);
-			}
-		})();
-		return () => {
-			mounted = false;
-		};
-	}, [topics]);
-	// Initialize selected topics from URL
+export function Filter({ open, setOpen, topics = [], onClose }: FilterProps) {
+	const [topicInput, setTopicInput] = useState("");
+	const [formatInput, setFormatInput] = useState("");
+	const [languageInput, setLanguageInput] = useState("");
 	const [selectedTopics, setSelectedTopics] = useState<
 		Record<string, boolean>
-	>(() => {
-		const topics: Record<string, boolean> = {};
-		if (searchParams) {
-			searchParams.getAll("topic").forEach((topic) => {
-				topics[topic] = true;
-			});
-		}
-		return topics;
-	});
-
-	// Sync selected topics with URL params
-	useEffect(() => {
-		const topics: Record<string, boolean> = {};
-		if (searchParams) {
-			searchParams.getAll("topic").forEach((topic) => {
-				topics[topic] = true;
-			});
-		}
-		startTransition(() => {
-			setSelectedTopics(topics);
-		});
-	}, [searchParams]);
-
-	// Language search + selection state
-	const [languageQuery, setLanguageQuery] = useState("");
-	const [allLanguages] = useState<string[]>(() => ALL_LANGUAGES);
-	// Initialize selected languages from URL
-	const [selectedLanguages, setSelectedLanguages] = useState<
-		Record<string, boolean>
-	>(() => {
-		const languages: Record<string, boolean> = {};
-		if (searchParams) {
-			searchParams.getAll("languages").forEach((language) => {
-				languages[language] = true;
-			});
-		}
-		return languages;
-	});
-
-	// Sync selected languages with URL params
-	useEffect(() => {
-		const languages: Record<string, boolean> = {};
-		if (searchParams) {
-			searchParams.getAll("languages").forEach((language) => {
-				languages[language] = true;
-			});
-		}
-		startTransition(() => {
-			setSelectedLanguages(languages);
-		});
-	}, [searchParams]);
-
-	// Format (mime_type) search + selection state
-	const [formatQuery, setFormatQuery] = useState("");
-	const [allFormats] = useState<string[]>(() => [
-		"text/plain",
-		"text/html",
-		"application/json",
-		"application/pdf",
-		"image/jpeg",
-		"image/png",
-	]);
-	// Initialize selected formats from URL
+	>({});
 	const [selectedFormats, setSelectedFormats] = useState<
 		Record<string, boolean>
-	>(() => {
-		const formats: Record<string, boolean> = {};
-		if (searchParams) {
-			[
-				...searchParams.getAll("mime_type"),
-				...searchParams.getAll("format"),
-			].forEach((format) => {
-				formats[format] = true;
-			});
-		}
-		return formats;
-	});
+	>({});
+	const [selectedLanguages, setSelectedLanguages] = useState<
+		Record<string, boolean>
+	>({});
+	const [copyright, setCopyright] = useState(false);
+	const [yearFrom, setYearFrom] = useState("");
+	const [yearTo, setYearTo] = useState("");
 
-	// Sync selected formats with URL params
-	useEffect(() => {
-		const formats: Record<string, boolean> = {};
-		if (searchParams) {
-			[
-				...searchParams.getAll("mime_type"),
-				...searchParams.getAll("format"),
-			].forEach((format) => {
-				formats[format] = true;
-			});
-		}
-		startTransition(() => {
-			setSelectedFormats(formats);
-		});
-	}, [searchParams]);
+	// Static formats list (can be replaced with dynamic if needed)
+	const formats = [
+		"text/plain",
+		"text/html",
+		"application/pdf",
+		"application/epub+zip",
+		"application/x-mobipocket-ebook",
+		"application/rdf+xml",
+		"image/jpeg",
+		"audio/mpeg",
+		"audio/ogg",
+		"text/markdown",
+		"application/json",
+	];
 
-	// Report total selected filters count to parent
-	useEffect(() => {
-		const topicsCount =
-			Object.values(selectedTopics).filter(Boolean).length;
-		const languagesCount = Object.values(selectedLanguages || {}).filter(
-			Boolean
-		).length;
-		const formatsCount = Object.values(selectedFormats || {}).filter(
-			Boolean
-		).length;
-		const copyrightCount = copyright ? 1 : 0;
-		const total =
-			topicsCount + languagesCount + formatsCount + copyrightCount;
-		if (onSelectedFiltersCountChange) onSelectedFiltersCountChange(total);
-	}, [
-		selectedTopics,
-		selectedLanguages,
-		selectedFormats,
-		copyright,
-		onSelectedFiltersCountChange,
-	]);
-
-	// Year range filter - initialize from URL
-	const [yearFrom, setYearFrom] = useState(
-		() => searchParams?.get("year_from") || ""
-	);
-	const [yearTo, setYearTo] = useState(
-		() => searchParams?.get("year_to") || ""
-	);
-
-	// Control overlay visibility for drag-to-close
-	const [overlayOpen, setOverlayOpen] = useState(true);
-
-	useEffect(() => {
-		if (typeof window === "undefined") return;
-		const mediaQuery = window.matchMedia("(max-width: 639px)");
-		const handleChange = (event: MediaQueryListEvent) => {
-			setIsMobile(event.matches);
-		};
-		setIsMobile(mediaQuery.matches);
-		if (typeof mediaQuery.addEventListener === "function") {
-			mediaQuery.addEventListener("change", handleChange);
-			return () => mediaQuery.removeEventListener("change", handleChange);
-		}
-		mediaQuery.addListener(handleChange);
-		return () => mediaQuery.removeListener(handleChange);
-	}, []);
-
-	useEffect(() => {
-		if (isMobile) {
-			setOverlayOpen(true);
-		}
-	}, [isMobile]);
-
-	const revertFiltersToApplied = useCallback(() => {
-		const params = searchParams;
-
-		const collectSelections = (values: string[]) => {
-			const next: Record<string, boolean> = {};
-			values.forEach((value) => {
-				next[value] = true;
-			});
-			return next;
-		};
-
-		const nextTopics = collectSelections(params?.getAll("topic") ?? []);
-		const nextFormats = collectSelections([
-			...(params?.getAll("mime_type") ?? []),
-			...(params?.getAll("format") ?? []),
-		]);
-		const nextLanguages = collectSelections(
-			params?.getAll("languages") ?? []
-		);
-
-		startTransition(() => {
-			setSelectedTopics(nextTopics);
-			setSelectedFormats(nextFormats);
-			setSelectedLanguages(nextLanguages);
-			setYearFrom(params?.get("year_from") ?? "");
-			setYearTo(params?.get("year_to") ?? "");
-			toggleCopyRight(params?.get("copyright") === "on");
-		});
-
-		setTopicQuery("");
-		setFormatQuery("");
-		setLanguageQuery("");
-	}, [
-		searchParams,
-		setSelectedTopics,
-		setSelectedFormats,
-		setSelectedLanguages,
-		setYearFrom,
-		setYearTo,
-		toggleCopyRight,
-		setTopicQuery,
-		setFormatQuery,
-		setLanguageQuery,
-	]);
-
-	const hasFilterChanges = useCallback(() => {
-		const params = searchParams;
-
-		const selectedKeys = (record: Record<string, boolean>) =>
-			Object.entries(record)
-				.filter(([, value]) => value)
-				.map(([key]) => key);
-
-		const setsDiffer = (current: string[], fromParams: string[]) => {
-			const normalize = (values: string[]) =>
-				Array.from(new Set(values)).sort((a, b) => a.localeCompare(b));
-			const currentNormalized = normalize(current);
-			const paramsNormalized = normalize(fromParams);
-			if (currentNormalized.length !== paramsNormalized.length)
-				return true;
-			for (let i = 0; i < currentNormalized.length; i += 1) {
-				if (currentNormalized[i] !== paramsNormalized[i]) return true;
-			}
-			return false;
-		};
-
-		const topicValues = params?.getAll("topic") ?? [];
-		if (setsDiffer(selectedKeys(selectedTopics), topicValues)) return true;
-
-		const formatValues = [
-			...(params?.getAll("mime_type") ?? []),
-			...(params?.getAll("format") ?? []),
-		];
-		if (setsDiffer(selectedKeys(selectedFormats), formatValues))
-			return true;
-
-		const languageValues = params?.getAll("languages") ?? [];
-		if (setsDiffer(selectedKeys(selectedLanguages), languageValues))
-			return true;
-
-		const paramYearFrom = params?.get("year_from") ?? "";
-		if ((yearFrom || "") !== paramYearFrom) return true;
-
-		const paramYearTo = params?.get("year_to") ?? "";
-		if ((yearTo || "") !== paramYearTo) return true;
-
-		const paramCopyright = params?.get("copyright") === "on";
-		if (Boolean(copyright) !== paramCopyright) return true;
-
-		return false;
-	}, [
-		searchParams,
-		selectedTopics,
-		selectedFormats,
-		selectedLanguages,
-		yearFrom,
-		yearTo,
-		copyright,
-	]);
-
-	const handleClearAll = () => {
-		toggleCopyRight(false);
-		setTopicQuery("");
-		setSelectedTopics({});
-		setLanguageQuery("");
-		setSelectedLanguages({});
-		setFormatQuery("");
-		setSelectedFormats({});
-		setYearFrom("");
-		setYearTo("");
-
-		// Also apply the cleared filters immediately by navigating with empty params
-		const params = new URLSearchParams();
-		if (searchQuery && searchQuery.trim()) {
-			params.set("search", searchQuery.trim());
-		}
-		// No topics/formats/languages/copyright/year params -> cleared
-		router.push(`/store?${params.toString()}`);
-		onClose?.();
+	const handleToggleTopic = (topic: string) => {
+		setSelectedTopics((prev) => ({ ...prev, [topic]: !prev[topic] }));
 	};
 
-	// Non-destructive runtime portal: move existing #form-container into a
-	// small portal root on document.body so the filter renders outside layout
-	// constraints. This does not delete or change any source tokens — it
-	// operates on the rendered DOM and restores everything on unmount.
-	useLayoutEffect(() => {
-		if (typeof window === "undefined" || !overlayOpen || !isMobile) return;
+	const handleToggleFormat = (format: string) => {
+		setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
+	};
 
-		const el = document.getElementById("form-container");
-		if (!el) return;
+	const handleToggleLanguage = (lang: string) => {
+		setSelectedLanguages((prev) => ({ ...prev, [lang]: !prev[lang] }));
+	};
 
-		const originalParent = el.parentNode as Node | null;
-		const originalNextSibling = el.nextSibling;
-
-		const portalRoot = document.createElement("div");
-		portalRoot.setAttribute("id", "gutendex-filter-portal-root");
-		// minimal styles on the portal root; panel/backdrop added below
-		document.body.appendChild(portalRoot);
-
-		const backdrop = document.createElement("div");
-		backdrop.className = "fixed inset-0 bg-black/40 z-50";
-		backdrop.addEventListener("click", () => {
-			if (hasFilterChanges()) {
-				const form = document.getElementById(
-					"filter"
-				) as HTMLFormElement | null;
-				if (form) form.submit();
-			} else {
-				revertFiltersToApplied();
-			}
-			setOverlayOpen(false);
-			onClose?.();
-		});
-		portalRoot.appendChild(backdrop);
-
-		const panel = document.createElement("div");
-		panel.setAttribute("id", "gutendex-filter-portal-panel");
-		panel.className = "relative z-60";
-		portalRoot.appendChild(panel);
-
-		// move the existing element into the portal panel
-		panel.appendChild(el);
-
-		// lock body scroll while portal is mounted
-		const prevOverflow = document.body.style.overflow;
-		document.body.style.overflow = "hidden";
-
-		// Drag-to-close on handlebar
-		const handlebar = document.getElementById("handle-bar");
-		let dragStartY = 0;
-		let dragStartTime = 0;
-		let isDragging = false;
-
-		const onPointerDown = (e: PointerEvent) => {
-			isDragging = true;
-			dragStartY = e.clientY;
-			dragStartTime = Date.now();
-			if (handlebar) handlebar.style.cursor = "grabbing";
-			if (handlebar && "setPointerCapture" in handlebar) {
-				handlebar.setPointerCapture(e.pointerId);
-			}
-		};
-
-		const onPointerMove = (e: PointerEvent) => {
-			if (!isDragging || dragStartY === 0) return;
-			const dragDistance = e.clientY - dragStartY;
-			// Only allow downward drag
-			if (dragDistance > 0) {
-				el.style.transform = `translateY(${dragDistance}px)`;
-			}
-		};
-
-		const onPointerUp = (e: PointerEvent) => {
-			if (!isDragging) return;
-			isDragging = false;
-			const dragDistance = e.clientY - dragStartY;
-			const dragTime = Date.now() - dragStartTime;
-			dragStartY = 0;
-
-			if (handlebar) handlebar.style.cursor = "grab";
-
-			// Close if dragged > 100px down or fast flick
-			if (dragDistance > 100 || (dragDistance > 30 && dragTime < 200)) {
-				if (hasFilterChanges()) {
-					const form = document.getElementById(
-						"filter"
-					) as HTMLFormElement | null;
-					if (form) form.submit();
-				} else {
-					revertFiltersToApplied();
-				}
-
-				// Animate slide-out before closing
-				el.style.transition = "all 0.3s ease-out";
-				el.style.transform = `translateY(100vh)`;
-				setTimeout(() => {
-					setOverlayOpen(false);
-					onClose?.();
-				}, 300);
-			} else {
-				// Snap back if didn't meet threshold
-				el.style.transition = "all 0.2s ease-out";
-				el.style.transform = "translateY(0)";
-			}
-		};
-
-		const onPointerLeave = () => {
-			if (!isDragging && handlebar) {
-				handlebar.style.cursor = "grab";
-			}
-		};
-
-		if (handlebar) {
-			// Add grab cursor on hover
-			handlebar.style.cursor = "grab";
-			handlebar.addEventListener("pointerdown", onPointerDown);
-			document.addEventListener("pointermove", onPointerMove);
-			document.addEventListener("pointerup", onPointerUp);
-			handlebar.addEventListener("pointerleave", onPointerLeave);
-		}
-
-		const onKey = (e: KeyboardEvent) => {
-			if (e.key === "Escape") {
-				if (!hasFilterChanges()) {
-					revertFiltersToApplied();
-				}
-				setOverlayOpen(false);
-				onClose?.();
-			}
-		};
-		document.addEventListener("keydown", onKey);
-
-		// Click outside to close (for mobile portal)
-		const onClickOutside = (e: MouseEvent) => {
-			if (!el.contains(e.target as Node)) {
-				if (hasFilterChanges()) {
-					const form = document.getElementById(
-						"filter"
-					) as HTMLFormElement | null;
-					if (form) form.submit();
-				} else {
-					revertFiltersToApplied();
-				}
-				setOverlayOpen(false);
-				onClose?.();
-			}
-		};
-		document.addEventListener("mousedown", onClickOutside);
-
-		return () => {
-			if (handlebar) {
-				handlebar.removeEventListener("pointerdown", onPointerDown);
-				handlebar.removeEventListener("pointerleave", onPointerLeave);
-				handlebar.style.cursor = "";
-			}
-			document.removeEventListener("pointermove", onPointerMove);
-			document.removeEventListener("pointerup", onPointerUp);
-			document.removeEventListener("keydown", onKey);
-			document.removeEventListener("mousedown", onClickOutside);
-			document.body.style.overflow = prevOverflow;
-
-			// move element back to its original location to avoid leaving DOM mutated
-			if (originalParent) {
-				if (originalNextSibling)
-					originalParent.insertBefore(el, originalNextSibling);
-				else originalParent.appendChild(el);
-			}
-
-			// remove portal root
-			try {
-				portalRoot.remove();
-			} catch {}
-		};
-	}, [
-		overlayOpen,
-		isMobile,
-		hasFilterChanges,
-		revertFiltersToApplied,
-		onClose,
-	]);
-
-	// Click outside to close for non-mobile mode
-	useEffect(() => {
-		if (typeof window === "undefined" || isMobile) return;
-
-		const el = document.getElementById("form-container");
-		if (!el) return;
-
-		const onClickOutside = (e: MouseEvent) => {
-			if (!el.contains(e.target as Node)) {
-				onClose?.();
-			}
-		};
-
-		document.addEventListener("mousedown", onClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", onClickOutside);
-		};
-	}, [isMobile, onClose]);
-
-	const filterContent = (
-		// <Form
-		// 	aria-label="filter"
-		// 	id="filter"
-		// 	action="/store"
-		// 	className={cn(
-		// 		"w-full",
-		// 		"grid grid-cols-1 md:grid-cols-2 gap-4",
-		// 		"items-start",
-		// 		"justify-between ",
-		// 		"items-center gap-0 max-w-6xl mx-auto  py-0 px-5 lg:px-10 lg:max-w-7xl",
-		// 		"justify-around",
-		// 		"justify-items-around",
-		// 		"content-center",
-		// 		"px-10",
-		// 		"lg:px-15",
-		// 		"justify-items-start",
-		// 		// "max-w-6xl mx-auto py-0 px-5 lg:px-10 lg:max-w-7xl",
-		// 		"w-full sm:w-fit",
-		// 		"sx:border-none",
-
-		// 		// container design test
-		// 		"bg-container",
-		// 		"shadow-xl",
-		// 		"rounded-2xl",
-		// 		"p-5",
-		// 		// "md:p-5",
-		// 		// "lg:p-5",
-		// 		// "lg:px-5 mr-0",
-		// 		// "md:mt-10",
-		// 		"mt-5",
-		// 		// "md:",
-		// 		// "md:grid-rows-3 lg:grid-rows-1",
-
-		// 		"",
-		// 		"",
-		// 		""
-		// 	)}
-		// >
-		<div
-			id="form-container"
+	const handleClose = () => {
+		setOpen(false);
+		if (onClose) onClose();
+	};
+	return (
+		<Drawer
+			visible={open}
+			onClose={handleClose}
+			placement="bottom"
+			width={400}
+			height={200}
 			className={cn(
-				"w-full",
-				"grid grid-cols-1 md:grid-cols-2 gap-4",
-				"items-start",
-				"justify-between ",
-				"items-center gap-0 max-w-6xl mx-auto py-0 px-5 lg:px-10 lg:max-w-7xl",
-				"md:grid-cols-1",
-				"gap-5",
-
-				// "justify-items-start",
-				// "items-start",
-				// "content-start",
-				isMobile
-					? cn(
-							"fixed",
-							"bottom-0 left-0",
-							// "h-180",
-							"h-full",
-							"max-h-250",
-							"",
-							"z-999",
-							"rounded-t-3xl",
-							"shadow-xl",
-							"bg-container-solid",
-							"p-0 pt-0 lg:px-10",
-							"pb-25",
-							// "overflow-y-auto",
-
-							//
-							!overlayOpen && "hidden"
-					  )
-					: cn(
-							"relative",
-							"absolute",
-							"z-30",
-							"top-20",
-							"bg-container-solid",
-							"shadow-3xl",
-							"rounded-3xl",
-							"p-5",
-							"mt-5"
-					  ),
-				"shadow-md",
+				"flex flex-col",
+				"h-fit",
+				"max-h-[85vh]",
+				"rounded-2xl",
 				"shadow-2xl",
-				"rounded-3xl",
-				// "shadow-none",
-				// "bg-amber-400",
-
-				"",
+				"bg-white dark:bg-zinc-900",
+				"border border-divider",
+				"p-0",
+				"mx-auto",
 				""
-			)}
-		>
-			<div id="handle-bar-container" className={cn("w-full", "")}>
-				<div
-					id="handle-bar"
+			)}>
+			<Drawer.Title>
+				<span
 					className={cn(
-						"w-15 h-1 rounded-2xl",
-						"bg-container-lowered",
-						"bg-edge-dark",
-						"justify-self-center self-start my-5",
-						"touch-none",
-						"py-3",
-						"py-2",
-						"px-5",
-						"cursor-grab",
-						!isMobile && "hidden",
-						"",
+						"text-2xl font-bold text-center w-full block",
+						"pt-4 pb-1",
+						"text-primary dark:text-primary-inv",
 						""
-					)}
-				/>
-			</div>
-			{/* {isMobile && (
-				<div
+					)}>
+					Filter
+				</span>
+			</Drawer.Title>
+			<Drawer.Subtitle>
+				<span
 					className={cn(
-						"grid grid-cols-3 w-full h-fit ",
-						"mb-0",
-						"sm:mb-5",
-						"border-b border-divider",
-						"pb-5",
-						// "-mx-5 sm:mx-0",
-						"px-5",
-
-						"",
+						"text-xs font-semibold text-center w-full block",
+						"pb-2  uppercase tracking-wide",
 						""
-					)}
-				>
-					<h3 className="col-start-2 justify-self-center self-center text-xl leading-none">
-						Filter Search
-					</h3>
-					<button
-						type="button"
-						onClick={handleClearAll}
-						className={cn(
-							"col-start-3 justify-self-end",
-							"text-nowrap rounded-full w-full sm:w-fit px-6 py-1 transition-colors",
-							"border border-secondary text-secondary",
-							"hover:border-accent-dark hover:text-accent-dark",
-							"w-fit",
-							"text-xl self-center",
-							"leading-none",
-							`${textBtnClass}`,
-							`${secondaryBtnClass}`,
-							`${compressedBtnClass}`,
-							"",
-							"",
-							"",
-							""
-						)}
-					>
-						Clear Filters
-					</button>
-				</div>
-			)} */}
-			<div
-				className={cn(
-					"grid grid-cols-3 w-full h-fit ",
-					"mb-0",
-					// "sm:mb-5",
-					"border-b border-divider",
-					"pb-5",
-					// "-mx-5 sm:mx-0",
-					"px-5",
-
-					"",
-					""
-				)}
-			>
-				<h3 className="col-start-2 justify-self-center self-center text-xl leading-none">
-					Filter Search
-				</h3>
-				<button
-					type="button"
-					onClick={handleClearAll}
+					)}>
+					Refine your search
+				</span>
+			</Drawer.Subtitle>
+			<Drawer.Content className={cn("px-6 pb-6 pt-2 h-fit", "")}>
+				<Form
+					action=""
 					className={cn(
-						"flex sm:hidden",
-						"col-start-3 justify-self-end",
-						"text-nowrap rounded-full w-full sm:w-fit px-6 py-1 transition-colors",
-						// "border border-secondary text-secondary",
-						// "hover:border-accent-dark hover:text-accent-dark",
-						"border border-secondary text-secondary",
-						"hover:border-accent-dark hover:text-accent-dark",
-						"w-fit",
-						"text-xl self-center",
-						"leading-none",
-						`${textBtnClass}`,
-						`${secondaryBtnClass}`,
-						`${compressedBtnClass}`,
-
-						"hover:border-red-500 hover:text-red-500",
-						"active:border-red-500 active:text-red-500",
-						"",
-						"",
-						"",
+						"flex flex-col",
+						// "flex-row",
+						"gap-6",
+						// "w-full",
+						// "max-w-md",
+						// "mx-auto",
 						""
-					)}
-				>
-					Clear Filters
-					{/* Clear All */}
-				</button>
-			</div>
-			<Form
-				aria-label="filter"
-				id="filter"
-				action="/store"
-				className={cn(
-					"w-full",
-					// "grid grid-cols-1 md:grid-cols-2 gap-4",
-					"items-start",
-					"justify-between ",
-					// "items-center gap-0 max-w-6xl mx-auto  py-0 px-5 lg:px-10 lg:max-w-7xl",
-					"items-center gap-0 ",
-					"overflow-auto",
-					"[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-					"",
-					"",
-					"h-full",
-					"p-2",
-					"sm:overflow-visible",
-					"sm:h-auto",
-					"sm:p-0",
-					// "xl:grid-cols-1",
-					"gap-5",
-					"p-5",
-					"pt-0",
-					"sm:pt-0",
-					// "pb-25",
-					"pb-10",
-					"sm:pb-0",
-					"sm:mb-0",
-
-					//
-					// "max-w-6xl ",
-					// "lg:max-w-7xl",
-					// "mx-auto",
-					// "justify-around",
-					// "justify-items-around",
-					// "content-center",
-					// "px-10",
-					// "lg:px-15",
-					// "justify-items-start",
-					// "w-full sm:w-fit",
-					// "sx:border-none",
-					// "bg-container",
-					// "shadow-xl",
-					// "rounded-2xl",
-					// "p-5",
-					// "mt-5",
-					// _-____________________________
-					// "sticky",
-					// "static",
-					// "fixed",
-					// // "top-0",
-
-					// "bg-container-solid",
-					// "bottom-0",
-					// "left-0",
-					// "h-100",
-					// "overflow-auto",
-					// "z-99",
-
-					// "pt-30",
-					// "rounded-t-3xl",
-					// "shadow-xl",
-
-					// "bg-red-400",
-					"",
-					"gap-5",
-
-					// "items-start!",
-					"",
-					""
-				)}
-			>
-				{/* TODO: in filters year and copyright button overflows */}
-				{searchQuery && (
-					<input type="hidden" name="search" value={searchQuery} />
-				)}
-				{Object.entries(selectedTopics)
-					.filter(([, v]) => v)
-					.map(([topic]) => (
-						<input
-							key={`topic-${topic}`}
-							type="hidden"
-							name="topic"
-							value={topic}
-						/>
-					))}
-				{Object.entries(selectedFormats)
-					.filter(([, v]) => v)
-					.map(([format]) => (
-						<input
-							key={`format-${format}`}
-							type="hidden"
-							name="mime_type"
-							value={format}
-						/>
-					))}
-				{Object.entries(selectedLanguages)
-					.filter(([, v]) => v)
-					.map(([language]) => (
-						<input
-							key={`language-${language}`}
-							type="hidden"
-							name="languages"
-							value={language}
-						/>
-					))}
-
-				<div
-					id="filter-input-container"
-					className={cn(
-						"w-full sm:w-fit",
-						"grid gap-4",
-						"grid-cols-1    sm:grid-cols-2 md:grid-cols-2",
-						"md:grid-rows-2 lg:grid-cols-4",
-						"lg:grid-rows-1",
-						"sm:col-span-2",
-						"gap-5",
-						// "sm:gap-5",
-						// "mt-5",
-						"mt-0",
-						// "py-5",
-						"sm:mt-0",
-						"lg:h-fit",
-						// "border-t border-divider",
-						// "border-b border-edge-dark",
-						"mb-5",
-						"",
-						"",
-						""
-					)}
-				>
+					)}>
+					{Object.entries(selectedTopics)
+						.filter(([, v]) => v)
+						.map(([topic]) => (
+							<input
+								key={topic}
+								type="hidden"
+								name="topic"
+								value={topic}
+							/>
+						))}
+					{Object.entries(selectedFormats)
+						.filter(([, v]) => v)
+						.map(([format]) => (
+							<input
+								key={format}
+								type="hidden"
+								name="format"
+								value={format}
+							/>
+						))}
+					{Object.entries(selectedLanguages)
+						.filter(([, v]) => v)
+						.map(([lang]) => (
+							<input
+								key={lang}
+								type="hidden"
+								name="languages"
+								value={lang}
+							/>
+						))}
 					<FilterInput
 						label="Topics"
-						value={topicQuery}
-						onChange={setTopicQuery}
+						value={topicInput}
+						onChange={setTopicInput}
 						placeholder="Search topics..."
-						items={allTopics}
+						items={topics}
 						selectedItems={selectedTopics}
-						onToggleItem={(topic) =>
-							setSelectedTopics((s) => ({
-								...s,
-								[topic]: !s[topic],
-							}))
-						}
-						getItemId={(topic, index) => `topic-${index}-${topic}`}
+						onToggleItem={handleToggleTopic}
+						//    name="topic"
+					/>
+					<FilterInput
+						label="Formats"
+						value={formatInput}
+						onChange={setFormatInput}
+						placeholder="Search formats..."
+						items={formats}
+						selectedItems={selectedFormats}
+						onToggleItem={handleToggleFormat}
+						//    name="format"
 					/>
 					<FilterInput
 						label="Languages"
-						value={languageQuery}
-						onChange={setLanguageQuery}
+						value={languageInput}
+						onChange={setLanguageInput}
 						placeholder="Search languages..."
-						items={allLanguages}
+						items={ALL_LANGUAGES}
 						selectedItems={selectedLanguages}
-						onToggleItem={(language) =>
-							setSelectedLanguages((s) => ({
-								...s,
-								[language]: !s[language],
-							}))
-						}
-						getItemId={(language, index) =>
-							`language-${index}-${language}`
-						}
+						onToggleItem={handleToggleLanguage}
+						//    name="languages"
 					/>
-					<FilterInput
-						label="Format"
-						value={formatQuery}
-						onChange={setFormatQuery}
-						placeholder="Search formats..."
-						items={allFormats}
-						selectedItems={selectedFormats}
-						onToggleItem={(fmt) =>
-							setSelectedFormats((s) => ({
-								...s,
-								[fmt]: !s[fmt],
-							}))
-						}
-						getItemId={(fmt, index) => `format-${index}-${fmt}`}
-					/>
-
-					<div
-						className={cn(
-							"grid",
-							"grid-cols-1",
-							"sm:grid-cols-1",
-							"gap-0",
-							"content-start",
-							"mt-5",
-							"sm:border-none",
-							"sm:border-b",
-							"border-none",
-							"border-divider",
-							// "py-5",
-							"mt-0",
-							"sm:py-0",
-							"items-baseline",
-
-							"",
-							""
+					<div className="flex items-center gap-2">
+						<CopyrightToggle
+							checked={copyright}
+							onChange={setCopyright}
+						/>
+						{copyright && (
+							<input type="hidden" name="copyright" value="on" />
 						)}
-					>
-						{/* TODO: maybe change to calender? */}
+					</div>
+					<div className="flex gap-2">
 						<YearRangeFilter
 							yearFrom={yearFrom}
 							yearTo={yearTo}
 							onYearFromChange={setYearFrom}
 							onYearToChange={setYearTo}
 						/>
-						<div
-							className={cn(
-								"border-b border-divider",
-								// " my-3 mb-10 ",
-								" my-2 ",
-								"sm:border-none ",
-								"sm:my-0 sm:mb-0",
-								"",
-								""
-							)}
-						/>
-						<CopyrightToggle
-							checked={copyright}
-							onChange={toggleCopyRight}
-						/>
-					</div>
-				</div>
-				<div
-					id="filter button row"
-					className={cn(
-						// "py-5 sm:py-0 w-full sm:w-fit",
-						// "sm:border-none",
-						// "border-b border-divider",
-
-						// "sticky",
-						// "absolute",
-						// "static",
-						"border-t border-divider",
-
-						// MOBILE
-
-						"flex items-end justify-start gap-5",
-						"w-full",
-						"bg-container-solid p-5",
-						"fixed",
-						// "sm:relative",
-						"bottom-0 left-0 right-0",
-						//  *new stuff
-						"col-span-full",
-						"",
-						"",
-						// "absolute",
-						"bottom-10",
-						"sm:bottom-0",
-						// SX
-						"sx:col-span-2 sx:mr-auto",
-						"sx:bottom-0",
-
-						// SM
-						"sm:w-full",
-						"sm:bg-transparent sm:p-0 sm:pt-5",
-						"sm:relative",
-
-						// "sx:relative",
-						// "sm:bottom-auto sm:left-auto sm:right-auto",
-						"justify-between",
-						// "sm:p-0",
-						"",
-						""
-					)}
-				>
-					<button
-						type="button"
-						onClick={handleClearAll}
-						className={cn(
-							"text-nowrap rounded-full w-full sm:w-fit px-6 py-1 transition-colors",
-							"border border-secondary text-secondary",
-							"hover:border-accent-dark hover:text-accent-dark",
-							"w-fit",
-							textBtnClass,
-							secondaryBtnClass,
-							// compressedBtnClass,
-							"border border-divider text-secondary",
-							"hover:border-red-500 hover:text-red-500",
-							"hidden sm:flex",
-							"",
-							""
+						{yearFrom && (
+							<input
+								type="hidden"
+								name="year_from"
+								value={yearFrom}
+							/>
 						)}
-					>
-						Clear Filters
-						{/* Clear All */}
-					</button>
+						{yearTo && (
+							<input
+								type="hidden"
+								name="year_to"
+								value={yearTo}
+							/>
+						)}
+					</div>
 					<button
 						type="submit"
-						onClick={() => {
-							const form = document.getElementById(
-								"filter"
-							) as HTMLFormElement | null;
-							if (form) {
-								if (
-									typeof (form as any).requestSubmit ===
-									"function"
-								) {
-									(form as any).requestSubmit();
-								} else {
-									form.submit();
-								}
-							}
-							onClose?.();
-						}}
 						className={cn(
+							"mt-6",
+							"px-6 py-2",
+							"rounded-lg",
+							"bg-primary text-white dark:bg-accent dark:text-black",
+							"font-semibold text-base",
+							"hover:bg-primary/80 dark:hover:bg-accent/80",
+							"transition-colors duration-200",
+							"shadow-md",
+							"w-full",
+							"bg-accent-dark",
 							"text-nowrap rounded-full w-full",
 							"sm:w-fit",
 							"px-6 py-2 transition-colors border",
@@ -1123,19 +231,17 @@ export default function Filter({
 							// "hover:bg-accent-dark hover:border-accent-dark       text-white ",
 							textBtnClass,
 							primaryBtnClass,
+							"w-full!",
 							"px-20",
 							// compressedBtnClass,
 							"",
-							""
-						)}
-					>
-						Show Results
-						{/* Apply Filters */}
-					</button>
-				</div>
-			</Form>
-		</div>
-	);
 
-	return filterContent;
+							""
+						)}>
+						Apply Filters
+					</button>
+				</Form>
+			</Drawer.Content>
+		</Drawer>
+	);
 }

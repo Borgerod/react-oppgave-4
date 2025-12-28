@@ -45,8 +45,7 @@ export default function FilterInput({
 
 				"",
 				""
-			)}
-		>
+			)}>
 			<span
 				className={cn(
 					"p-0",
@@ -56,8 +55,7 @@ export default function FilterInput({
 
 					"",
 					""
-				)}
-			>
+				)}>
 				{label}
 			</span>
 			<input
@@ -105,8 +103,7 @@ export default function FilterInput({
 
 						"",
 						""
-					)}
-				>
+					)}>
 					No {label} match.
 				</div>
 			) : (
@@ -116,23 +113,13 @@ export default function FilterInput({
 						"gap-1",
 						"content-start",
 						"w-full",
-						"max-h-24",
-						"max-h-32",
-						"sm:max-h-35",
-						"sm:max-h-39",
-						"lg:max-h-40",
-						"overflow-y-auto",
-						// "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
 						"px-2.5",
 						"gap-1.5",
 						"sm:gap-1.5",
 						"sm:gap-1",
 						"overflow-x-hidden",
-						"",
-						"",
 						""
-					)}
-				>
+					)}>
 					{filteredItems.map((item, index) => {
 						const id = itemIdGetter(item, index);
 						return (

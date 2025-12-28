@@ -1,5 +1,5 @@
 "use client";
-import { IoChevronBack, IoMenu } from "react-icons/io5";
+import { IoMenu } from "react-icons/io5";
 import { cn } from "@/utils/cn";
 import { iconBtnClass, textBtnClass } from "@/components/buttonClasses";
 import Link from "next/link";
@@ -10,10 +10,10 @@ import type { BooksResponse } from "@/types";
 import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-import Filter from "@/components/filters/filter";
+// import Filter from "@/components/filters/filter";
+import { Filter } from "@/components/filters/filter";
 import { useTheme } from "@/providers/providers";
 import { HiLibrary } from "react-icons/hi";
-import Filter_v2 from "../filters/filter_v2";
 
 type StoreHeaderProps = {
 	onResults?: (data: BooksResponse, queryString?: string) => void;
@@ -92,8 +92,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 				// "justify-around",
 				"",
 				""
-			)}
-		>
+			)}>
 			{isOpen && (
 				<div
 					aria-label="menu"
@@ -104,8 +103,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						"text-xl text-center content-center",
 						"shadow-xl",
 						"z-50 top-25 right-0"
-					)}
-				>
+					)}>
 					Stop snooping!
 				</div>
 			)}
@@ -169,8 +167,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					// isBookProfile ? "max-w-7xl" : "",
 					"",
 					""
-				)}
-			>
+				)}>
 				<Link
 					href={"/home"}
 					className={cn(
@@ -179,8 +176,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						`${logoBtnClass}`,
 						"",
 						""
-					)}
-				>
+					)}>
 					<div className="self-center flex items-center justify-center ">
 						{isDark ? (
 							<>
@@ -213,7 +209,14 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									alt="logo"
 									width={60}
 									height={50}
-									className="block sm:hidden self-center"
+									className={cn(
+										"block",
+										"sm:hidden",
+										"self-center",
+										"h-auto",
+										"w-auto",
+										""
+									)}
 								/>
 							</>
 						)}
@@ -228,8 +231,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 							// `${logoBtnClass}`,
 							"hidden sm:block",
 							""
-						)}
-					>
+						)}>
 						<HiLibrary
 							size={19}
 							className="place-self-center align-middle"
@@ -247,8 +249,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						"hidden",
 						"sm:flex",
 						""
-					)}
-				>
+					)}>
 					<SearchBar
 						onResults={onResults}
 						searchQuery={searchQuery}
@@ -257,8 +258,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					<button
 						aria-label="filter"
 						onClick={() => toggleFilter(!openFilter)}
-						className={iconBtnClass}
-					>
+						className={iconBtnClass}>
 						<PiSlidersHorizontalFill size={19} className="block" />
 						{selectedCount ? (
 							<div
@@ -270,8 +270,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									"justify-items-end",
 									"",
 									""
-								)}
-							>
+								)}>
 								<span
 									className={cn(
 										"h-4 aspect-square ",
@@ -282,8 +281,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 										"text-xs text-white",
 										"",
 										""
-									)}
-								>
+									)}>
 									{selectedCount}
 								</span>
 							</div>
@@ -310,8 +308,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					aria-label="menu"
 					onClick={() => toggleMenu((prev) => !prev)}
 					ref={menuRef}
-					className={iconBtnClass}
-				>
+					className={iconBtnClass}>
 					<IoMenu size={19} className="block" />
 				</button>
 				{/* </div> */}
@@ -330,14 +327,12 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					// "px-5",
 					"",
 					""
-				)}
-			>
+				)}>
 				{isBookProfile ? (
 					<Link
 						href={"/store"}
 						className={cn(`${iconBtnClass}`, "", "")}
-						aria-label="library"
-					>
+						aria-label="library">
 						<HiLibrary size={19} />
 					</Link>
 				) : null}
@@ -345,8 +340,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 				<button
 					aria-label="filter"
 					onClick={() => toggleFilter(!openFilter)}
-					className={iconBtnClass}
-				>
+					className={iconBtnClass}>
 					<PiSlidersHorizontalFill size={19} className="" />
 					{selectedCount ? (
 						<div
@@ -358,8 +352,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 								"justify-items-end",
 								"",
 								""
-							)}
-						>
+							)}>
 							<span
 								className={cn(
 									"h-4 aspect-square ",
@@ -370,8 +363,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 									"text-xs text-white",
 									"",
 									""
-								)}
-							>
+								)}>
 								{selectedCount}
 							</span>
 						</div>
@@ -380,19 +372,13 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 					)}
 				</button>
 			</div>
-			{openFilter && (
-				// TODO chose between these
-				<Filter
-					searchQuery={searchQuery}
-					topics={topics}
-					onClose={() => toggleFilter(false)}
-				/>
-				// <Filter_v2
-				// 	searchQuery={searchQuery}
-				// 	topics={topics}
-				// 	onClose={() => toggleFilter(false)}
-				// />
-			)}
+			<Filter
+				open={openFilter}
+				setOpen={toggleFilter}
+				searchQuery={searchQuery}
+				topics={topics}
+				onClose={() => toggleFilter(false)}
+			/>
 		</header>
 	);
 }

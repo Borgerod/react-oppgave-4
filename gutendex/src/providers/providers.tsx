@@ -65,7 +65,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 					: null;
 			if (raw) return JSON.parse(raw) as HomeCache;
 		} catch (e) {
-			// ignore
+			console.error("Error reading homeCache from sessionStorage:", e);
 		}
 		return {} as HomeCache;
 	});
@@ -78,7 +78,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 				JSON.stringify(homeCache || {})
 			);
 		} catch (e) {
-			// ignore
+			console.error("Error saving homeCache to sessionStorage:", e);
 		}
 	}, [homeCache]);
 
@@ -156,8 +156,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 		<UpperDownloadCountContext.Provider value={upperDownloadCountLimit}>
 			<ThemeContext.Provider value={{ isDark, toggleTheme }}>
 				<HomeCacheContext.Provider
-					value={{ cache: homeCache, setCache: setHomeCache }}
-				>
+					value={{ cache: homeCache, setCache: setHomeCache }}>
 					{children}
 				</HomeCacheContext.Provider>
 			</ThemeContext.Provider>

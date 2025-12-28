@@ -2,7 +2,7 @@ import type { Title, Book } from "@/types";
 
 export function parseTitle(input: string | Title): Title {
 	if (!input) return { main: "Untitled" };
-	if (typeof input !== "string") return input;
+	if (typeof input !== "string") return { ...input };
 
 	const titleParts = input
 		// .split(/[:\-–—]/)
@@ -17,7 +17,7 @@ export function parseTitle(input: string | Title): Title {
 }
 
 // Normalize a raw book object (from upstream) so `title` is a `Title`.
-export function ensureBookTitle(raw: any): Book {
+export function ensureBookTitle(raw: Book): Book {
 	// shallow clone and replace title
 	return {
 		...(raw as Book),

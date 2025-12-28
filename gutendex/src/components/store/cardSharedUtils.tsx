@@ -58,7 +58,7 @@ export function useFavorite(
 			} else {
 				setLocalFav(false);
 			}
-		} catch (e) {
+		} catch {
 			setLocalFav(false);
 		}
 	}, [book.id, isFavorite]);
@@ -80,7 +80,7 @@ export function useFavorite(
 			}
 			localStorage.setItem("favoriteBooks", JSON.stringify(updated));
 			setLocalFav(updated.some((b) => b.id === book.id));
-		} catch (e) {
+		} catch {
 			// ignore localStorage errors
 		}
 	}

@@ -7,10 +7,13 @@ type SelectedFiltersTagsProps = {
 	selectedFormats?: Record<string, boolean>;
 	selectedLanguages?: Record<string, boolean>;
 	copyright?: boolean;
+	yearFrom?: string | null;
+	yearTo?: string | null;
 	onRemoveTopic?: (topic: string) => void;
 	onRemoveFormat?: (format: string) => void;
 	onRemoveLanguage?: (language: string) => void;
 	onRemoveCopyright?: () => void;
+	onRemoveYearRange?: () => void;
 	onClearAll?: () => void;
 	searchQuery?: string | null;
 };
@@ -20,10 +23,13 @@ export default function SelectedFiltersTags({
 	selectedFormats = {},
 	selectedLanguages = {},
 	copyright = false,
+	yearFrom = null,
+	yearTo = null,
 	onRemoveTopic,
 	onRemoveFormat,
 	onRemoveLanguage,
 	onRemoveCopyright,
+	onRemoveYearRange,
 	onClearAll,
 	searchQuery,
 }: SelectedFiltersTagsProps) {
@@ -32,7 +38,8 @@ export default function SelectedFiltersTags({
 		Object.values(selectedFormats).some(Boolean) ||
 		Object.values(selectedLanguages).some(Boolean) ||
 		copyright ||
-		Boolean(searchQuery);
+		Boolean(searchQuery) ||
+		Boolean(yearFrom || yearTo);
 
 	if (!hasAnyFilters) {
 		return null;
@@ -41,16 +48,14 @@ export default function SelectedFiltersTags({
 	return (
 		<div
 			id="selected-filters-tags"
-			className="col-span-full w-full mt-5 sm:mt-0"
-		>
+			className="col-span-full w-full mt-5 sm:mt-0">
 			<div className="flex items-start justify-between mb-2">
 				<div className="text-sm text-tertiary">Selected filters</div>
 				<button
 					type="button"
 					aria-label="Clear all filters"
 					onClick={() => onClearAll?.()}
-					className="text-sm text-red-500 hover:underline"
-				>
+					className="text-sm text-red-500 hover:underline">
 					Clear All
 				</button>
 			</div>
@@ -75,8 +80,7 @@ export default function SelectedFiltersTags({
 					.map(([format]) => (
 						<li
 							key={`selected-format-${format}`}
-							className="place-self-center"
-						>
+							className="place-self-center">
 							<Tag
 								id={`selected-format-${format}`}
 								item={format}
@@ -92,8 +96,7 @@ export default function SelectedFiltersTags({
 					.map(([language]) => (
 						<li
 							key={`selected-language-${language}`}
-							className="place-self-center"
-						>
+							className="place-self-center">
 							<Tag
 								id={`selected-language-${language}`}
 								item={language}
@@ -111,6 +114,25 @@ export default function SelectedFiltersTags({
 							item="Copyright Only"
 							checked={true}
 							onToggle={() => onRemoveCopyright?.()}
+							closeIcon
+						/>
+					</li>
+				)}
+
+				{/* Year range */}
+				{(yearFrom || yearTo) && (
+					<li key="selected-year-range" className="place-self-center">
+						<Tag
+							id="selected-year-range"
+							item={
+								yearFrom && yearTo
+									? `Years: ${yearFrom} - ${yearTo}`
+									: yearFrom
+									? `From: ${yearFrom}`
+									: `To: ${yearTo}`
+							}
+							checked={true}
+							onToggle={() => onRemoveYearRange?.()}
 							closeIcon
 						/>
 					</li>

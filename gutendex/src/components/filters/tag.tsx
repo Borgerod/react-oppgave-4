@@ -43,7 +43,7 @@ export function Tag({
 								})
 							);
 						}
-					} catch (err) {
+					} catch {
 						// ignore
 					}
 
@@ -70,8 +70,7 @@ export function Tag({
 					"",
 					"",
 					""
-				)}
-			>
+				)}>
 				{item}
 			</button>
 		);
@@ -124,8 +123,7 @@ export function Tag({
 					"text-nowrap",
 					"",
 					""
-				)}
-			>
+				)}>
 				{item}
 				{closeIcon ? (
 					<button
@@ -141,8 +139,7 @@ export function Tag({
 							bigText ? "text-lg sm:text-sm" : "",
 							"",
 							""
-						)}
-					>
+						)}>
 						<IoMdClose className="" />
 					</button>
 				) : null}

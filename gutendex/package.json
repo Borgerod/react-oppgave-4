@@ -6,14 +6,18 @@
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
-		"lint": "eslint"
+		"lint": "eslint",
+		"lhci:healthcheck": "lhci healthcheck --config=./lighthouserc.js",
+		"lhci:collect": "lhci collect --config=./lighthouserc.js",
+		"lhci:assert": "lhci assert --config=./lighthouserc.js",
+		"lhci": "lhci autorun --config=./lighthouserc.js"
 	},
 	"dependencies": {
 		"@emotion/cache": "^11.14.0",
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.1",
+		"@geist-ui/core": "^2.3.8",
 		"clsx": "^2.1.1",
-		"geist": "^1.5.1",
 		"next": "16.0.10",
 		"next-themes": "^0.4.6",
 		"react": "19.2.0",
@@ -22,6 +26,7 @@
 		"tailwind-merge": "^3.4.0"
 	},
 	"devDependencies": {
+		"@lhci/cli": "^0.15.1",
 		"@tailwindcss/postcss": "^4",
 		"@types/node": "^20",
 		"@types/prop-types": "^15.7.15",

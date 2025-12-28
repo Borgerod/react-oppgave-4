@@ -17,7 +17,7 @@ export default function FavoriteButton({
 	book,
 	isFavorite,
 	onToggleFavorite,
-	compact = false,
+	// compact = false,
 	className = "",
 }: FavoriteButtonProps) {
 	const { localFav, toggle, ariaLabel } = useFavorite(
@@ -44,6 +44,7 @@ export default function FavoriteButton({
 		"scale-101",
 		"hover:scale-105",
 		// "hover:bg-",
+
 		"",
 		""
 	);
@@ -117,8 +118,7 @@ export default function FavoriteButton({
 				className,
 				"",
 				""
-			)}
-		>
+			)}>
 			{localFav ? (
 				<FaHeart
 					className={cn(

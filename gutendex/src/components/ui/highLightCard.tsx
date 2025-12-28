@@ -26,8 +26,8 @@ export default function HighLightCard({
 	image,
 	badge = { text: "Top", variant: "pink" },
 	href = "https://kokonutui.com/",
-	icon,
-}: HighLightCardProps) {
+}: // icon,
+HighLightCardProps) {
 	return (
 		<div
 			className={cn(
@@ -38,8 +38,7 @@ export default function HighLightCard({
 
 				"transition-all duration-300",
 				""
-			)}
-		>
+			)}>
 			<Link
 				href={href}
 				className={cn(
@@ -98,8 +97,7 @@ export default function HighLightCard({
 					"scale-101",
 					"",
 					""
-				)}
-			>
+				)}>
 				{/* <div className="relative h-[320px] overflow-hidden"> */}
 				<div
 					id="highlightcard-image-container"
@@ -124,8 +122,7 @@ export default function HighLightCard({
 
 						"",
 						""
-					)}
-				>
+					)}>
 					{image ? (
 						<Image
 							src={image}
@@ -195,8 +192,7 @@ export default function HighLightCard({
 
 				<div
 					id="highlightcard-badge"
-					className="absolute top-3 right-3"
-				>
+					className="absolute top-3 right-3">
 					{badge ? (
 						typeof badge.text === "string" ? (
 							<span
@@ -208,8 +204,7 @@ export default function HighLightCard({
 									"backdrop-blur-md",
 									"shadow-xs",
 									"border border-white/20 dark:border-zinc-800/50"
-								)}
-							>
+								)}>
 								{badge.text}
 							</span>
 						) : (
@@ -238,8 +233,7 @@ export default function HighLightCard({
 									// "border border-white/10 dark:border-zinc-800/30",
 									"",
 									""
-								)}
-							>
+								)}>
 								{React.isValidElement(badge.text)
 									? React.cloneElement(
 											badge.text as React.ReactElement<{
@@ -273,12 +267,10 @@ export default function HighLightCard({
 
 				<div
 					id="highlightcard-footer"
-					className="absolute bottom-0 left-0 right-0 p-3"
-				>
+					className="absolute bottom-0 left-0 right-0 p-3">
 					<div
 						id="highlightcard-footer-row"
-						className="flex items-center justify-between gap-3 pr-6"
-					>
+						className="flex items-center justify-between gap-3 pr-6">
 						<div
 							id="highlightcard-text"
 							className="space-y-1.5 min-w-0"
@@ -308,8 +300,7 @@ export default function HighLightCard({
 								"absolute right-3 bottom-3",
 								"",
 								""
-							)}
-						>
+							)}>
 							<GoArrowUpRight className="w-3 h-3 text-white group-hover:-rotate-12 transition-transform duration-300" />
 						</div>
 					</div>

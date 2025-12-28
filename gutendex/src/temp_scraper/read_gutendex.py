@@ -13,6 +13,8 @@ import pandas as pd
 from collections import Counter, defaultdict
 from pprint import pprint
 import re
+import json
+import ast
 
 def printFirstRow(df):
     
@@ -74,6 +76,101 @@ def get_subject_counts(dataframe: pd.DataFrame) -> dict:
             parts = []
 
         counter.update(parts)
+
+    return dict(counter)
+
+
+def get_media_type_counts(dataframe: pd.DataFrame) -> dict:
+    """Count occurrences of mime types across the dataframe.
+
+    Accepts list-like values or delimiter-separated strings. Returns mapping
+    media_type -> occurrence_count.
+    """
+    if "media_type" not in dataframe.columns:
+        return {}
+
+    counter = Counter()
+    # for val in dataframe["media_type"].dropna():
+    for val in dataframe["media_type"].dropna():
+        parts = []
+        if isinstance(val, (list, tuple)):
+            parts = [str(p).strip() for p in val if str(p).strip()]
+        elif isinstance(val, str):
+            s = val.strip()
+            if not s:
+                parts = []
+            else:
+                # Remove surrounding brackets if present
+                if s.startswith("[") and s.endswith("]"):
+                    s = s[1:-1]
+                # Split on common delimiters and clean tokens
+                parts = [token.strip().strip('"').strip("'") for token in re.split(r"[,;|]", s) if token.strip()]
+        else:
+            parts = []
+
+        counter.update(parts)
+
+    '''
+    [('False', 54665),
+    ('Text', 672),
+    ('True', 567),
+    ('Sound', 95),
+    ('StillImage', 1)]
+    '''
+    return dict(counter)
+
+
+def get_format_counts(dataframe: pd.DataFrame) -> dict:
+    """Count occurrences of format mime types across the dataframe.
+
+    The `formats` column may contain a mapping (dict) of mime-type -> url,
+    a JSON string, or a Python-dict-like string. This function extracts the
+    mime-type keys and returns a mapping mime_type -> occurrence_count.
+    """
+    if "formats" not in dataframe.columns:
+        return {}
+
+    counter = Counter()
+    for val in dataframe["formats"].dropna():
+        keys = []
+        if isinstance(val, dict):
+            keys = [str(k).strip() for k in val.keys() if str(k).strip()]
+        elif isinstance(val, (list, tuple)):
+            keys = [str(item).strip() for item in val if str(item).strip()]
+        elif isinstance(val, str):
+            s = val.strip()
+            if not s:
+                keys = []
+            else:
+                parsed = None
+                try:
+                    parsed = json.loads(s)
+                except Exception:
+                    try:
+                        parsed = ast.literal_eval(s)
+                    except Exception:
+                        parsed = None
+
+                if isinstance(parsed, dict):
+                    keys = [str(k).strip() for k in parsed.keys() if str(k).strip()]
+                else:
+                    q1 = re.findall(r'"([^"\n]+)"\s*:\s*', s)
+                    q2 = re.findall(r"'([^'\n]+)'\s*:\s*", s)
+                    keys = [k.strip() for k in (q1 + q2) if k.strip()]
+                    if not keys:
+                        t = s
+                        if t.startswith("{") and t.endswith("}"):
+                            t = t[1:-1]
+                        parts = [p.strip() for p in re.split(r",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", t) if p.strip()]
+                        for p in parts:
+                            if ":" in p:
+                                key = p.split(":", 1)[0].strip().strip('"').strip("'")
+                                if key:
+                                    keys.append(key)
+        else:
+            keys = []
+
+        counter.update(keys)
 
     return dict(counter)
 
@@ -213,6 +310,9 @@ def get_subject_downloads(dataframe: pd.DataFrame) -> dict:
 
 
 
+
+
+
 def main() -> None:
     script_dir = Path(__file__).resolve().parent
     csv_path = script_dir / "gutendex_books.csv"
@@ -221,6 +321,8 @@ def main() -> None:
 
     df = pd.read_csv(csv_path)
     # printFirstRow(df)
+
+    print(df["formats"][0])
 
     # counts = get_bookshelf_counts(df)
     # # Simple descending sort: sort the (bookshelf, count) pairs by count
@@ -232,20 +334,37 @@ def main() -> None:
     # top10 = sorted(author_downloads.items(), key=lambda kv: kv[1], reverse=True)[:10]
     # pprint(top10)
 
-    # Also print top subjects by occurrence count (like bookshelves)
-    subject_counts = get_subject_counts(df)
-    top_subjects = sorted(subject_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    print("top 100 Subjects:")
-    print("_"*60)
-    pprint(top_subjects)
+    # # Also print top subjects by occurrence count (like bookshelves)
+    # subject_counts = get_subject_counts(df)
+    # top_subjects = sorted(subject_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
+    # print("top 100 Subjects:")
+    # print("_"*60)
+    # pprint(top_subjects)
 
 
-    # Also print top subjects by occurrence count (like bookshelves)
-    bookshelf_counts = get_bookshelf_counts(df)
-    top_bookshelf = sorted(bookshelf_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    print("top 100 Bookshelves:")
+    # # Also print top subjects by occurrence count (like bookshelves)
+    # bookshelf_counts = get_bookshelf_counts(df)
+    # top_bookshelf = sorted(bookshelf_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
+    # print("top 100 Bookshelves:")
+    # print("_"*60)
+    # pprint(top_bookshelf)
+
+
+
+    # # get_media_type_counts
+    # mimt_type_counts = get_media_type_counts(df)
+    # top_media_type = sorted(mimt_type_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
+    # print("top 100 top_media_type:")
+    # print("_"*60)
+    # pprint(top_media_type)
+
+
+    # get_media_type_counts
+    format_counts = get_format_counts(df)
+    top_format = sorted(format_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
+    print("top 100 top_format:")
     print("_"*60)
-    pprint(top_bookshelf)
+    pprint(top_format)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,11 @@
 "use client";
 
+declare global {
+	interface Window {
+		__apiCallCount?: number;
+	}
+}
+
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/store/productCard";
@@ -9,8 +15,15 @@ import CardSkeleton from "@/components/store/cardSkeleton";
 import { cn } from "@/utils/cn";
 import SelectMenu from "@/components/store/selectMenu";
 import SelectedFiltersTags from "@/components/filters/selectedFiltersTags";
-import Highlights from "@/components/ui/highlights";
+// import Highlights from "@/components/ui/highlights";
 // todo: issue, the popularity chart updates when its filtered, it should allways calculate popoularity by all books.
+
+// Robust API call counter for browser debugging
+if (typeof window !== "undefined") {
+	if (!window.__apiCallCount) {
+		window.__apiCallCount = 0;
+	}
+}
 function computeUpperDownloadCountLimit(
 	results: Book[],
 	limit: number = 1.25
@@ -28,7 +41,9 @@ function computeUpperDownloadCountLimit(
 	return current;
 }
 
-export default function Store() {
+import { Suspense } from "react";
+
+function StorePageInner() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const searchParamsStr = searchParams ? searchParams.toString() : "";
@@ -66,7 +81,10 @@ export default function Store() {
 	const selectedFormats = React.useMemo(() => {
 		const formats: Record<string, boolean> = {};
 		if (searchParams) {
-			searchParams.getAll("format").forEach((format) => {
+			[
+				...searchParams.getAll("format"),
+				...searchParams.getAll("mime_type"),
+			].forEach((format) => {
 				formats[format] = true;
 			});
 		}
@@ -85,21 +103,41 @@ export default function Store() {
 
 	const copyright = searchParams?.get("copyright") === "on";
 
+	const yearFrom = searchParams?.get("year_from") ?? null;
+	const yearTo = searchParams?.get("year_to") ?? null;
+
 	// Handler to remove individual filters
 	const removeFilter = (type: string, value?: string) => {
 		const params = new URLSearchParams(searchParams?.toString() || "");
 
 		if (type === "copyright") {
 			params.delete("copyright");
+		} else if (type === "year") {
+			params.delete("year_from");
+			params.delete("year_to");
 		} else if (value) {
-			// Remove specific value
-			const allValues = params.getAll(type);
-			params.delete(type);
-			allValues.forEach((v) => {
-				if (v !== value) {
-					params.append(type, v);
-				}
-			});
+			// Remove specific value. Support formats that might be stored in
+			// either "format" or "mime_type" query keys.
+			if (type === "format") {
+				// Remove both keys and re-append other values
+				const allFormatValues = [
+					...params.getAll("format"),
+					...params.getAll("mime_type"),
+				];
+				params.delete("format");
+				params.delete("mime_type");
+				allFormatValues.forEach((v) => {
+					if (v !== value) params.append("format", v);
+				});
+			} else {
+				const allValues = params.getAll(type);
+				params.delete(type);
+				allValues.forEach((v) => {
+					if (v !== value) {
+						params.append(type, v);
+					}
+				});
+			}
 		}
 
 		router.push(`/store?${params.toString()}`);
@@ -147,7 +185,17 @@ export default function Store() {
 					url: string,
 					retries = 3,
 					backoff = 1000
-				): Promise<any> => {
+				): Promise<BooksResponse> => {
+					if (typeof window !== "undefined") {
+						window.__apiCallCount =
+							(window.__apiCallCount || 0) + 1;
+						console.log(
+							"API call count:",
+							window.__apiCallCount,
+							"URL:",
+							url
+						);
+					}
 					const res = await fetch(url);
 
 					// Handle 429 with Retry-After or exponential backoff
@@ -210,6 +258,7 @@ export default function Store() {
 							"body:",
 							text
 						);
+						console.log(err);
 						throw new Error(`Invalid JSON response from ${url}`);
 					}
 				};
@@ -254,7 +303,7 @@ export default function Store() {
 		return () => {
 			mounted = false;
 		};
-	}, [searchParamsStr, pageCount]);
+	}, [searchParamsStr, pageCount, searchParams]);
 
 	// load favorites from localStorage on mount
 	useEffect(() => {
@@ -267,6 +316,7 @@ export default function Store() {
 			} catch (e) {
 				setFavoriteBooks(null);
 				setFavoriteIds([]);
+				console.log(e);
 			}
 		}
 	}, []);
@@ -329,6 +379,8 @@ export default function Store() {
 					selectedFormats={selectedFormats}
 					selectedLanguages={selectedLanguages}
 					copyright={copyright}
+					yearFrom={yearFrom}
+					yearTo={yearTo}
 					searchQuery={searchParams?.get("search") ?? undefined}
 					onRemoveTopic={(topic) => removeFilter("topic", topic)}
 					onRemoveFormat={(format) => removeFilter("format", format)}
@@ -336,6 +388,7 @@ export default function Store() {
 						removeFilter("languages", language)
 					}
 					onRemoveCopyright={() => removeFilter("copyright")}
+					onRemoveYearRange={() => removeFilter("year")}
 					onClearAll={() => router.push("/store")}
 				/>
 
@@ -388,8 +441,7 @@ export default function Store() {
 						"gap-4",
 						"",
 						""
-					)}
-				>
+					)}>
 					{/* If initial load or no data, show full skeleton set */}
 					{isInitialLoad || !hasResults ? (
 						Array.from({ length: 15 }).map((_, index) => (
@@ -422,5 +474,17 @@ export default function Store() {
 				<div ref={loadMoreRef} aria-hidden className="h-1 w-full" />
 			</div>
 		</main>
+	);
+}
+export default function Store() {
+	return (
+		<Suspense
+			fallback={
+				<div className={cn("p-8", "text-center", "", "")}>
+					Loading store...
+				</div>
+			}>
+			<StorePageInner />
+		</Suspense>
 	);
 }

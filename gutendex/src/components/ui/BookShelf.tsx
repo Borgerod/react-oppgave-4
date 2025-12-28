@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn";
-import React from "react";
+// import React from "react";
 import Link from "next/link";
 
 function buildStoreUrl(topic: string) {
@@ -74,8 +74,7 @@ export default function BookShelf({}: BookShelfProps) {
 				"",
 				"",
 				""
-			)}
-		>
+			)}>
 			<div
 				className={cn(
 					// "bg-amber-100",
@@ -97,8 +96,7 @@ export default function BookShelf({}: BookShelfProps) {
 
 					"",
 					""
-				)}
-			>
+				)}>
 				<div
 					className={cn(
 						"relative flex flex-row",
@@ -106,8 +104,7 @@ export default function BookShelf({}: BookShelfProps) {
 						"items-end justify-start",
 						"",
 						""
-					)}
-				>
+					)}>
 					<div
 						className={cn(
 							// "flex flex-col gap-1 h-full",
@@ -120,8 +117,7 @@ export default function BookShelf({}: BookShelfProps) {
 							"rotate-290 origin-bottom",
 							"",
 							""
-						)}
-					>
+						)}>
 						<Link
 							href={buildStoreUrl("Children & Young Adult")}
 							className={cn(
@@ -139,8 +135,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Children & Young Adult"
-						>
+							aria-label="Browse Children & Young Adult">
 							Children & Young Adult
 						</Link>
 					</div>
@@ -153,8 +148,7 @@ export default function BookShelf({}: BookShelfProps) {
 							"place-self-end",
 							"",
 							""
-						)}
-					>
+						)}>
 						<Link
 							href={buildStoreUrl("Horror")}
 							className={cn(
@@ -172,16 +166,14 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Horror"
-						>
+							aria-label="Browse Horror">
 							<span
 								className={cn(
 									// "hover:scale-100 hover:bg-accent transition-transform",
 
 									"",
 									""
-								)}
-							>
+								)}>
 								Horror
 							</span>
 						</Link>
@@ -202,8 +194,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Humour"
-						>
+							aria-label="Browse Humour">
 							Humour
 						</Link>
 						<Link
@@ -223,8 +214,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Science Fiction"
-						>
+							aria-label="Browse Science Fiction">
 							Science Fiction
 						</Link>
 					</div>
@@ -234,8 +224,7 @@ export default function BookShelf({}: BookShelfProps) {
 							"rotate-290 origin-bottom",
 							"",
 							""
-						)}
-					>
+						)}>
 						<Link
 							href={buildStoreUrl("Adventure")}
 							className={cn(
@@ -253,8 +242,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Adventure"
-						>
+							aria-label="Browse Adventure">
 							Adventure
 						</Link>
 					</div>
@@ -265,8 +253,7 @@ export default function BookShelf({}: BookShelfProps) {
 							"-bottom-9 left-120 gap-1 items-end",
 							"",
 							""
-						)}
-					>
+						)}>
 						<Link
 							href={buildStoreUrl("Romance")}
 							className={cn(
@@ -284,8 +271,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Romance"
-						>
+							aria-label="Browse Romance">
 							Romance
 						</Link>
 						<Link
@@ -305,8 +291,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Literary Fiction"
-						>
+							aria-label="Browse Literary Fiction">
 							Literary Fiction
 						</Link>
 						<Link
@@ -326,8 +311,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse History"
-						>
+							aria-label="Browse History">
 							History
 						</Link>
 						<Link
@@ -347,8 +331,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Fantasy"
-						>
+							aria-label="Browse Fantasy">
 							Fantasy
 						</Link>
 
@@ -369,8 +352,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Science"
-						>
+							aria-label="Browse Science">
 							Science
 						</Link>
 					</div>
@@ -381,8 +363,7 @@ export default function BookShelf({}: BookShelfProps) {
 							"bottom-17 left-19",
 							"",
 							""
-						)}
-					>
+						)}>
 						<Link
 							href={buildStoreUrl("Thrillers and Mystery")}
 							className={cn(
@@ -400,8 +381,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Thrillers and Mystery"
-						>
+							aria-label="Browse Thrillers and Mystery">
 							Thrillers and Mystery
 						</Link>
 						<Link
@@ -421,8 +401,7 @@ export default function BookShelf({}: BookShelfProps) {
 								"",
 								""
 							)}
-							aria-label="Browse Crime"
-						>
+							aria-label="Browse Crime">
 							Crime
 						</Link>
 					</div>

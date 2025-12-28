@@ -5,6 +5,7 @@ import { cn } from "@/utils/cn";
 import Providers from "@/providers/providers";
 import ThemeToggle from "@/components/layout/themeToggle";
 import StoreHeader from "@/components/layout/header";
+import { Suspense } from "react";
 import getTopicsServer from "@/utils/getTopicsServer";
 import { readTopicsCache, isCacheValid } from "@/utils/topicsCache";
 
@@ -129,13 +130,25 @@ export default async function RootLayout({
 					"",
 					"",
 					""
-				)}
-			>
+				)}>
 				<Providers>
 					{/* keep centered constraints here instead of on body */}
 					<div className="">
 						{/* <div className="max-w-7xl mx-auto px-10"> */}
-						<StoreHeader topics={topics} />
+						<Suspense
+							fallback={
+								<div
+									className={cn(
+										"p-8",
+										"text-center",
+										"",
+										""
+									)}>
+									Loading header...
+								</div>
+							}>
+							<StoreHeader topics={topics} />
+						</Suspense>
 						{children}
 						<ThemeToggle />
 					</div>

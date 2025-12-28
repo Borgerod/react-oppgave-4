@@ -11,7 +11,8 @@ export async function fetchCategories(opts?: {
 	maxConsecutiveFailures?: number;
 }): Promise<string[]> {
 	const startPage = opts?.startPage ?? 1;
-	const maxPages = opts?.maxPages ?? 500;
+	// Reduce the default number of pages fetched to avoid overwhelming the upstream API
+	const maxPages = opts?.maxPages ?? 50;
 	const maxConsecutiveFailures = opts?.maxConsecutiveFailures ?? 100;
 
 	const found = new Set<string>();
@@ -44,6 +45,20 @@ export async function fetchCategories(opts?: {
 				res = null;
 			}
 			if (res && res.ok) break;
+			// If we hit a 429 Too Many Requests, try to respect Retry-After then stop
+			if (res && res.status === 429) {
+				const retry = res.headers.get("retry-after");
+				const waitMs = retry
+					? Math.max(1000, Number(retry) * 1000)
+					: 2000;
+				console.warn(
+					`fetchCategories: upstream 429 for ${url}; waiting ${waitMs}ms and aborting further paging`
+				);
+				// wait briefly for well-behaved backoff, but then abort to avoid hammering upstream
+				// return what we've collected so far.
+				await new Promise((r) => setTimeout(r, waitMs));
+				return Array.from(found).sort();
+			}
 			// If non-retriable error (4xx) break attempts
 			if (res && res.status >= 400 && res.status < 500) break;
 			// backoff
@@ -93,6 +108,10 @@ export async function fetchCategories(opts?: {
 
 		// If Gutendex returned no next link, we can stop early.
 		if (!data.next) break;
+
+		// Be polite: small pause between page fetches to reduce risk of rate-limiting
+		// (keeps the background fetch gentle while still making progress)
+		await new Promise((r) => setTimeout(r, 150));
 
 		page += 1;
 	}

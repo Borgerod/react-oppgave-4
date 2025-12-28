@@ -16,8 +16,8 @@ type AuthorItem = { author: string; count: number };
 // import { FaHeart } from "react-icons/fa";
 // import { FaRegHeart } from "react-icons/fa";
 import { IoMdDownload } from "react-icons/io";
-import { Tag } from "../filters/tag";
-import { BsPersonFill } from "react-icons/bs";
+// import { Tag } from "../filters/tag";
+// import { BsPersonFill } from "react-icons/bs";
 
 // button classes are centralized in src/components/buttonClasses.ts
 export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
@@ -58,7 +58,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 					console.warn("Failed to write popular authors cache:", e);
 				}
 			} catch (e) {
-				console.error(e);
+				console.error("Error fetching popular authors:", e);
 				if (replaceIfEmpty && mounted) setItems([]);
 			}
 		}
@@ -93,7 +93,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 				// no cache -> fetch and store (replace on error)
 				await fetchAndStore(true);
 			} catch (e) {
-				console.error(e);
+				console.error("Error loading popular authors:", e);
 				if (mounted) setItems([]);
 			} finally {
 				if (mounted) setLoading(false);
@@ -115,13 +115,11 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 				<div
 					className={cn(
 						"bg-container   rounded-3xl shadow-xl ",
-						// "grid grid-cols-2 grid-rows-[auto_1fr] items-start justify-start justify-items-start",
 						"grid",
 						"grid-cols-2 grid-rows-2",
 						"items-start",
 						"justify-start",
 						"justify-items-start",
-						// "content-between",
 						"p-4 text-center",
 						"h-full w-full",
 						"hover:scale-105 hover:bg-container-solid",
@@ -133,19 +131,19 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 						"hover:dark:text-background!",
 						"",
 						""
-					)}
-				>
+					)}>
 					<Image
 						width={96}
 						height={96}
-						// width={40}
-						// height={40}
-						src={it.image ?? personPlaceholder()}
+						src={
+							it.image && it.image.trim() !== ""
+								? it.image
+								: personPlaceholder()
+						}
 						alt={it.author}
 						className={cn(
 							"aspect-square",
 							"rounded-full",
-							// "rounded-2xl",
 							"shadow-xl",
 							"object-cover",
 							"col-start-1",
@@ -251,8 +249,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 							"flex-col",
 							"",
 							""
-						)}
-					>
+						)}>
 						<span
 							id="sur-name"
 							className={cn(
@@ -267,8 +264,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 
 								"",
 								""
-							)}
-						>
+							)}>
 							{(it.author.split(",")[0] || "").trim()},
 						</span>
 						<span
@@ -284,8 +280,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 
 								"",
 								""
-							)}
-						>
+							)}>
 							{(it.author.split(",")[1] || "").trim()}
 						</span>
 					</div>
@@ -308,8 +303,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 				"h-full w-full",
 				"",
 				""
-			)}
-		>
+			)}>
 			<Image
 				width={96}
 				height={96}
@@ -345,8 +339,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 					"rounded-full bg-foreground/10",
 					"",
 					""
-				)}
-			>
+				)}>
 				<IoMdDownload className="shrink-0" />
 				<span className="inline-flex items-center leading-none max-w-16 truncate">
 					000k
@@ -365,8 +358,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 					"flex-col",
 					"",
 					""
-				)}
-			>
+				)}>
 				<span
 					id="sur-name"
 					className={cn(
@@ -383,8 +375,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 						"",
 						"",
 						""
-					)}
-				>
+					)}>
 					placeholder
 				</span>
 				<span
@@ -399,8 +390,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 						"rounded-full bg-foreground/10 text-transparent",
 						"",
 						""
-					)}
-				>
+					)}>
 					placeholder
 				</span>
 			</div>
@@ -421,8 +411,7 @@ export default function PopularAuthorsGrid({}: PopularAuthorsGridProps) {
 					"lg:text-base",
 					"",
 					""
-				)}
-			>
+				)}>
 				{loading ? skeletons : cards}
 			</div>
 		</div>

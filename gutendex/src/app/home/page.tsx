@@ -6,6 +6,7 @@ import BookShelf_v4 from "@/components/ui/Bookshelf_v4";
 import Highlights from "@/components/ui/highlights";
 import PopularAuthorsGrid from "@/components/ui/PopularAuthorsGrid";
 import SubjectGrid from "@/components/ui/SubjectGrid";
+import { Suspense } from "react";
 // import SubjectAuthorsGrid from "@/components/ui/SubjectGrid";
 import { Book, BooksResponse } from "@/types";
 import React, { useEffect, useState } from "react";
@@ -151,64 +152,6 @@ export default function Home({}: HomeProps) {
 	}
 
 	return (
-		// <main className="grid grid-rows-3 grid-cols-3 gap-5 h-full ">
-		// 	<div className="scale-70 row-start-1 col-start-1 col-span-2">hei</div>
-		// <main className="grid grid-rows-none grid-cols-3 gap-5 auto-rows-min">
-		// 	<div className="scale-70 row-start-1 col-start-1 col-span-2">
-		// 		<BookShelf />
-		// 	</div>
-		// 	{/* TODO: make popularAuthor Algorithm:
-		// 	- search by auther for all authors and collect their cumulative downloads
-		// 	- popularAuthors = top 5 downloadedAuthors
-		// 	*/}
-		// 	<div className="row-start-2 col-start-1 col-span-2 h-fit">
-		// 		<SubjectGrid />
-		// 	</div>
-		// 	<div className="row-start-3 col-start-1 col-span-2">
-		// 		<Highlights
-		// 			loading
-		// 			data={newBooksData}
-		// 			title="Newcommers"
-		// 			tagLabel="New"
-		// 		/>
-		// 	</div>
-		// 	<div className="row-start-2 col-start-3">
-		// 		<Highlights
-		// 			loading
-		// 			data={previewData}
-		// 			title="Popular Books"
-		// 			tagLabel="Top"
-		// 			button={{ text: "View All", href: "/store" }}
-		// 			grid
-		// 		/>
-		// 	</div>
-		// 	<div className="row-start-3 col-start-3">
-		// 		<PopularAuthorsGrid />
-		// 	</div>
-
-		// 	{/* TODO: Make trend algorythm:
-		// 	- save a static snapshot form this specific date: {id, downloads}
-		// 	- upon page load, get all downloads (were already doing this in tags, do it then)
-		// 	- make a top five based on downloads / (snapshotDate - loadDate) => downloadPrDayRate
-		// 	- top five = the books with the highest downloadPrDayRate
-		// 	*/}
-		// 	{/* <Highlights
-		// 		loading
-		// 		data={newBooksData}
-		// 		title="Trendy"
-		// 		tagLabel="Hot"
-		// 	/> */}
-
-		// 	{/* FAVORITES */}
-		// 	{/* <Highlights
-		// 		loading
-		// 		data={newBooksData}
-		// 		title="favorites"
-		// 		tagLabel={<FaHeart />}
-		// 	/> */}
-		// </main>
-
-		// <main className="grid grid-rows-[auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center">
 		<main
 			className={cn(
 				// "grid grid-rows-[auto_auto_auto] grid-cols-[3fr_2fr] gap-5 auto-rows-min h-full w-full justify-items-stretch content-center",
@@ -229,11 +172,18 @@ export default function Home({}: HomeProps) {
 				"",
 				"",
 				""
-			)}
-		>
+			)}>
 			{/* > NEW, TEST */}
 			{/* <div className="w-full row-start-1 col-start-1 col-span-2 mt-15 mb-15"> */}
-			<div className="w-full row-start-1 col-start-1 col-span-2 ">
+			<div
+				className={cn(
+					"relative",
+					"w-full",
+					"row-start-1",
+					"col-start-1",
+					"col-span-2",
+					""
+				)}>
 				<h3 className="text-2xl font-medium mb-4">
 					{/* Books you read last */}
 				</h3>
@@ -258,8 +208,6 @@ export default function Home({}: HomeProps) {
 				</div>
 			</div>
 
-			{/* <div className="h-100 w-full row-start-2 col-start-1 col-span-2 mt-15"> */}
-
 			{/* TODO: try combine bookshelf-mobile-mode and bookshelf-browser-mode */}
 			<div
 				id="bookshelf-mobile-mode"
@@ -271,30 +219,18 @@ export default function Home({}: HomeProps) {
 					"col-start-1 col-span-2",
 					// " mt-0 ",
 					"gap-5",
-					// "h-140 ",
-					// "w-fit",
-					// " md:w-full ",
-					// "h-full ",
-					// "pb-20",
+
 					"",
 					""
-				)}
-			>
+				)}>
 				{/* <h3 className="text-2xl font-medium md:pb-2.5 p-2.5"> */}
 				<h3 className="text-2xl font-medium px-2.5">Genre bookshelf</h3>
 				<BookShelf_v4 />
-				{/* <div className="origin-top w-full h-auto mt-10 translate-y-0 gap-20 flex flex-col justify-start w-full px-10"> */}
-				{/* <div className="origin-top w-full h-auto mt-10 translate-y-0 gap-20 flex flex-col justify-start w-full px-10"> */}
-				{/* <BookShelf_2 /> */}
-				{/* <BookShelf_3 /> */}
-				{/* </div> */}
 			</div>
 
 			<div
 				id="bookshelf-browser-mode"
 				className={cn(
-					// "hidden  md:block",
-					// "hidden md:flex flex-col",
 					"hidden sm:flex sm:flex-col",
 					"w-full",
 					"row-start-2 col-start-1 col-span-2",
@@ -307,21 +243,11 @@ export default function Home({}: HomeProps) {
 					"lg:h-fit",
 					// "mb-10",f
 					"gap-5",
-
-					// "md:items-center",
-					// "md:justify-center",
-					// "md:justify-items-center",
-					// "md:content-center",
-					// "md:place-self-start",
-					// "bg-amber-100",
 					"",
 					""
-				)}
-			>
-				{/* <h3 className="text-2xl font-medium md:pb-2.5 px-2.5"> */}
+				)}>
 				<h3 className="text-2xl font-medium px-2.5">Genre bookshelf</h3>
 
-				{/* <h3 className="text-2xl font-medium mb-0">Genre bookshelf</h3> */}
 				<div
 					className={cn(
 						// "bg-amber-100",
@@ -337,44 +263,14 @@ export default function Home({}: HomeProps) {
 						"justify-center",
 						// // MD
 						"md:gap-0",
-						// "md:justify-start",
-						// "md:items-start",
-						// "md:scale-60",
-						// "md:origin-center",
-						// "md:h-100",
-						// "md:h-110",
-						// "bg-amber-300",
 
-						// "md:content-center",
-						// "md:place-self-start",
-						// "md:items-start",
-						// "md:items-center-safe",
-						// "md:items-end",
-						// "md:items-stretch",
-						// "md:justify-items-stretch",
 						"md:justify-center",
 
-						// "md:w-250",
-						// "md:w-200",
-
-						// "md:px-48",
-						// "md:pr-20",
-						// "md:pl-20",
-						// "md:ml-20",
-						// "md:mr-20",
-						// "md:justify-center",
-						// "md:justify-self-center",
-						// "md:place-self-start",
-						// LG
-						// "lg:scale-90",
 						"lg:items-center",
-						// "lg:origin-center",
-						// "lg:h-120",
-						// "lg:mr-15",
+
 						"",
 						""
-					)}
-				>
+					)}>
 					<BookShelf />
 				</div>
 			</div>
@@ -392,35 +288,39 @@ export default function Home({}: HomeProps) {
 					"gap-15",
 					"",
 					""
-				)}
-			>
+				)}>
 				<div className="h-fit w-full flex">
-					{/* <div className="h-full w-full  flex"> */}
-					<Highlights
-						loading={favBooksData === null}
-						data={favBooksData}
-						title="Your Favorites"
-						tagLabel={<FaHeart />}
-						onToggleFavorite={toggleFavorite}
-						favoriteIds={favoriteIds}
-					/>
+					<Suspense fallback={null}>
+						<Highlights
+							loading={favBooksData === null}
+							data={favBooksData}
+							title="Your Favorites"
+							tagLabel={<FaHeart />}
+							onToggleFavorite={toggleFavorite}
+							favoriteIds={favoriteIds}
+						/>
+					</Suspense>
 				</div>
 				<div className="h-fit w-full  flex">
-					<SubjectGrid />
+					<Suspense fallback={null}>
+						<SubjectGrid />
+					</Suspense>
 				</div>
 				<div className="h-fit w-full  flex">
-					<Highlights
-						loading={newBooksData === null}
-						data={newBooksData}
-						title="New Realeases"
-						tagLabel="New"
-						button={{
-							text: "View All",
-							href: "/store?sort=descending",
-						}}
-						onToggleFavorite={toggleFavorite}
-						favoriteIds={favoriteIds}
-					/>
+					<Suspense fallback={null}>
+						<Highlights
+							loading={newBooksData === null}
+							data={newBooksData}
+							title="New Realeases"
+							tagLabel="New"
+							button={{
+								text: "View All",
+								href: "/store?sort=descending",
+							}}
+							onToggleFavorite={toggleFavorite}
+							favoriteIds={favoriteIds}
+						/>
+					</Suspense>
 				</div>
 			</div>
 			<div
@@ -440,34 +340,27 @@ export default function Home({}: HomeProps) {
 					"gap-15",
 					"",
 					""
-				)}
-			>
+				)}>
 				<div className="h-fit w-full  flex">
-					<Highlights
-						loading={previewData === null}
-						data={previewData}
-						title="Popular Books"
-						tagLabel="Top"
-						button={{ text: "View All", href: "/store" }}
-						grid
-						onToggleFavorite={toggleFavorite}
-						favoriteIds={favoriteIds}
-					/>
+					<Suspense fallback={null}>
+						<Highlights
+							loading={previewData === null}
+							data={previewData}
+							title="Popular Books"
+							tagLabel="Top"
+							button={{ text: "View All", href: "/store" }}
+							grid
+							onToggleFavorite={toggleFavorite}
+							favoriteIds={favoriteIds}
+						/>
+					</Suspense>
 				</div>
 				<div className="h-fit w-full  flex">
-					<PopularAuthorsGrid />
+					<Suspense fallback={null}>
+						<PopularAuthorsGrid />
+					</Suspense>
 				</div>
 			</div>
-			{/* <div className="w-full h-full">
-				<Highlights
-					loading
-					data={previewData}
-					title="Popular Books"
-					tagLabel="Top"
-					button={{ text: "View All", href: "/store" }}
-					grid
-				/>
-			</div> */}
 		</main>
 	);
 }
