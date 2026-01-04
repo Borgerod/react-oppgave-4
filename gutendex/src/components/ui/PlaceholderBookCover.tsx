@@ -4,9 +4,13 @@ import { cn } from "@/utils/cn";
 type Props = {
 	title: { main?: string; sub?: string };
 	authorsText?: string;
+	staticAspect?: boolean;
 };
 
-export default function PlaceholderBookCover({ title }: Props) {
+export default function PlaceholderBookCover({
+	title,
+	staticAspect = false,
+}: Props) {
 	// export default function PlaceholderBookCover({ title, authorsText }: Props) {
 	return (
 		<div
@@ -19,12 +23,18 @@ export default function PlaceholderBookCover({ title }: Props) {
 				"gap-1",
 				"w-full",
 				"h-full",
-				"max-w-30 sm:max-w-none",
-				"min-h-40 sm:min-h-none",
-				"aspect-2/3",
-				"rounded-xl",
+				staticAspect ? "aspect-2/3 max-w-30 sm:max-w-none" : "",
+				// "max-w-30 sm:max-w-none",
+				// "min-h-40 sm:min-h-none",
+				// "aspect-2/3",
+				// "rounded-xl",
 				"rounded-2xl",
-				"overflow-hidden",
+				// "overflow-hidden",
+				// "w-full",
+				// "object-cover",
+				// "object-fill",
+				"object-contain",
+
 				"",
 				""
 			)}>

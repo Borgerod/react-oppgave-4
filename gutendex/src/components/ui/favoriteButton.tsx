@@ -92,8 +92,10 @@ export default function FavoriteButton({
 				"bg-white/10 text-white",
 				"dark:bg-zinc-800/40 dark:text-zinc-200",
 				"bg-zinc-800/10 dark:text-zinc-200",
-				"hover:dark:bg-zinc-900/60 hover:dark:text-zinc-300",
+				// "hover:dark:bg-zinc-900/60 hover:dark:text-zinc-300",
 				"hover:bg-zinc-900/30 hover:dark:text-zinc-300",
+				//
+
 				// "border",
 				"border-edge",
 				// "border-edge-dark",
@@ -115,7 +117,12 @@ export default function FavoriteButton({
 				// "justify-center",
 				// "content-center",
 				"hover:scale-105",
+				"text-white/90",
+				"dark:text-zinc-200/90",
+				"hover:text-accent-light",
+				isFavorite ? "hover:text-zinc-900/20  " : "",
 				className,
+
 				"",
 				""
 			)}>
@@ -123,9 +130,27 @@ export default function FavoriteButton({
 				<FaHeart
 					className={cn(
 						iconSize,
+						"hover:text-zinc-900/50",
 						// "text-accent-dark",
-						"text-white/90",
-						"dark:text-zinc-200/90",
+						// "hover:text-zinc-700/40",
+						// "hover:dark:text-zinc-200/40",
+						// "hover:dark:edge-dark",
+						// "hover:dark:text-edge-dark",
+						// "hover:dark:text-zinc-900",
+						// "hover:dark:text-edge-dark",
+						// "sm:hover:dark:text-edge-highlight",
+						// "hover:dark:text-edge",
+						// //
+						// "sm:hover:dark:text-zinc-900",
+						// "hover:dark:text-edge",
+						"hover:dark:text-black",
+						// "hover:drop-shadow-sm!",
+						"",
+
+						// "inset-shadow-sm!",
+						// isFavorite
+						// 	? "hover:text-zinc-900/20  drop-shadow-sm!"
+						// 	: "",
 						"",
 						""
 					)}
@@ -134,8 +159,9 @@ export default function FavoriteButton({
 				<FaRegHeart
 					className={cn(
 						iconSize,
-						"text-white/90",
-						"dark:text-zinc-200/90",
+						// "hover:dark:bg-zinc-900/60 hover:dark:text-zinc-300",
+
+						"hover:text-accent-light hover:dark:text-accent-light",
 						"",
 						""
 					)}
