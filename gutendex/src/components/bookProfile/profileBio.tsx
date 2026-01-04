@@ -1,4 +1,39 @@
-import type { Author, Book } from "@/types";
+import type { Author, Book, Person, Title } from "@/types";
+function formatList(
+	input: string[] | Person[] | Title | string | undefined | null
+): string {
+	/**
+	 * Formats arrays of strings or Person objects for display.
+	 * - For string[], joins with ", ".
+	 * - For Person[], joins names with "; " and "&" before the last.
+	 * - For string, returns the string or "None".
+	 */
+	if (Array.isArray(input)) {
+		if (input.length === 0) return "None";
+		if (typeof input[0] === "string") {
+			return (input as string[]).join(", ");
+		}
+		if (typeof input[0] === "object" && input[0] && "name" in input[0]) {
+			const names = (input as Person[])
+				.map((p) => p.name)
+				.filter(Boolean);
+			if (names.length === 0) return "None";
+			return names.reduce(
+				(acc, name, i, arr) =>
+					i === 0
+						? name
+						: i === arr.length - 1
+						? `${acc} & ${name}`
+						: `${acc}; ${name}`,
+				""
+			);
+		}
+	}
+	if (typeof input === "string") {
+		return input || "None";
+	}
+	return "None";
+}
 import { cn } from "@/utils/cn";
 import { FaRegCopyright } from "react-icons/fa";
 import { IoMdClose } from "react-icons/io";
@@ -35,48 +70,53 @@ interface ProfileBioProps {
 
 export default function ProfileBio({ book }: ProfileBioProps) {
 	return (
-		<>
+		<div className="grid grid-cols-1 grid-rows-[auto_auto_auto] gap-5">
 			{/* Book ID: {book.id} */}
 			{/* TITLE */}
+			<div>
+				{(() => {
+					const t = book.title ?? { main: "unknown" };
+					return (
+						// <div className="flex items-start gap-3 justify-between ">
+						<div className="flex items-center gap-3 justify-between ">
+							<h1 className="text-2xl font-extralight text-primary p-0 m-0 leading-none">
+								{t.main || "unknown"}
+								{t.sub && (
+									<span className="text-sm italic font-thin text-secondary ml-2 mt-0 align-baseline ">
+										{t.sub}
+									</span>
+								)}
+							</h1>
+							{/* TODO MOVE THIS */}
+							<FavoriteButton
+								book={book}
+								// compact
+								// className="text-secondary/20 w-5 h-5 ml-auto"
+								// className="text-secondary/20 w-5 h-5 ml-auto md:ml-0 mr-2"
+								// className="text-secondary/20 w-5 h-5 ml-auto mr-2 relative left-0 right-0 top-0 bottom-0 p-2 w-8"
+								// className="text-secondary/20 ml-auto mr-2 relative left-0 right-0 top-0 bottom-0 p-2"
+								className="relative left-0 right-0 top-0 bottom-0"
+							/>
+						</div>
+					);
+				})()}
 
-			{(() => {
-				const t = book.title ?? { main: "unknown" };
-				return (
-					<div className="flex items-start gap-3 ">
-						<h1 className="text-2xl font-extralight text-primary p-0 m-0 leading-none">
-							{t.main || "unknown"}
-							{t.sub && (
-								<span className="text-sm italic font-thin text-secondary ml-2 mt-0 align-baseline ">
-									{t.sub}
-								</span>
-							)}
-						</h1>
-						<FavoriteButton
-							book={book}
-							compact
-							// className="text-secondary/20 w-5 h-5 ml-auto"
-							// className="text-secondary/20 w-5 h-5 ml-auto md:ml-0 mr-2"
-							className="text-secondary/20 w-5 h-5 ml-auto mr-2"
-						/>
-					</div>
-				);
-			})()}
-			{/* AUTHORS */}
-			{(book.authors || []).map((a: Author, i: number) => (
-				<h3 key={i}>
-					<span className="text-xs text-secondary">By: </span>
-					<span className="text-xs font-semibold">
-						{a?.name}
-						{i < (book.authors || []).length - 2
-							? "; "
-							: i === (book.authors || []).length - 2
-							? " & "
-							: ""}
-					</span>
-					{(book.authors || []).length === 0 && "unknown"}
-				</h3>
-			))}
-
+				{/* AUTHORS */}
+				{(book.authors || []).map((a: Author, i: number) => (
+					<h3 key={i}>
+						<span className="text-xs text-secondary">By: </span>
+						<span className="text-xs font-semibold">
+							{a?.name}
+							{i < (book.authors || []).length - 2
+								? "; "
+								: i === (book.authors || []).length - 2
+								? " & "
+								: ""}
+						</span>
+						{(book.authors || []).length === 0 && "unknown"}
+					</h3>
+				))}
+			</div>
 			{/* SUMMARY */}
 			{(book.summaries || []).map((summary: string, i: number) => {
 				const paragraphs = (summary ?? "")
@@ -89,23 +129,20 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 				return (
 					<div
 						className="py-5 text-secondary text-md lg:text-sm"
-						key={i}
-					>
+						key={i}>
 						{paragraphs.length === 0
 							? "unknown"
 							: paragraphs.map((p, idx) =>
 									idx === 0 ? (
 										<p
 											className="italic font-thin"
-											key={`summary-${i}-${idx}`}
-										>
+											key={`summary-${i}-${idx}`}>
 											{p}
 										</p>
 									) : (
 										<p
 											className="py-5"
-											key={`summary-${i}-${idx}`}
-										>
+											key={`summary-${i}-${idx}`}>
 											{p}
 										</p>
 									)
@@ -116,91 +153,146 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 
 			{/* divider line */}
 			<hr className="border-t w-full border-divider" aria-hidden="true" />
-
 			{/* INFO TABLE */}
 			<div
 				id="info table"
 				className={cn(
-					"grid grid-cols-2 gap-2",
-					"p-5",
+					"grid",
+					// "grid-cols-2",
+					"gap-2",
+					// "p-5",
 					"items-baseline",
 					"justify-items-start",
-					"",
+					"justify-between",
+					// "justify-evenly",
+					// "justify",
+					// "justify-around",
+					// "justify-items-between",
+					// "place-content-between",
+					// "justify-content-between",
+					// "content-between",
+					// "items-between",
+					// "self-start",
+					// "w-full",
 					"gap-y-2",
-					"gap-x-4"
-				)}
-			>
-				{/* editors */}
-				<div className="grid grid-cols-2 gap-2">
-					<span id="key" className="text-sm font-medium">
-						Editors
+					"gap-x-4",
+					// "gap-x-auto",
+					"",
+					""
+				)}>
+				{/* TITLE */}
+				<div
+					id="title"
+					className="flex flex-row gap-x-2 items-baseline ">
+					<span id="key" className="text-sm  min-w-22">
+						Title
 					</span>
-					<div className="text-sm text-secondary">
-						{(book.editors || []).length === 0
-							? "None"
-							: (book.editors || []).map(
-									(editor: string, i: number) => (
-										<div key={i}>{editor}</div>
-									)
-							  )}
-					</div>
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.title.main)}
+					</span>
+				</div>
+				{/* ID */}
+				<div id="id" className="flex flex-row gap-x-2 items-baseline ">
+					<span id="key" className="text-sm  min-w-22">
+						ID
+					</span>
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.id.toString())}
+					</span>
 				</div>
 
-				{/* language */}
-				<div className="grid grid-cols-2 gap-2">
-					<span id="key" className="text-sm font-medium">
+				{/* AUTHORS */}
+				<div
+					id="authors"
+					className="flex flex-row gap-x-2 items-baseline ">
+					<span id="key" className="text-sm  min-w-22">
+						Authors
+					</span>
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.authors)}
+					</span>
+				</div>
+
+				{/* Languages */}
+				<div
+					id="languages"
+					className="flex flex-row gap-x-2 items-baseline">
+					<span id="key" className="text-sm  min-w-22">
 						Languages
 					</span>
-					<span className="text-sm text-secondary">
-						{Array.isArray(book.languages)
-							? book.languages.length
-								? book.languages.join(", ")
-								: "None"
-							: book.languages
-							? book.languages
-							: "None"}
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.languages)}
 					</span>
 				</div>
-				<div className="grid grid-cols-2 gap-2">
-					<span id="key" className="text-sm font-medium">
-						Translators
+				{/* Editors */}
+				<div
+					id="editors"
+					className="flex flex-row gap-x-2 items-baseline ">
+					<span id="key" className="text-sm  min-w-22">
+						Editors
 					</span>
-					<span className="text-sm text-secondary">
-						{Array.isArray(book.translators)
-							? book.translators.length
-								? book.translators.join(", ")
-								: "None"
-							: book.translators
-							? book.translators
-							: "None"}
-					</span>
-				</div>
-				<div className="grid grid-cols-2 gap-2">
-					{/* Mediatype */}
-					<span id="key" className="text-sm font-medium">
-						Media Type
-					</span>
-					<span className="text-sm text-secondary">
-						{book.media_type || "None"}
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.editors)}
 					</span>
 				</div>
 
-				<div className="grid grid-cols-2 gap-2">
-					{/* copy right */}
-					<span id="key" className="text-sm font-medium">
+				{/* Media Type */}
+				<div
+					id="media_type"
+					className="flex flex-row gap-x-2 items-baseline">
+					<span id="key" className="text-sm  min-w-22">
+						Media Type
+					</span>
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.media_type)}
+					</span>
+				</div>
+				{/* Translators */}
+				<div
+					id="translators"
+					className="flex flex-row gap-x-2 items-baseline ">
+					<span id="key" className="text-sm  min-w-22">
+						Translators
+					</span>
+					<span
+						id="values"
+						className="text-sm text-secondary wrap-break-word">
+						{formatList(book.translators)}
+					</span>
+				</div>
+				{/* COPYRIGHT */}
+				<div id="copyright" className="grid grid-cols-2 gap-2  ">
+					<span id="key" className="text-sm min-w-22">
 						Copyright
 					</span>
-					<span className="text-lg text-secondary">
+					<span id="values" className="text-sm text-secondary/80">
 						{/* todo make icon */}
 						{book.copyright ? (
 							<div className="grid grid-cols-1 grid-rows-1">
-								<FaRegCopyright className="row-start-1 col-start-1" />
-								<IoMdClose className="row-start-1 col-start-1" />
+								<FaRegCopyright
+									title="is copyrighted"
+									className="row-start-1 col-start-1 "
+								/>
 							</div>
 						) : (
 							<div className="grid grid-cols-1 grid-rows-1">
-								<FaRegCopyright className="row-start-1 col-start-1" />
-								<IoMdClose className="row-start-1 col-start-1" />
+								<FaRegCopyright
+									title="is not copyrighted"
+									className="row-start-1 col-start-1 "
+								/>
+								<IoMdClose className="row-start-1 col-start-1 " />
 							</div>
 						)}
 					</span>
@@ -208,16 +300,16 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 				</div>
 
 				{/* Formats */}
-				<div className="col-span-2 flex flex-row justify-start items-baseline gap-x-4">
-					<span id="key" className="text-sm font-medium">
+				<div
+					id="formats"
+					className="flex flex-row gap-x-2 col-span-2 items-baseline ">
+					<span id="key" className="text-sm min-w-22">
 						Formats
 					</span>
-					<span className="text-sm text-secondary block">
-						{Object.keys(book.formats || {}).length === 0
-							? "None"
-							: Object.keys(book.formats || {})
-									.map(prettyMime)
-									.join(", ")}
+					<span id="value" className="text-sm text-secondary">
+						{formatList(
+							Object.keys(book.formats || {}).map(prettyMime)
+						)}
 					</span>
 				</div>
 			</div>
@@ -290,6 +382,6 @@ export default function ProfileBio({ book }: ProfileBioProps) {
 					},
 				]}
 			/>
-		</>
+		</div>
 	);
 }
