@@ -4,6 +4,7 @@ module.exports = {
 		"./src/**/*.{js,ts,jsx,tsx,css}",
 		"./app/**/*.{js,ts,jsx,tsx,css}",
 		"./pages/**/*.{js,ts,jsx,tsx,css}",
+		"./node_modules/geist/**/*.{js,ts,jsx,tsx}",
 	],
 	theme: {
 		extend: {
