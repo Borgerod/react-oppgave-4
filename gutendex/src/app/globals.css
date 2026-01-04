@@ -1,7 +1,11 @@
 @import "tailwindcss";
-
+/* @tailwind base;
+@tailwind components; */
+@tailwind utilities;
 @custom-variant dark (&:where(.dark, .dark *));
-
+:root {
+	color-scheme: light dark;
+}
 :root {
 	--background: oklab(97% -0.00037 0.00116);
 	--background: oklab(95% -0.00037 0.00116);
@@ -17,6 +21,17 @@
 	--accent-dark: #66ccbe;
 	--accent: #98e1d7;
 	--accent-light: #beefe8;
+	--primary-highlight: #2a3b58;
+
+	--warning: oklab(65% 0.2 0.1);
+	--warning-soft: oklab(65% 0.2 0.1 / 0.6);
+	--warning-light: oklab(80% 0.2 0.1);
+	--warning-dark: oklab(40% 0.2 0.1);
+	/* --accent-dark: #1d293d;
+	--accent-dark: #435e8e;
+	--accent: #2a3b58;
+	--accent: #658fd9b6;
+	--accent-light: #435e8e; */
 }
 
 .dark {
@@ -57,6 +72,21 @@ body {
 	}
 }
 
+/*> task-ref: theme detection - dark-mode-logo, logo, Image  */
+.imgDark {
+	display: none;
+}
+
+/*> task-ref: theme detection - dark-mode-logo, logo, Image  */
+@media (prefers-color-scheme: dark) {
+	.imgLight {
+		display: none;
+	}
+	.imgDark {
+		display: unset;
+	}
+}
+
 /* Prefer theme-driven radiuses — overrides should be provided via
 	 `tailwind.config.js`. The config in the repo sets smaller values
 	 for `3xl` and `xl` so no extra class overrides are needed here. */
@@ -92,6 +122,7 @@ html {
 		var(--container) 60%,
 		black 40%
 	);
+	--color-warning: var(--warning);
 
 	/* --color-edge-dark: color-mix(
 		in srgb,
@@ -135,23 +166,27 @@ html {
 		var(--color-container) 40%,
 		white 60%
 	); */
+	/* --color-edge-highlight: var(--color-container-solid); */
 	--color-edge-highlight: color-mix(
 		in srgb,
 		var(--color-container) 60%,
 		white 40%
 	);
-	/* --color-edge-highlight: var(--color-container-solid); */
 
-	--color-edge: color-mix(
-		in srgb,
-		var(--color-container-raised) 50%,
-		transparent 50%
-	);
 	--color-edge-dark: color-mix(
 		in srgb,
 		var(--color-container) 60%,
 		black 40%
 	);
+
+	/* --color-edge: color-mix(
+		in srgb,
+		var(--color-container-raised) 50%,
+		transparent 50%
+	); */
+
+	--color-edge: color-mix(in srgb, var(--foreground) 20%, transparent 80%);
+
 	/* --color-edge-dark: color-mix(
 		in srgb,
 		var(--color-container-raised) 30%,
@@ -162,6 +197,15 @@ html {
 
 	--color-primary: var(--foreground);
 	--color-primary-inv: var(--background);
+	/* --color-primary-highlight: #5273ac;
+	--color-primary-highlight: #7aabff;
+	--color-primary-highlight: #2a3b58; */
+	--color-primary-highlight: color-mix(
+		in srgb,
+		var(--foreground) 70%,
+		#7aabff 30%
+	);
+
 	--color-secondary: color-mix(
 		in srgb,
 		var(--foreground) 70%,
