@@ -84,7 +84,8 @@ const SelectMenu = ({
 					{label}
 				</label>
 			)}
-			<div className="relative">
+			{/* <div className="relative "> */}
+			<div className="relative bg-container rounded-3xl">
 				<button
 					type="button"
 					onClick={() => setIsOpen(!isOpen)}
@@ -95,10 +96,27 @@ const SelectMenu = ({
 						"bg-container-raised rounded-full px-4 py-2",
 						"border border-edge-dark",
 						"hover:border-edge-highlight",
-						"focus:outline-none focus:ring-transparent focus:border-edge-highlight",
+						// "focus:outline-none focus:ring-transparent focus:border-edge-highlight",
+						// "focus:outline-none focus:ring-transparent focus:border-edge-dark",
 						"text-primary",
 						"transition-colors duration-200",
-						"cursor-pointer"
+						"cursor-pointer",
+						"border",
+						"border-edge",
+						"hover:border-edge-dark",
+						"focus:border-edge-dark",
+						"dark:hover:border-edge-highlight",
+
+						"bg-edge/50",
+						"dark:bg-edge-dark/50",
+						"border-edge-dark/50",
+						"border-edge/30",
+						"dark:hover:border-edge/50",
+						// "dark:hover:border-edge-dark",
+						// "border-0",
+						"inset-shadow-xs",
+
+						""
 					)}>
 					<span className="truncate">{selectedOption.name}</span>
 					<div>
@@ -111,7 +129,7 @@ const SelectMenu = ({
 						className={cn(
 							"absolute z-50 w-full mt-2",
 							"bg-container-raised rounded-2xl",
-							"border border-edge-dark",
+							// "border border-edge-dark",
 							"shadow-lg",
 							"overflow-hidden",
 							"animate-in fade-in slide-in-from-top-2 duration-200"

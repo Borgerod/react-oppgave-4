@@ -10,16 +10,17 @@ import type { BooksResponse } from "@/types";
 import React, { useState } from "react";
 import { useRef, useEffect } from "react";
 import { PiSlidersHorizontalFill } from "react-icons/pi";
-// import Filter from "@/components/filters/filter";
-import { Filter } from "@/components/filters/filter";
+import Filter from "@/components/filters/filter";
+// import { Filter } from "@/components/filters/filter";
+// import { Filter  } from "@/components/filters/filter";
 import { useTheme } from "@/providers/providers";
 import { HiLibrary } from "react-icons/hi";
 
-type StoreHeaderProps = {
-	onResults?: (data: BooksResponse, queryString?: string) => void;
+type NavbarProps = {
 	topics?: string[];
 };
-export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
+
+export default function Navbar({ topics }: NavbarProps) {
 	const { isDark } = useTheme();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
@@ -72,7 +73,7 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 
 	if (pathname === "/") return null;
 	return (
-		<header
+		<nav
 			className={cn(
 				"relative",
 				"flex",
@@ -81,15 +82,6 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 				"py-10",
 				"sm:py-5",
 				"gap-y-5 sm:gap-x-5",
-				// "flex-row",
-				// "sm:flex-row",
-				// "bg-transparent",
-				// "justify-items-between",
-				// "content-between",
-				// "grid",
-				// "flex flex-row",
-				// "gap-5",
-				// "justify-around",
 				"",
 				""
 			)}>
@@ -250,44 +242,38 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						"sm:flex",
 						""
 					)}>
-					<SearchBar
-						onResults={onResults}
-						searchQuery={searchQuery}
-					/>
+					<SearchBar />
 
 					<button
 						aria-label="filter"
 						onClick={() => toggleFilter(!openFilter)}
-						className={iconBtnClass}>
+						className={cn(
+							iconBtnClass,
+							"flex flex-col items-center justify-center",
+							// "min-w-[40px] min-h-[40px]",
+							"min-w-10 min-h-10",
+							"relative",
+							"gap-0",
+							"",
+							""
+						)}>
 						<PiSlidersHorizontalFill size={19} className="block" />
 						{selectedCount ? (
-							<div
+							<span
 								className={cn(
-									"m-0 p-0",
-									"row-start-1 col-start-1",
-									"ml-2 mt-1",
-									"w-full",
-									"justify-items-end",
+									"absolute -top-1 -right-1",
+									"h-4 w-4",
+									"bg-orange-600",
+									"rounded-full",
+									"flex items-center justify-center text-center",
+									"text-xs text-white",
+									"font-bold",
 									"",
 									""
 								)}>
-								<span
-									className={cn(
-										"h-4 aspect-square ",
-										"justify-self-end",
-										"bg-orange-600",
-										"rounded-full",
-										"flex items-center justify-center text-center",
-										"text-xs text-white",
-										"",
-										""
-									)}>
-									{selectedCount}
-								</span>
-							</div>
-						) : (
-							<></>
-						)}
+								{selectedCount}
+							</span>
+						) : null}
 					</button>
 				</div>
 
@@ -336,49 +322,40 @@ export default function StoreHeader({ onResults, topics }: StoreHeaderProps) {
 						<HiLibrary size={19} />
 					</Link>
 				) : null}
-				<SearchBar onResults={onResults} searchQuery={searchQuery} />
+				<SearchBar />
 				<button
 					aria-label="filter"
 					onClick={() => toggleFilter(!openFilter)}
-					className={iconBtnClass}>
+					className={cn(
+						iconBtnClass,
+						"flex flex-col items-center justify-center",
+						// "min-w-[40px] min-h-[40px]",
+						"min-w-10 min-h-10",
+						"relative",
+						"gap-0",
+						"",
+						""
+					)}>
 					<PiSlidersHorizontalFill size={19} className="" />
 					{selectedCount ? (
-						<div
+						<span
 							className={cn(
-								"m-0 p-0",
-								"row-start-1 col-start-1",
-								"ml-2 mt-1",
-								"w-full",
-								"justify-items-end",
+								"absolute -top-1 -right-1",
+								"h-4 w-4",
+								"bg-orange-600",
+								"rounded-full",
+								"flex items-center justify-center text-center",
+								"text-xs text-white",
+								"font-bold",
 								"",
 								""
 							)}>
-							<span
-								className={cn(
-									"h-4 aspect-square ",
-									"justify-self-end",
-									"bg-orange-600",
-									"rounded-full",
-									"flex items-center justify-center text-center",
-									"text-xs text-white",
-									"",
-									""
-								)}>
-								{selectedCount}
-							</span>
-						</div>
-					) : (
-						<></>
-					)}
+							{selectedCount}
+						</span>
+					) : null}
 				</button>
 			</div>
-			<Filter
-				open={openFilter}
-				setOpen={toggleFilter}
-				searchQuery={searchQuery}
-				topics={topics}
-				onClose={() => toggleFilter(false)}
-			/>
-		</header>
+			{/* Filter removed: Filters should be colocated with page content, not in the global header. */}
+		</nav>
 	);
 }
