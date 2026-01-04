@@ -86,6 +86,7 @@ export default function ProductCard({
 				book={book}
 				isFavorite={isFavorite}
 				onToggleFavorite={onToggleFavorite}
+				className="bg-zinc-800/20 sm:bg-zinc-800/20  hover:shadow-md dark:bg-zinc-800/30 dark:hover:bg-zinc-800/50 dark:border dark:border-edge shadow-sm inset-shadow-xs  "
 			/>
 
 			<div className={cn(`${mini ? "" : "h-full"}`)}>
@@ -131,6 +132,7 @@ export default function ProductCard({
 						<PlaceholderBookCover
 							title={title}
 							authorsText={authorsText}
+							staticAspect
 						/>
 					)}
 
@@ -298,6 +300,7 @@ export default function ProductCard({
 									"w-fit p-1 px-3",
 									"border border-accent-dark text-accent-dark",
 									"hover:border-accent-dark hover:text-container-solid hover:bg-accent-dark",
+
 									"border dark:border-accent dark:ext-accent",
 									"hover:dark:border-accent-dark hover:dark:text-container-solid hover:dark:bg-accent-dark",
 									"h-10 text-nowrap self-end",

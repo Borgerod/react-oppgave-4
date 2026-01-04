@@ -15,6 +15,7 @@ import {
 	getImageSrc,
 } from "./cardSharedUtils";
 import { number } from "prop-types";
+import FavoriteButton from "../ui/favoriteButton";
 
 type Props = {
 	book: Book;
@@ -73,12 +74,12 @@ export default function MiniProductCard({
 				"h-40",
 				"h-30",
 				"w-fit",
+				"relative",
 
 				"",
 
 				""
-			)}
-		>
+			)}>
 			{/* <div className={cn()}> */}
 			{/* <div
 					id="content-container"
@@ -175,8 +176,7 @@ export default function MiniProductCard({
 
 						"",
 						""
-					)}
-				>
+					)}>
 					<Image
 						id="logo"
 						src="/gutendex_short_dark.png"
@@ -206,8 +206,7 @@ export default function MiniProductCard({
 							"",
 							"",
 							""
-						)}
-					>
+						)}>
 						<span className="text-xl tracking-wide font-bold text-secondary hidden ">
 							{title.main}
 						</span>
@@ -220,129 +219,9 @@ export default function MiniProductCard({
 					</span>
 				</div>
 			)}
-			{/* {imgSrc ? (
-				<Image
-					src={imgSrc}
-					alt={book.title?.main ?? "cover"}
-					width={100}
-					height={150}
-					className={cn(
-						"h-full",
-						"w-auto",
-						"object-cover",
-						"grid grid-rows-[auto_1fr_auto]",
-						"justify-items-center",
-						"content-start",
-						"max-w-30 ",
-						"min-h-40 ",
-						"aspect-2/3",
-						"rounded-xl",
-						"rounded-2xl",
-						"overflow-hidden",
-						"",
-						"",
-						""
-					)}
-				/>
-			) : (
-				<div
-					className={cn(
-						"grid grid-rows-[auto_1fr_auto]",
-						"justify-items-center",
-						"content-start",
-						"bg-divider",
-						"p-2 ",
-						"gap-2 ",
-						"max-w-30 ",
-						"min-h-40 ",
-						"aspect-2/3",
-						"rounded-xl",
-						"overflow-hidden",
-						"",
-						""
-					)}
-				>
-					<Image
-						id="logo"
-						src="/gutendex_short_dark.png"
-						alt="logo"
-						width={200}
-						height={20}
-						className={cn(
-							"h-fit",
-							"flex",
-							"w-fit",
-							"object-contain",
-							"",
-							""
-						)}
-					/>
-					<Image
-						id="logo"
-						src="/gutendex_long_dark.png"
-						alt="logo"
-						width={200}
-						height={20}
-						className={cn(
-							"h-fit",
-							"hidden",
-							"w-fit",
-							"object-contain",
-							"",
-							""
-						)}
-					/>
-					<div
-						id="cover-placeholder"
-						className={cn(
-							"row-start-2 h-full w-full rounded",
-							"bg-divider",
-							"p-5",
-							"grid",
-							"content-start",
-							"justify-items-center",
-							"text-center wrap-break-word",
-							"",
-							""
-						)}
-					>
-						<span
-							className={cn(
-								"text-xl",
-								"tracking-wide",
-								"font-bold",
-								"text-secondary",
-								"hidden",
-								"",
-								""
-							)}
-						>
-							{title.main}
-						</span>
-						<span
-							className={cn("text-sm", "tracking-wide", "", "")}
-						>
-							{title.sub}
-						</span>
-					</div>
-					<span
-						className={cn(
-							"text-secondary",
-							"text-md",
-							"leading-none",
-							"tracking-widest",
-							"hidden",
-							"",
-							""
-						)}
-					>
-						{authorsText}
-					</span>
-				</div>
-			)} */}
 
 			{/* Favorite button overlay (always visible) */}
-			<button
+			{/* <button
 				// todo: make this into component
 				onClick={(e) => {
 					e.preventDefault();
@@ -391,8 +270,12 @@ export default function MiniProductCard({
 				) : (
 					<FaRegHeart className="w-4 h-4 overflow-visible" />
 				)}
-			</button>
-
+			</button> */}
+			<FavoriteButton
+				book={book}
+				isFavorite={isFavorite}
+				onToggleFavorite={onToggleFavorite}
+			/>
 			<div
 				id="text-container"
 				className={cn(
@@ -407,8 +290,7 @@ export default function MiniProductCard({
 					"h-full",
 					"",
 					""
-				)}
-			>
+				)}>
 				<h2
 					className={cn(
 						// "text-2xl font-extralight text-primary p-0 m-0",
@@ -418,12 +300,12 @@ export default function MiniProductCard({
 						"h-fit",
 						"w-full",
 						"overflow-hidden",
+						"",
 						"truncate",
 						"whitespace-nowrap",
 						"",
 						""
-					)}
-				>
+					)}>
 					{title.main}
 					{title.sub && (
 						<span
@@ -434,8 +316,7 @@ export default function MiniProductCard({
 								"",
 								"",
 								""
-							)}
-						>
+							)}>
 							{title.sub}
 						</span>
 					)}
@@ -449,8 +330,7 @@ export default function MiniProductCard({
 						"",
 						"",
 						""
-					)}
-				>
+					)}>
 					<span className={cn("text-xs text-tertiary mr-1")}>
 						By:
 					</span>
@@ -468,8 +348,7 @@ export default function MiniProductCard({
 
 						"",
 						""
-					)}
-				>
+					)}>
 					<Rating
 						ratingCount={download_count}
 						upperDownloadCountLimit={upperLimit}
