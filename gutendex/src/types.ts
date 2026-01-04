@@ -12,7 +12,7 @@ export type Book = {
 	authors: Author[];
 	summaries: string[];
 	editors: string[];
-	translators: string[];
+	translators: Person[];
 	subjects: string[];
 	bookshelves: string[];
 	languages: string[];
@@ -32,4 +32,9 @@ export type BooksResponse = {
 export type Title = {
 	main: string;
 	sub?: string | undefined;
+};
+export type LanguageOptions = {
+	key: string;
+	count?: number;
+	name?: string;
 };
