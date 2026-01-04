@@ -1,4 +1,14 @@
 import { cn } from "@/utils/cn";
+// todo move all buttons css here
+export const simpleTextBtnClass = cn(
+	"text-sm",
+	"hover:underline",
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
+	"",
+	""
+);
 
 export const iconBtnClass = cn(
 	"p-3",
@@ -8,11 +18,28 @@ export const iconBtnClass = cn(
 	"rounded-full",
 	"self-center",
 	"hover:bg-foreground/10",
+	// experimantal
+	"flex items-center justify-center",
+	// "h-full",
+	"text-xl sm:text-md",
+	"cursor-pointer",
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
 	"",
 	""
 );
 
-export const compressedBtnClass = cn("px-5!", "py-1.5!", "h-fit!", "", "");
+export const compressedBtnClass = cn(
+	"px-5!",
+	"py-1.5!",
+	"h-fit!",
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
+	"",
+	""
+);
 
 export const textBtnClass = cn(
 	"aspect-auto",
@@ -22,25 +49,38 @@ export const textBtnClass = cn(
 	"h-12",
 	"pointer-events-auto",
 	"rounded-full",
+	"cursor-pointer",
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
 	"",
 	""
 );
 
 export const primaryBtnClass = cn(
+	"cursor-pointer",
 	"border border-accent-dark text-accent-dark",
 	"hover:bg-accent-dark hover:text-container-solid",
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
 	"",
 	""
 );
 
 export const secondaryBtnClass = cn(
+	"cursor-pointer",
 	"border border-secondary text-secondary ",
 	"hover:border-accent-dark hover:text-accent-dark",
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
 	"",
 	""
 );
 
 export const toggleButtoncls = cn(
+	"cursor-pointer",
 	"fixed right-5 bottom-5 z-50",
 	//
 	"hover:scale-105 ",
@@ -65,6 +105,10 @@ export const toggleButtoncls = cn(
 	//
 	"dark:bg-container-inv dark:text-primary-inv",
 	"bg-container-inv text-primary-inv",
+
+	"pointer-events-auto",
+	"cursor-pointer",
+	"select-none",
 	"",
 	""
 );
