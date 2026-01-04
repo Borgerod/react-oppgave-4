@@ -1,141 +1,191 @@
 import { cn } from "@/utils/cn";
-import { Tag } from "./tag";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { LanguageOptions } from "@/types";
 
 type FilterInputProps = {
 	label: string;
-	value: string;
-	onChange: (value: string) => void;
-	placeholder: string;
-	items: string[];
-	selectedItems: Record<string, boolean>;
-	onToggleItem: (item: string) => void;
-	getItemId?: (item: string, index: number) => string;
+	name?: string; // name for form field, defaults to label
+	options?: (string | LanguageOptions)[]; // list of options to show as checkboxes
+	placeholder?: string;
+	searchParamName: string; // query param for search input, defaults to `${label.toLowerCase()}Search`
+	// key: string;
 };
 
 export default function FilterInput({
 	label,
-	value,
-	onChange,
+	options = [],
 	placeholder,
-	items,
-	selectedItems,
-	onToggleItem,
-	getItemId,
+	searchParamName,
 }: FilterInputProps) {
-	const defaultGetItemId = (item: string, index: number) =>
-		`${label}-${index}-${item}`;
-	const itemIdGetter = getItemId || defaultGetItemId;
-	const filteredItems = items.filter((item) =>
-		value ? item.toLowerCase().includes(value.toLowerCase()) : true
-	);
+	const searchParams = useSearchParams();
+	const preSelected = searchParams.get(searchParamName) || "";
+	const [selected, setSelected] = useState<string | null>(preSelected);
 
 	return (
-		<div
+		<fieldset
 			className={cn(
-				"grid grid-cols-1",
-				"justify-start justify-items-start",
-				"items-start content-start",
-				"sm:border-none border-b border-divider",
-				"py-5 gap-2 ",
-				"py-0 gap-2 ",
-				"pb-5 sm:pb-0",
+				"grid",
+				"grid-cols-1",
+				"justify-start",
+				"items-start",
+				// "border-b",
+				// "border-divider",
+				"py-4",
+				"gap-2",
+				// "gap-5",
 				"w-full",
-				"max-w-full",
-				// "h-full",
-
+				"w-fit",
+				"h-full",
+				"content-start",
 				"",
 				""
 			)}>
-			<span
+			<legend
 				className={cn(
 					"p-0",
 					"m-0",
 					"text-base",
 					"text-xl",
-
+					"row-start-1",
 					"",
 					""
 				)}>
 				{label}
-			</span>
+			</legend>
 			<input
+				// TODO does not work, fix
+				id="search-bar"
+				type="text"
+				name={searchParamName}
 				aria-label={`Filter ${label}`}
-				placeholder={placeholder}
-				value={value}
-				onChange={(e) => onChange(e.target.value)}
+				placeholder={placeholder || `Search ${label}`}
 				className={cn(
 					"w-full",
 					"bg-transparent",
 					"placeholder:italic",
 					"outline-none",
 					"focus:outline-none",
-					"flex flex-row items-center",
+					"flex",
+					"items-center",
 					"bg-container",
-					// "text-sm",
 					"p-1",
 					"pl-4",
-					"border border-foreground/10",
-					"border border-divider",
+					"border",
+					"border-edge",
 					"rounded-full",
-					"w-full",
-					"hover:border-edge-highlight",
+					"hover:border-edge-dark",
 					"text-lg",
-					"sm:text-sm",
-					"sm:text-base",
-					"sm:text-md",
-					// "justify-items-center",
-					// // "justify-content-center",
-					// "items-baseline",
-					// "leading-none",
-
 					"h-12",
-					// "sm:h-fit",
+					// "bg-divider/50",
+					// "bg-container-lowered",
+					// "bg-edge",
+					"bg-edge/50",
+					"dark:bg-edge-dark/50",
+					"border-edge-dark/50",
+					"border-edge/30",
+					"dark:hover:border-edge/50",
+					// "dark:hover:border-edge-dark",
+					// "border-0",
+					"inset-shadow-xs",
 					"",
 					""
 				)}
 			/>
 
-			{filteredItems.length === 0 ? (
-				<div
+			<div className="flex h-full line-clamp-5">
+				<ul
 					className={cn(
-						"text-xs",
-						"text-muted",
-
+						"row-start-3",
+						"flex",
+						"flex-row",
+						"flex-wrap",
+						"gap-1",
+						"gap-2",
+						"gap-1.5",
+						"w-full",
+						"px-2.5",
+						"overflow-y-auto",
+						// "max-h-100",
+						"max-h-60",
+						"max-h-45",
+						"h-full",
+						"overflow-x-clip",
+						// "line-clamp-6",
 						"",
 						""
 					)}>
-					No {label} match.
-				</div>
-			) : (
-				<ul
-					className={cn(
-						"flex flex-wrap",
-						"gap-1",
-						"content-start",
-						"w-full",
-						"px-2.5",
-						"gap-1.5",
-						"sm:gap-1.5",
-						"sm:gap-1",
-						"overflow-x-hidden",
-						""
-					)}>
-					{filteredItems.map((item, index) => {
-						const id = itemIdGetter(item, index);
-						return (
-							<li key={id}>
-								<Tag
-									id={id}
-									item={item}
-									checked={!!selectedItems[item]}
-									onToggle={() => onToggleItem(item)}
-									bigText
-								/>
-							</li>
-						);
-					})}
+					{options.length === 0 ? (
+						<span className={cn("text-xs", "text-muted", "", "")}>
+							No {label} options.
+						</span>
+					) : (
+						options.map((option, idx) => {
+							const isLanguageOption =
+								typeof option !== "string" &&
+								option.key &&
+								option.name;
+							const optionKey = isLanguageOption
+								? option.key
+								: typeof option === "string"
+								? option
+								: option.key;
+							const optionLabel = isLanguageOption
+								? option.name
+								: typeof option === "string"
+								? option
+								: option.name ?? option.key;
+							const checked = selected === optionKey;
+							return (
+								<li key={idx}>
+									<button
+										key={optionKey}
+										type="button"
+										aria-pressed={checked}
+										onClick={() =>
+											setSelected(
+												checked ? null : optionKey
+											)
+										}
+										className={cn(
+											"flex",
+											"items-center",
+											"rounded-full",
+											// "px-3",
+											"px-2",
+											// "py-1",
+											"border",
+											"border-edge/50",
+											// "border-transparent",
+											"bg-container",
+											"cursor-pointer",
+											"transition",
+											"hover:border-edge-dark",
+											"text-nowrap",
+											"text-base",
+											// "text-sm",
+											"transition",
+											"bg-primary/10",
+											checked
+												? "bg-accent-light text-primaruy dark:text-primary-inv"
+												: "text-secondary",
+											"",
+											""
+										)}>
+										{optionLabel}
+									</button>
+								</li>
+							);
+						})
+					)}
 				</ul>
-			)}
-		</div>
+			</div>
+			{/* Hidden input for form submission */}
+			<input
+				type="hidden"
+				name={searchParamName}
+				value={selected ?? ""}
+			/>
+		</fieldset>
 	);
 }

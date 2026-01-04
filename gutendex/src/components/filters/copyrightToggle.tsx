@@ -1,86 +1,139 @@
 import { cn } from "@/utils/cn";
-import { LiaToggleOnSolid } from "react-icons/lia";
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { textBtnClass } from "../buttonClasses";
 
-type CopyrightToggleProps = {
-	checked: boolean;
-	onChange: (checked: boolean) => void;
-};
-// TODO change default color
-export default function CopyrightToggle({
-	checked,
-	onChange,
-}: CopyrightToggleProps) {
+export default function CopyrightToggle() {
+	const searchParams = useSearchParams();
+	const preChecked = searchParams.get("copyright") ?? "";
+	const [selectedCopyright, setSelectedCopyright] =
+		useState<string>(preChecked);
+
+	const copyrightOption = {
+		"": "All",
+		true: "Only Copyright",
+		false: "Only Public",
+	};
+
 	return (
-		<label
-			htmlFor="copyright"
-			className={cn(
-				"cursor-pointer",
-				"grid grid-cols-2",
-				"w-full",
-				"gap-2",
-				"items-center",
-				"justify-between",
-				"text-xl",
-				"",
-				""
-			)}
-		>
-			Copyright
-			<input
-				id="copyright"
-				type="checkbox"
-				name="copyright"
-				value="on"
-				aria-label="Filter by copyright status"
-				title="copyright"
-				className={cn("sr-only", "peer", "", "")}
-				checked={checked}
-				onChange={() => onChange(!checked)}
-			/>
-			{checked ? (
-				<div
-					className={cn(
-						"flex",
-						"justify-end",
+		<fieldset
+			id="copyright-toggle fieldset"
+			name="copyright"
+			aria-label="Filter copyrighted material">
+			<div
+				role="group"
+				aria-labelledby="copyright-label"
+				className={cn(
+					// layout
+					"flex", // Use Flexbox for easier alignment
+					"flex-row", // Mobile: Side-by-side (Row)
+					"sm:flex-col", // sm: Stacked (Column)
 
+					// alignment
+					"items-center", // Mobile: Center vertically
+					"sm:items-start", // sm: Align to start
+					"justify-between",
+					// sizing
+					"md:w-fit",
+					"h-fit",
+					// spacing
+					// "gap-4", // Mobile: Gap between legend and buttons
+					"gap-1", // Mobile: Gap between legend and buttons
+					"gap-5", // Mobile: Gap between legend and buttons
+					"sm:gap-2", // sm: Smaller gap when stacked
+					"",
+					""
+				)}>
+				<span
+					id="copyright-label"
+					className={cn(
+						// layout
+						// "row-start-1", // REMOVED: Let flexbox handle order
+						// typography
+						"text-xl",
+						// "h-full",
 						"",
 						""
-					)}
-				>
-					<LiaToggleOnSolid
-						size={42}
-						className={cn(
-							"text-accent-dark",
-							"size-13",
+					)}>
+					Copyright
+				</span>
 
-							"",
-							""
-						)}
-					/>
-				</div>
-			) : (
-				<div
+				<ul
+					aria-label="Filter by copyright status"
 					className={cn(
-						"flex",
-						"justify-end",
-
+						// layout
+						"grid",
+						"grid-flow-col",
+						"place-items-center",
+						// "row-start-3",
+						// sizing
+						"w-fit",
+						"h-12",
+						"max-h-50",
+						// spacing
+						"p-1",
+						"gap-1",
+						// border
+						"border",
+						"border-edge/30",
+						"rounded-full",
+						// background
+						"bg-edge/50",
+						"dark:bg-edge-dark/50",
+						// effects
+						"inset-shadow-sm",
+						// overflow
+						"overflow-x-clip",
+						"overflow-y-auto",
+						// typography
+						"text-nowrap",
+						// state/variant
+						"dark:hover:border-edge/50",
 						"",
 						""
-					)}
-				>
-					<LiaToggleOnSolid
-						size={42}
-						className={cn(
-							"size-13",
-							"rotate-180",
-							"text-divider",
-
-							"",
-							""
-						)}
-					/>
-				</div>
-			)}
-		</label>
+					)}>
+					{Object.entries(copyrightOption).map(([value, label]) => (
+						<label
+							key={value}
+							className={cn(
+								textBtnClass,
+								// sizing
+								"h-full",
+								// spacing
+								"p-1",
+								"px-5",
+								"px-3",
+								"md:px-3",
+								// border
+								"rounded-full",
+								// background & state
+								selectedCopyright === value
+									? "bg-edge-highlight shadow-md hover:bg-edge-highlight"
+									: "bg-transparent hover:bg-edge",
+								// typography
+								"text-center",
+								"w-fit",
+								""
+							)}>
+							<input
+								type="radio"
+								name="copyright"
+								id={`${label.replace(" ", "-").toLowerCase()}`}
+								value={value}
+								checked={selectedCopyright === value}
+								onChange={() => setSelectedCopyright(value)}
+								className={cn(
+									// display
+									"hidden",
+									"",
+									""
+								)}
+							/>
+							{label}
+						</label>
+					))}
+				</ul>
+			</div>
+		</fieldset>
 	);
 }

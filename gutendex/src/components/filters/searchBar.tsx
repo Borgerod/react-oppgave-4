@@ -1,136 +1,71 @@
-"use client";
-import React, { useState } from "react";
-import { IoSearch } from "react-icons/io5";
 import { cn } from "@/utils/cn";
-import type { BooksResponse } from "@/types";
-import { useRouter, useSearchParams } from "next/navigation";
+import Form from "next/form";
+import { IoSearch } from "react-icons/io5";
+import { iconBtnClass } from "../buttonClasses";
 
 const SearchIcon = () => (
-	<div
-		className={cn(
-			"flex items-center justify-center",
-			"h-full",
-			"rounded-full",
-			"aspect-square",
-			"text-xl sm:text-md",
-			"pointer-events-auto",
-			"hover:bg-foreground/10",
-			"",
-			""
-		)}>
+	<button type="submit" className={cn(iconBtnClass, "", "")}>
 		<IoSearch className={cn("pointer-events-none")} />
-	</div>
+	</button>
 );
-
-type SearchBarProps = {
-	onResults?: (data: BooksResponse, queryString?: string) => void;
-	onQuery?: (queryString?: string) => void;
-	searchQuery?: string;
-	setSearchQuery?: (query: string) => void;
+export type SearchBarProps = {
+	className?: string;
 };
-
-export default function SearchBar({
-	onResults,
-	onQuery,
-	searchQuery,
-	setSearchQuery,
-}: SearchBarProps) {
-	const [localQuery, setLocalQuery] = useState(searchQuery ?? "");
-
-	// Sync if parent updates the searchQuery prop
-	React.useEffect(() => {
-		if (typeof searchQuery === "string") setLocalQuery(searchQuery);
-	}, [searchQuery]);
-
-	const query = localQuery;
-	const router = useRouter();
-	const searchParams = useSearchParams();
-
-	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-		e.preventDefault();
-		const trimmed = (query ?? "").trim();
-		if (!trimmed) return;
-
-		// Preserve existing filter parameters
-		const params = new URLSearchParams(searchParams?.toString() || "");
-		params.set("search", trimmed);
-
-		const queryString = `?${params.toString()}`;
-		const encoded = encodeURIComponent(trimmed);
-
-		try {
-			const res = await fetch(
-				`https://gutendex.com/books?search=${encoded}`
-			);
-			if (!res.ok) throw new Error(`HTTP ${res.status}`);
-			const data = (await res.json()) as BooksResponse;
-			if (onResults) onResults(data, queryString);
-			else router.push(`/store${queryString}`);
-			if (onQuery) onQuery(queryString);
-		} catch (err) {
-			console.error("Search failed:", err);
-		}
-	}
-
+export default function SearchBar({ className }: SearchBarProps) {
 	return (
-		<form
-			onSubmit={handleSubmit}
+		<Form
+			action="/store"
 			className={cn(
 				"w-full",
-				"lg:max-w-lg",
+				"flex",
+				"items-center",
+				"rounded-full",
+				"p-2",
+				"gap-2",
+				"bg-container",
+				"select-none",
+				"border",
+				"border-edge",
+				"hover:border-edge-dark",
+				"dark:hover:border-edge-highlight",
+				"bg-edge/50",
+				"dark:bg-edge-dark/50",
+				"dark:bg-edge/15",
+				"dark:bg-edge-dark",
 
+				// "bg-linear-to-r",
+				// "dark:from-edge-dark/50",
+				// "dark:to-container",
+				// "bg-blend-color",
+				// "dark:bg-[color-mix(in_srgb,var(--color-edge-dark)_50%,var(--color-container)_50%)]",
+				"dark:bg-[color-mix(in_srgb,var(--container)_15%,var(--color-edge-dark)_50%)]",
+
+				"",
+				"border-edge-dark/50",
+				"border-edge/30",
+				"dark:hover:border-edge/50",
+				className,
+
+				"",
 				"",
 				""
 			)}>
-			<div
+			<SearchIcon />
+			<input
+				name="search"
+				placeholder="Søk etter bøker..."
+				autoComplete="off"
 				className={cn(
-					"flex flex-row items-center",
-					"text-sm",
-					"px-3 py-0",
-					"px-3 py-2",
-					"focus:outline-none focus:ring-none ",
-					"rounded-full",
 					"w-full",
-					"border border-edge-dark",
-					"hover:border-edge-highlight",
-					// "h-12",
-					"h-15",
-					"text-lg sm:text-sm",
-					"bg-container",
-					"gap-2",
-
-					// "lg:max-w-lg",
-
+					"h-full",
+					"focus:outline-none",
+					"focus:ring-0",
+					"pointer-events-auto",
+					"placeholder:pointer-events-none",
 					"",
 					""
-				)}>
-				<SearchIcon />
-				<input
-					name="q"
-					value={query}
-					onChange={(e) => {
-						const v = e.target.value;
-						setLocalQuery(v);
-						if (setSearchQuery) setSearchQuery(v);
-					}}
-					type="text"
-					placeholder="Search.."
-					aria-label="Search"
-					className={cn(
-						"bg-transparent",
-						"placeholder:italic",
-						"outline-none",
-						"focus:outline-none",
-						"leading-none",
-						"py-0",
-						"h-full",
-						// "aspect-square",
-						// "w-full",
-						"",
-						""
-					)}
-				/>
-			</div>
-		</form>
+				)}
+			/>
+		</Form>
 	);
 }

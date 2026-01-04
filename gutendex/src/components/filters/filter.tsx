@@ -1,247 +1,291 @@
 "use client";
-import { Drawer } from "@geist-ui/core";
-import FilterInput from "./filterInput";
-import CopyrightToggle from "./copyrightToggle";
-import YearRangeFilter from "./yearRangeFilter";
-import { useState } from "react";
-import { ALL_LANGUAGES } from "@/utils/languages";
 import { cn } from "@/utils/cn";
+import YearRangeFilter from "./yearRangeFilter";
+import CopyrightToggle from "./copyrightToggle";
+import FilterInput from "./filterInput";
+import { Fragment } from "react";
 import Form from "next/form";
-import { primaryBtnClass, textBtnClass } from "../buttonClasses";
+import { useSearchParams, useRouter } from "next/navigation";
+import { LanguageOptions } from "@/types";
+
 type FilterProps = {
+	topicOptions: string[];
+	formatOptions: string[];
+	languageOptions: LanguageOptions[];
 	open: boolean;
-	setOpen: (open: boolean) => void;
-	searchQuery?: string;
-	topics?: string[];
-	onClose?: () => void;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	// setOpen,
+};
+// type FilterProps = {
+// 	topicOptions: string[];
+// 	formatOptions: string[];
+// 	languageOptions: LanguageOption[];
+// 	open: boolean;
+// 	setOpen;
+// };
+// interface FilterProps {
+// 	topicOptions: string[];
+// 	formatOptions: string[];
+// 	languageOptions: LanguageOption[];
+// 	open: boolean;
+// }
+
+type FilterSectionProps = {
+	topicOptions: string[];
+	formatOptions: string[];
+	languageOptions: LanguageOptions[];
 };
 
-export function Filter({ open, setOpen, topics = [], onClose }: FilterProps) {
-	const [topicInput, setTopicInput] = useState("");
-	const [formatInput, setFormatInput] = useState("");
-	const [languageInput, setLanguageInput] = useState("");
-	const [selectedTopics, setSelectedTopics] = useState<
-		Record<string, boolean>
-	>({});
-	const [selectedFormats, setSelectedFormats] = useState<
-		Record<string, boolean>
-	>({});
-	const [selectedLanguages, setSelectedLanguages] = useState<
-		Record<string, boolean>
-	>({});
-	const [copyright, setCopyright] = useState(false);
-	const [yearFrom, setYearFrom] = useState("");
-	const [yearTo, setYearTo] = useState("");
+type MobileFilterProps = FilterSectionProps & {
+	// No extra props for year/copyright; all handled via form
+};
 
-	// Static formats list (can be replaced with dynamic if needed)
-	const formats = [
-		"text/plain",
-		"text/html",
-		"application/pdf",
-		"application/epub+zip",
-		"application/x-mobipocket-ebook",
-		"application/rdf+xml",
-		"image/jpeg",
-		"audio/mpeg",
-		"audio/ogg",
-		"text/markdown",
-		"application/json",
-	];
-
-	const handleToggleTopic = (topic: string) => {
-		setSelectedTopics((prev) => ({ ...prev, [topic]: !prev[topic] }));
-	};
-
-	const handleToggleFormat = (format: string) => {
-		setSelectedFormats((prev) => ({ ...prev, [format]: !prev[format] }));
-	};
-
-	const handleToggleLanguage = (lang: string) => {
-		setSelectedLanguages((prev) => ({ ...prev, [lang]: !prev[lang] }));
-	};
-
-	const handleClose = () => {
-		setOpen(false);
-		if (onClose) onClose();
-	};
+function MobileFilter({
+	topicOptions,
+	formatOptions,
+	languageOptions,
+	onSubmit,
+}: FilterSectionProps & {
+	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}) {
 	return (
-		<Drawer
-			visible={open}
-			onClose={handleClose}
-			placement="bottom"
-			width={400}
-			height={200}
+		<Form
+			action=""
+			onSubmit={onSubmit}
 			className={cn(
-				"flex flex-col",
-				"h-fit",
-				"max-h-[85vh]",
-				"rounded-2xl",
-				"shadow-2xl",
-				"bg-white dark:bg-zinc-900",
-				"border border-divider",
-				"p-0",
-				"mx-auto",
+				"flex",
+				"flex-col",
+				"gap-4",
+				"p-4",
+				"gap-3",
+				"p-3",
+				"bg-container",
+				"border",
+				"border-edge",
+				"rounded-lg",
+				"rounded-3xl",
+				"md:hidden",
+				"",
 				""
 			)}>
-			<Drawer.Title>
-				<span
-					className={cn(
-						"text-2xl font-bold text-center w-full block",
-						"pt-4 pb-1",
-						"text-primary dark:text-primary-inv",
-						""
-					)}>
-					Filter
-				</span>
-			</Drawer.Title>
-			<Drawer.Subtitle>
-				<span
-					className={cn(
-						"text-xs font-semibold text-center w-full block",
-						"pb-2  uppercase tracking-wide",
-						""
-					)}>
-					Refine your search
-				</span>
-			</Drawer.Subtitle>
-			<Drawer.Content className={cn("px-6 pb-6 pt-2 h-fit", "")}>
-				<Form
-					action=""
-					className={cn(
-						"flex flex-col",
-						// "flex-row",
-						"gap-6",
-						// "w-full",
-						// "max-w-md",
-						// "mx-auto",
-						""
-					)}>
-					{Object.entries(selectedTopics)
-						.filter(([, v]) => v)
-						.map(([topic]) => (
-							<input
-								key={topic}
-								type="hidden"
-								name="topic"
-								value={topic}
-							/>
-						))}
-					{Object.entries(selectedFormats)
-						.filter(([, v]) => v)
-						.map(([format]) => (
-							<input
-								key={format}
-								type="hidden"
-								name="format"
-								value={format}
-							/>
-						))}
-					{Object.entries(selectedLanguages)
-						.filter(([, v]) => v)
-						.map(([lang]) => (
-							<input
-								key={lang}
-								type="hidden"
-								name="languages"
-								value={lang}
-							/>
-						))}
-					<FilterInput
-						label="Topics"
-						value={topicInput}
-						onChange={setTopicInput}
-						placeholder="Search topics..."
-						items={topics}
-						selectedItems={selectedTopics}
-						onToggleItem={handleToggleTopic}
-						//    name="topic"
-					/>
-					<FilterInput
-						label="Formats"
-						value={formatInput}
-						onChange={setFormatInput}
-						placeholder="Search formats..."
-						items={formats}
-						selectedItems={selectedFormats}
-						onToggleItem={handleToggleFormat}
-						//    name="format"
-					/>
-					<FilterInput
-						label="Languages"
-						value={languageInput}
-						onChange={setLanguageInput}
-						placeholder="Search languages..."
-						items={ALL_LANGUAGES}
-						selectedItems={selectedLanguages}
-						onToggleItem={handleToggleLanguage}
-						//    name="languages"
-					/>
-					<div className="flex items-center gap-2">
-						<CopyrightToggle
-							checked={copyright}
-							onChange={setCopyright}
-						/>
-						{copyright && (
-							<input type="hidden" name="copyright" value="on" />
-						)}
-					</div>
-					<div className="flex gap-2">
-						<YearRangeFilter
-							yearFrom={yearFrom}
-							yearTo={yearTo}
-							onYearFromChange={setYearFrom}
-							onYearToChange={setYearTo}
-						/>
-						{yearFrom && (
-							<input
-								type="hidden"
-								name="year_from"
-								value={yearFrom}
-							/>
-						)}
-						{yearTo && (
-							<input
-								type="hidden"
-								name="year_to"
-								value={yearTo}
-							/>
-						)}
-					</div>
-					<button
-						type="submit"
-						className={cn(
-							"mt-6",
-							"px-6 py-2",
-							"rounded-lg",
-							"bg-primary text-white dark:bg-accent dark:text-black",
-							"font-semibold text-base",
-							"hover:bg-primary/80 dark:hover:bg-accent/80",
-							"transition-colors duration-200",
-							"shadow-md",
-							"w-full",
-							"bg-accent-dark",
-							"text-nowrap rounded-full w-full",
-							"sm:w-fit",
-							"px-6 py-2 transition-colors border",
-							"      bg-transparent       border-accent-dark       text-accent-dark ",
-							// "      bg-accent-dark/5       border-accent-dark       text-accent-dark ",
-							"hover:bg-accent-dark hover:border-accent-dark hover:text-container-solid ",
+			<FilterInput
+				label="Topics"
+				searchParamName="topic"
+				options={topicOptions}
+			/>
+			<FilterInput
+				label="Formats"
+				searchParamName="mime_type"
+				options={formatOptions}
+			/>
+			<FilterInput
+				label="Languages"
+				searchParamName="languages"
+				options={languageOptions}
+			/>
+			<YearRangeFilter />
+			<CopyrightToggle />
+			<button
+				type="submit"
+				className={cn(
+					"col-span-full",
+					"row-start-2",
+					"w-full",
+					"mt-2",
+					"py-2",
+					"rounded-full",
+					"rounded-full",
+					"bg-primary",
+					"text-white",
+					"font-semibold",
+					"hover:bg-primary-dark",
+					"transition",
+					"dark:bg-accent-light dark:text-primary-inv",
+					"dark:bg-transparent dark:text-accent-light dark:border dark:border-accent-light dark:hover:bg-accent-light dark:hover:text-primary-inv",
+					"cursor-pointer",
+					//option 1
+					"dark:bg-transparent dark:text-accent-light dark:border dark:border-accent-light dark:hover:bg-accent-light dark:hover:text-primary-inv ",
+					"border border-accent-dark text-accent-dark bg-transparent hover:bg-accent-dark hover:text-primary-inv",
+					// option 2
+					"bg-accent-dark hover:bg-accent",
+					//option 3
+					"border-0 text-primary-inv bg-primary hover:bg-primary-highlight dark:border",
+					"",
+					"",
+					"",
+					""
+				)}>
+				Apply Filters
+			</button>
+		</Form>
+	);
+}
 
-							// "      bg-accent       border-accent       text-primary-inv ",
-							// "hover:bg-accent-dark hover:border-accent-dark       text-white ",
-							textBtnClass,
-							primaryBtnClass,
-							"w-full!",
-							"px-20",
-							// compressedBtnClass,
-							"",
+type DesktopFilterProps = FilterSectionProps & {
+	// No extra props for year/copyright; all handled via form
+};
 
-							""
-						)}>
-						Apply Filters
-					</button>
-				</Form>
-			</Drawer.Content>
-		</Drawer>
+function DesktopFilter({
+	topicOptions,
+	formatOptions,
+	languageOptions,
+	onSubmit,
+}: FilterSectionProps & {
+	onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+}) {
+	return (
+		<Form
+			action=""
+			onSubmit={onSubmit}
+			className={cn(
+				"hidden",
+
+				"gap-4",
+				"p-6",
+				"p-5",
+				"gap-3",
+				"gap-5",
+				// "p-3",
+				"bg-container",
+				"border",
+				"border-edge",
+				"rounded-3xl",
+				"w-full",
+				"rounded-4xl",
+				"md:grid",
+				// "grid-cols-4",
+				// "grid-cols-auto",
+				// "grid-cols-2",
+				"grid-cols-2",
+				"grid-rows-auto",
+				"border-edge-dark/50",
+				"border-edge/30",
+				"dark:hover:border-edge/50",
+				"",
+				""
+			)}>
+			<div
+				className={cn(
+					"col-start-1 col-span-1 row-start-1 flex flex-col gap-4"
+				)}>
+				<FilterInput
+					label="Topics"
+					searchParamName="topic"
+					options={topicOptions}
+				/>
+			</div>
+			<div
+				className={cn(
+					"col-start-2 col-span-1 row-start-1 flex flex-col gap-4"
+				)}>
+				<FilterInput
+					label="Formats"
+					searchParamName="mime_type"
+					options={formatOptions}
+				/>
+			</div>
+			<div
+				className={cn(
+					"col-start-1 col-span-1 row-start-2 flex flex-col gap-4"
+				)}>
+				<FilterInput
+					label="Languages"
+					searchParamName="languages"
+					options={languageOptions}
+				/>
+			</div>
+			<div
+				className={cn(
+					"col-start-2 col-span-1 row-start-2 lex flex-col gap-4"
+				)}>
+				<YearRangeFilter />
+				<CopyrightToggle />
+			</div>
+			<button
+				type="submit"
+				className={cn(
+					// "col-span-full",
+					// "row-start-2",
+					"col-span-full",
+					"col-span-3",
+					"col-start-1",
+					"row-start-3",
+
+					"w-full",
+					"mt-2",
+					"py-2",
+					"rounded-full",
+					"text-white",
+					"font-semibold",
+					"transition",
+					"cursor-pointer",
+					//option 1
+					"dark:bg-transparent dark:text-accent-light dark:border dark:border-accent-light dark:hover:bg-accent-light dark:hover:text-primary-inv ",
+					"border border-accent-dark text-accent-dark bg-transparent hover:bg-accent-dark hover:text-primary-inv",
+					// option 2
+					"bg-accent-dark hover:bg-accent",
+					//option 3
+					"border-0 text-primary-inv bg-primary hover:bg-primary-highlight dark:border",
+					"",
+					"",
+					""
+				)}>
+				Apply Filters
+			</button>
+		</Form>
+	);
+}
+
+export default function Filter({
+	topicOptions,
+	formatOptions,
+	languageOptions,
+	open,
+	setOpen,
+}: FilterProps) {
+	const searchParams = useSearchParams();
+	const router = useRouter();
+
+	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+		e.preventDefault();
+		setOpen(false);
+		const form = e.currentTarget;
+		const formData = new FormData(form);
+		const params = new URLSearchParams(searchParams.toString());
+
+		////* Only add non-empty values to params
+		for (const [key, value] of formData.entries()) {
+			// params.set(key, value);
+			if (
+				typeof value === "string" &&
+				value.trim() !== "" &&
+				value !== "on"
+			) {
+				params.set(key, value);
+			}
+		}
+
+		router.push(`/store?${params.toString()}`);
+	}
+
+	return (
+		<>
+			{open && (
+				<>
+					<MobileFilter
+						topicOptions={topicOptions}
+						formatOptions={formatOptions}
+						languageOptions={languageOptions}
+						onSubmit={handleSubmit}
+					/>
+					<DesktopFilter
+						topicOptions={topicOptions}
+						formatOptions={formatOptions}
+						languageOptions={languageOptions}
+						onSubmit={handleSubmit}
+					/>
+				</>
+			)}
+		</>
 	);
 }

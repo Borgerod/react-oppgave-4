@@ -1,258 +1,150 @@
 import { cn } from "@/utils/cn";
+import { useRef } from "react";
 
-type YearRangeFilterProps = {
-	yearFrom: string;
-	yearTo: string;
-	onYearFromChange: (value: string) => void;
-	onYearToChange: (value: string) => void;
-};
+import { useSearchParams } from "next/navigation";
 
-export default function YearRangeFilter({
-	yearFrom,
-	yearTo,
-	onYearFromChange,
-	onYearToChange,
-}: YearRangeFilterProps) {
+export default function YearRangeFilter() {
+	const searchParams = useSearchParams();
+	const authorYearStart = searchParams.get("author_year_start") || "";
+	const authorYearEnd = searchParams.get("author_year_end") || "";
+	const formRef = useRef<HTMLFieldSetElement>(null);
 	const yearInputStyling = [
+		// "w-full",
+		"bg-transparent",
+		"placeholder:italic",
+		"outline-none",
+		"focus_outline-none",
+		"h-12",
+
 		"bg-transparent",
 		"placeholder:italic",
 		"outline-none",
 		"focus:outline-none",
-		"flex flex-row items-center",
+		"flex",
+		"items-center",
 		"bg-container",
-		"text-sm",
 		"p-1",
-		"border border-foreground/10",
-		"focus:outline-none focus:ring-2 focus:ring-accent",
+		"pl-4",
+		"border",
+		"border-divider",
 		"rounded-full",
-		"hover:border-edge-highlight",
+		"hover:border-edge-dark",
 		"text-lg",
-		"sm:text-sm",
-		"px-2",
-		"py-2.5",
-		"sm:py-1",
-		//
-		"w-20",
-		"w-40",
-		"sm:w-30",
-		// "w-16",
-		// "sm:w-16",
-		// "sm:w-20",
-		// "w-fit",
-		// "w-full",
-		"text-lg",
-		"sm:text-lg",
-
-		"lg:flex-col",
-		// "lg:grid-rows-2 lg:grid-cols-1",
-		// "lg:rows-start-2 lg:cols-start-1",
-
-		"",
-		"",
+		"h-12",
+		"appearance-none",
+		"[appearance:textfield]",
+		"[&::-webkit-outer-spin-button]:appearance-none",
+		"[&::-webkit-inner-spin-button]:appearance-none",
+		"inset-shadow-sm",
+		// "bg-",
+		"bg-edge/50",
+		"dark:bg-edge-dark/50",
+		"border-edge-dark/50",
+		"border-edge/30",
+		"dark:hover:border-edge/50",
+		"w-full",
+		"w-fit",
+		"w-33",
 	];
 
 	return (
-		//! ORIGINAL YEAR RANGE
-		<div
+		<fieldset
+			ref={formRef}
 			className={cn(
+				"grid",
+				"grid-cols-1",
+				// "grid-cols-2",
+				// "grid-rows-1",
+				"justify-start",
+				"items-start",
+				"py-4",
 				"gap-2",
-				"w-full",
-				"flex",
-				"justify-between",
+				// "w-full",
+				// "md:w-fit",
+				"content-start",
 
-				// OPTION 1
-				"flex-row",
-				"items-center",
-				"lg:flex-col",
-				"lg:items-start ",
-				// OPTION 2
-				"flex-col",
-				"items-start ",
-
+				// "text-secondary",
+				"h-fit",
+				// "h-full",
 				"",
 				""
 			)}>
-			<span
-				className={cn(
-					"p-0",
-					"m-0",
-					"text-base",
-
-					"text-xl",
-
-					"",
-					""
-				)}>
-				{/* Author year range */}
-				{/* Author's alive between */}
-				Books written between
-				{/* Year */}
-			</span>
 			<div
 				className={cn(
-					"flex",
-					"flex-row",
-					"gap-1",
-					"items-center",
+					// layout
+					"flex", // Use Flexbox for easier alignment
+					"flex-row", // Mobile: Side-by-side (Row)
+					"sm:flex-col", // sm: Stacked (Column)
 
+					// alignment
+					"items-center", // Mobile: Center vertically
+					"sm:items-start", // sm: Align to start
+					"justify-between",
+					// sizing
+					"md:w-fit",
+					"h-fit",
+					// spacing
+					// "gap-4", // Mobile: Gap between legend and buttons
+					"gap-1", // Mobile: Gap between legend and buttons
+					"gap-5", // Mobile: Gap between legend and buttons
+					"sm:gap-2", // sm: Smaller gap when stacked
 					"",
 					""
 				)}>
-				<input
-					type="number"
-					name={yearFrom ? "year_from" : undefined}
-					aria-label="Year from"
-					placeholder="From"
-					value={yearFrom}
-					onChange={(e) => onYearFromChange(e.target.value)}
+				<legend
 					className={cn(
-						// OPTION 1
-						yearInputStyling,
-
-						//OPTION 2
-						"w-full",
+						"p-0",
+						"m-0",
+						"text-base",
+						"text-xl",
+						"row-start-1"
+					)}>
+					{/* Books written between */}
+					Written between
+				</legend>
+				<ul
+					aria-label="Filter by copyright status"
+					className={cn(
+						// layout
+						"grid",
+						"grid-flow-col",
+						"place-items-center",
+						// "row-start-3",
+						// sizing
+						"w-fit",
 						"h-12",
-
-						"",
-						""
-					)}
-				/>
-				<span
-					className={cn(
-						// "text-sm",
-						"text-lg",
+						"max-h-50",
+						// spacing
+						"p-1",
+						"gap-1",
+						// border
+						// "border",
+						// "border-edge/30",
+						// "rounded-full",
+						// background
 
 						"",
 						""
 					)}>
-					-
-				</span>
-				<input
-					type="number"
-					name={yearTo ? "year_to" : undefined}
-					aria-label="Year to"
-					placeholder="To"
-					value={yearTo}
-					onChange={(e) => onYearToChange(e.target.value)}
-					className={cn(
-						// OPTION 1
-						yearInputStyling,
-
-						//OPTION 2
-						"w-full",
-						"h-12",
-
-						"",
-						""
-					)}
-				/>
+					<input
+						type="number"
+						name="author_year_start"
+						aria-label="Year from"
+						placeholder="From year"
+						defaultValue={authorYearStart}
+						className={cn(...yearInputStyling, "", "")}
+					/>
+					<span className={cn("")}>-</span>
+					<input
+						type="number"
+						name="author_year_end"
+						aria-label="Year to"
+						placeholder="To year"
+						defaultValue={authorYearEnd}
+						className={cn(...yearInputStyling)}
+					/>
+				</ul>
 			</div>
-		</div>
-
-		//* ALTERNATIV YEAR RANGE
-		// <div
-		// 	className={cn(
-		// 		"gap-2",
-		// 		"w-full",
-		// 		"flex",
-		// 		"justify-between",
-		// 		"text-lg",
-		// 		"text-xl",
-		// 		// "font-semibold",
-
-		// 		// OPTION 1
-		// 		"flex-row",
-		// 		"items-center",
-
-		// 		// OPTION 2
-		// 		"flex-col",
-		// 		"items-start ",
-		// 		"",
-		// 		""
-		// 	)}
-		// >
-		// 	<span
-		// 		className={cn(
-		// 			"p-0",
-		// 			"m-0",
-		// 			// "text-md",
-		// 			"",
-		// 			""
-		// 		)}
-		// 	>
-		// 		{/* Author year range */}
-		// 		{/* Author's alive between */}
-		// 		Books written between
-		// 	</span>
-		// 	<div
-		// 		className={cn(
-		// 			"flex",
-		// 			"flex-row",
-		// 			"gap-1",
-		// 			"items-center",
-		// 			"w-full",
-		// 			"justify-between",
-		// 			"",
-		// 			""
-		// 		)}
-		// 	>
-		// 		<span className="font-light text-lg text-secondary">
-		// 			{/* Author born */}
-		// 			{/* Author's year of birth */}
-		// 			{/* Books made after */}
-		// 			{/* Year from */}
-		// 			Year start
-		// 		</span>
-		// 		<input
-		// 			type="number"
-		// 			name={yearFrom ? "year_from" : undefined}
-		// 			aria-label="Year from"
-		// 			placeholder="From"
-		// 			value={yearFrom}
-		// 			onChange={(e) => onYearFromChange(e.target.value)}
-		// 			className={cn(
-		// 				yearInputStyling,
-
-		// 				"",
-		// 				""
-		// 			)}
-		// 		/>
-		// 	</div>
-		// 	<div
-		// 		className={cn(
-		// 			"flex",
-		// 			"flex-row",
-		// 			"gap-1",
-		// 			"items-center",
-		// 			"w-full",
-		// 			"justify-between",
-		// 			// "text-lg",
-		// 			"",
-		// 			""
-		// 		)}
-		// 	>
-		// 		<span className="font-light text-lg text-secondary">
-		// 			{/* Author died */}
-		// 			{/* Author's year of death */}
-		// 			{/* Books made before */}
-		// 			{/* Year to */}
-		// 			Year end
-		// 		</span>
-		// 		<input
-		// 			type="number"
-		// 			name={yearTo ? "year_to" : undefined}
-		// 			aria-label="Year to"
-		// 			placeholder="To"
-		// 			value={yearTo}
-		// 			onChange={(e) => onYearToChange(e.target.value)}
-		// 			className={cn(
-		// 				yearInputStyling,
-
-		// 				"",
-		// 				""
-		// 			)}
-		// 		/>
-		// 	</div>
-		// </div>
+		</fieldset>
 	);
 }

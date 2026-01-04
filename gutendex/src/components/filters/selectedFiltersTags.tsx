@@ -1,142 +1,108 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tag } from "./tag";
+import { cn } from "@/utils/cn";
+import { simpleTextBtnClass } from "../buttonClasses";
+import { LanguageOptions } from "@/types";
 
 type SelectedFiltersTagsProps = {
-	selectedTopics?: Record<string, boolean>;
-	selectedFormats?: Record<string, boolean>;
-	selectedLanguages?: Record<string, boolean>;
-	copyright?: boolean;
-	yearFrom?: string | null;
-	yearTo?: string | null;
-	onRemoveTopic?: (topic: string) => void;
-	onRemoveFormat?: (format: string) => void;
-	onRemoveLanguage?: (language: string) => void;
-	onRemoveCopyright?: () => void;
-	onRemoveYearRange?: () => void;
-	onClearAll?: () => void;
-	searchQuery?: string | null;
+	languageOptions?: LanguageOptions[];
 };
 
 export default function SelectedFiltersTags({
-	selectedTopics = {},
-	selectedFormats = {},
-	selectedLanguages = {},
-	copyright = false,
-	yearFrom = null,
-	yearTo = null,
-	onRemoveTopic,
-	onRemoveFormat,
-	onRemoveLanguage,
-	onRemoveCopyright,
-	onRemoveYearRange,
-	onClearAll,
-	searchQuery,
+	languageOptions = [],
 }: SelectedFiltersTagsProps) {
-	const hasAnyFilters =
-		Object.values(selectedTopics).some(Boolean) ||
-		Object.values(selectedFormats).some(Boolean) ||
-		Object.values(selectedLanguages).some(Boolean) ||
-		copyright ||
-		Boolean(searchQuery) ||
-		Boolean(yearFrom || yearTo);
+	const searchParams = useSearchParams();
+	const router = useRouter();
+	const pathname = usePathname();
 
-	if (!hasAnyFilters) {
-		return null;
+	function formatValue(key: string, value: string) {
+		switch (key) {
+			case "copyright":
+				switch (value) {
+					case "true":
+						return "Copyright Only";
+					case "false":
+						return "Copyright Only";
+					default:
+						break;
+				}
+			case "languages": {
+				const match = languageOptions.find((opt) => opt.key === value);
+				return match?.name || value;
+			}
+
+			default:
+				return value;
+
+			case "topic":
+				return value.replace("Category: ", "");
+		}
+	}
+
+	function deleteParam(key: string, value: string) {
+		const params = new URLSearchParams(searchParams.toString());
+		params.delete(key);
+		router.push(`${pathname}?${params.toString()}`);
+	}
+
+	function onClearAll() {
+		router.push(`${pathname}`);
 	}
 
 	return (
-		<div
-			id="selected-filters-tags"
-			className="col-span-full w-full mt-5 sm:mt-0">
-			<div className="flex items-start justify-between mb-2">
+		<div id="selected-filters-tags" className="w-full mt-5 sm:mt-0">
+			<div className="flex items-start justify-between">
 				<div className="text-sm text-tertiary">Selected filters</div>
 				<button
 					type="button"
 					aria-label="Clear all filters"
-					onClick={() => onClearAll?.()}
-					className="text-sm text-red-500 hover:underline">
+					onClick={() => onClearAll()}
+					className={cn(
+						simpleTextBtnClass,
+						"text-warning",
+
+						"",
+						""
+					)}>
 					Clear All
 				</button>
 			</div>
 			<ul className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
-				{/* Topics */}
-				{Object.entries(selectedTopics)
-					.filter(([, v]) => v)
-					.map(([topic]) => (
-						<li key={`selected-topic-${topic}`}>
-							<Tag
-								id={`selected-topic-${topic}`}
-								item={topic}
-								checked={true}
-								onToggle={() => onRemoveTopic?.(topic)}
-								closeIcon
-							/>
-						</li>
-					))}
-				{/* Formats */}
-				{Object.entries(selectedFormats)
-					.filter(([, v]) => v)
-					.map(([format]) => (
+				{Array.from(searchParams.entries()).map(([key, value]) => {
+					let tooltip: string | undefined = undefined;
+					if (value.includes("Category")) tooltip = "Category";
+					else if (value.includes("bookshelf")) tooltip = "bookshelf";
+					return (
 						<li
-							key={`selected-format-${format}`}
-							className="place-self-center">
+							key={`selected-topic-${key}`}
+							{...(tooltip ? { title: tooltip } : {})}>
 							<Tag
-								id={`selected-format-${format}`}
-								item={format}
+								id={`selected-topic-${key}`}
+								item={formatValue(key, value)}
 								checked={true}
-								onToggle={() => onRemoveFormat?.(format)}
+								onToggle={() => deleteParam(key, value)}
 								closeIcon
+								className={cn(
+									value.includes("Category")
+										? // ? "peer-checked:bg-purple-300"
+										  // ? "peer-checked:bg-[#c086ea]/30"
+										  // ? "peer-checked:bg-[#dcb6f7]/30"
+										  // ? "peer-checked:bg-[#658fd9b6]"
+										  // ? "peer-checked:bg-[#658fd9b6]/30"
+										  // ? "peer-checked:bg-[#435e8e]/30"
+										  // ? "peer-checked:bg-[#003530]/30"
+										  //   "peer-checked:bg-container-dark "
+										  "peer-checked:bg-container-dark "
+										: "",
+									"",
+									""
+								)}
 							/>
 						</li>
-					))}
-				{/* Languages */}
-				{Object.entries(selectedLanguages)
-					.filter(([, v]) => v)
-					.map(([language]) => (
-						<li
-							key={`selected-language-${language}`}
-							className="place-self-center">
-							<Tag
-								id={`selected-language-${language}`}
-								item={language}
-								checked={true}
-								onToggle={() => onRemoveLanguage?.(language)}
-								closeIcon
-							/>
-						</li>
-					))}
-				{/* Copyright */}
-				{copyright && (
-					<li key="selected-copyright" className="place-self-center">
-						<Tag
-							id="selected-copyright"
-							item="Copyright Only"
-							checked={true}
-							onToggle={() => onRemoveCopyright?.()}
-							closeIcon
-						/>
-					</li>
-				)}
-
-				{/* Year range */}
-				{(yearFrom || yearTo) && (
-					<li key="selected-year-range" className="place-self-center">
-						<Tag
-							id="selected-year-range"
-							item={
-								yearFrom && yearTo
-									? `Years: ${yearFrom} - ${yearTo}`
-									: yearFrom
-									? `From: ${yearFrom}`
-									: `To: ${yearTo}`
-							}
-							checked={true}
-							onToggle={() => onRemoveYearRange?.()}
-							closeIcon
-						/>
-					</li>
-				)}
+					);
+				})}
 			</ul>
 		</div>
 	);
