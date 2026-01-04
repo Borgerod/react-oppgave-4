@@ -89,8 +89,16 @@ export default async function BookProfilePage({
 				"md:grid-cols-[1fr_auto]",
 				"md:px-20",
 				"pb-20",
-				"gap-20",
-				"gap-10",
+				// "gap-20",
+				// "md:gap-0",
+				"md:gap-10",
+				"gap-y-10",
+				// md
+				// "lg:grid-cols-1",
+				// "md:grid-cols-1",
+				// "lg:grid-rows-[auto_1fr]",
+				// "lg:grid-cols-[1fr_auto]",
+
 				// lg
 				// "lg:flex-none",
 				// "lg:w-auto",
