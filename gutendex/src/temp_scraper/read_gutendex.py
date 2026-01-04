@@ -15,16 +15,87 @@ from pprint import pprint
 import re
 import json
 import ast
+from typing import Literal
 
-def printFirstRow(df):
+
+class GutenDexDF:
+    def __init__(self):
+        script_dir = Path(__file__).resolve().parent
+        csv_path = script_dir / "gutendex_books.csv"
+        if not csv_path.exists():
+            raise SystemExit(f"CSV file not found: {csv_path}")
+        self.df = pd.read_csv(csv_path)
+
+    def getSpecificField(self, field, first=False):
+        if first:
+            print(self.df[field][0])
+        else:
+            print(self.df[field])
     
-    if len(df) > 0:
-        first_item = df.iloc[[0]].T 
-        print(first_item)
+    def printFirstRow(self):
+        if len(self.df) > 0:
+            first_item = self.df.iloc[[0]].T 
+            print(first_item)
 
-def printAll(df):
-    print(df)
+    def printAll(self):
+        print(self.df)
 
+    def get(self, field: Literal["single", "full", "all_bookshelves", "authors", "subjects", "bookshelves", "media_types", "formats", "langs"]):
+        match field:
+            case "single":
+                self.printAll()
+            
+            case "full":
+                self.printFirstRow()
+            
+            case "all_bookshelves":
+                counts = get_bookshelf_counts(self.df)
+                top = dict(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))
+                print("all bookshelves:")
+                print("_"*60)
+                print(json.dumps(top, ensure_ascii=False, indent=4))
+            
+            case "authors": #NOTE: gets top 10
+                author_downloads = get_author_downloads(self.df)
+                top10 = dict(sorted(author_downloads.items(), key=lambda kv: kv[1], reverse=True)[:10])
+                print("top 10 authors:")
+                print("_"*60)
+                print(json.dumps(top10, ensure_ascii=False, indent=4))
+            
+            case "subjects":
+                subject_counts = get_subject_counts(self.df)
+                top_subjects = dict(sorted(subject_counts.items(), key=lambda kv: kv[1], reverse=True)[:100])
+                print("top 100 Subjects:")
+                print("_"*60)
+                print(json.dumps(top_subjects, ensure_ascii=False, indent=4))
+           
+            case "bookshelves":
+                bookshelf_counts = get_bookshelf_counts(self.df)
+                top_bookshelf = dict(sorted(bookshelf_counts.items(), key=lambda kv: kv[1], reverse=True)[:100])
+                print("top 100 Bookshelves:")
+                print("_"*60)
+                print(json.dumps(top_bookshelf, ensure_ascii=False, indent=4))
+
+            case "media_types":
+                mimt_type_counts = get_media_type_counts(self.df)
+                top_media_type = dict(sorted(mimt_type_counts.items(), key=lambda kv: kv[1], reverse=True)[:100])
+                print("top 100 top_media_type:")
+                print("_"*60)
+                print(json.dumps(top_media_type, ensure_ascii=False, indent=4))
+
+            case "formats":
+                format_counts = get_format_counts(self.df)
+                top_format = dict(sorted(format_counts.items(), key=lambda kv: kv[1], reverse=True)[:100])
+                print("top formats:")
+                print("_"*60)
+                print(json.dumps(top_format, ensure_ascii=False, indent=4))
+
+            case "langs":
+                lang_counts = get_language_counts(self.df)
+                top_lang = dict(sorted(lang_counts.items(), key=lambda kv: kv[1], reverse=True)[:100])
+                print("top 100 top_lang:")
+                print("_"*60)
+                print(json.dumps(top_lang, ensure_ascii=False, indent=4))
 
 def get_bookshelf_counts(dataframe: pd.DataFrame) -> dict:
     if "bookshelves" not in dataframe.columns:
@@ -52,7 +123,6 @@ def get_bookshelf_counts(dataframe: pd.DataFrame) -> dict:
 
     return dict(counter)
 
-
 def get_subject_counts(dataframe: pd.DataFrame) -> dict:
     """Count occurrences of subjects across the dataframe.
 
@@ -78,7 +148,6 @@ def get_subject_counts(dataframe: pd.DataFrame) -> dict:
         counter.update(parts)
 
     return dict(counter)
-
 
 def get_media_type_counts(dataframe: pd.DataFrame) -> dict:
     """Count occurrences of mime types across the dataframe.
@@ -118,7 +187,6 @@ def get_media_type_counts(dataframe: pd.DataFrame) -> dict:
     ('StillImage', 1)]
     '''
     return dict(counter)
-
 
 def get_format_counts(dataframe: pd.DataFrame) -> dict:
     """Count occurrences of format mime types across the dataframe.
@@ -173,7 +241,6 @@ def get_format_counts(dataframe: pd.DataFrame) -> dict:
         counter.update(keys)
 
     return dict(counter)
-
 
 def get_author_downloads(dataframe: pd.DataFrame) -> dict:
     """Aggregate download_count per author.
@@ -246,7 +313,6 @@ def get_author_downloads(dataframe: pd.DataFrame) -> dict:
 
     return dict(totals)
 
-
 def get_subject_downloads(dataframe: pd.DataFrame) -> dict:
     """Aggregate download_count per subject.
 
@@ -308,64 +374,40 @@ def get_subject_downloads(dataframe: pd.DataFrame) -> dict:
 
     return dict(totals)
 
+def get_language_counts(dataframe: pd.DataFrame) -> dict:
+    """Count occurrences of languages across the dataframe.
 
+    Expects a 'languages' column, which may contain list-like values or
+    delimiter-separated strings. Returns mapping language -> occurrence_count.
+    """
+    if "languages" not in dataframe.columns:
+        return {}
 
+    counter = Counter()
+    for val in dataframe["languages"].dropna():
+        parts = []
+        if isinstance(val, (list, tuple)):
+            parts = [str(p).strip() for p in val if str(p).strip()]
+        elif isinstance(val, str):
+            s = val.strip()
+            # Remove surrounding brackets if present (e.g. "[...]")
+            if s.startswith("[") and s.endswith("]"):
+                s = s[1:-1]
+            # Split on comma, semicolon, or pipe and clean each token
+            parts = [token.strip().strip('"').strip("'") for token in re.split(r"[,;|]", s) if token.strip()]
+        else:
+            parts = []
 
+        counter.update(parts)
 
+    return dict(counter)
 
 def main() -> None:
-    script_dir = Path(__file__).resolve().parent
-    csv_path = script_dir / "gutendex_books.csv"
-    if not csv_path.exists():
-        raise SystemExit(f"CSV file not found: {csv_path}")
-
-    df = pd.read_csv(csv_path)
-    # printFirstRow(df)
-
-    print(df["formats"][0])
-
-    # counts = get_bookshelf_counts(df)
-    # # Simple descending sort: sort the (bookshelf, count) pairs by count
-    # pprint(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))
-    
-    
-    # # Now compute total downloads per author and print sorted (largest first)
-    # author_downloads = get_author_downloads(df)
-    # top10 = sorted(author_downloads.items(), key=lambda kv: kv[1], reverse=True)[:10]
-    # pprint(top10)
-
-    # # Also print top subjects by occurrence count (like bookshelves)
-    # subject_counts = get_subject_counts(df)
-    # top_subjects = sorted(subject_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    # print("top 100 Subjects:")
-    # print("_"*60)
-    # pprint(top_subjects)
-
-
-    # # Also print top subjects by occurrence count (like bookshelves)
-    # bookshelf_counts = get_bookshelf_counts(df)
-    # top_bookshelf = sorted(bookshelf_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    # print("top 100 Bookshelves:")
-    # print("_"*60)
-    # pprint(top_bookshelf)
-
-
-
-    # # get_media_type_counts
-    # mimt_type_counts = get_media_type_counts(df)
-    # top_media_type = sorted(mimt_type_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    # print("top 100 top_media_type:")
-    # print("_"*60)
-    # pprint(top_media_type)
-
-
-    # get_media_type_counts
-    format_counts = get_format_counts(df)
-    top_format = sorted(format_counts.items(), key=lambda kv: kv[1], reverse=True)[:100]
-    print("top 100 top_format:")
-    print("_"*60)
-    pprint(top_format)
-
+    g = GutenDexDF() 
+    g.get("formats")
 
 if __name__ == "__main__":
     main()
+
+
+
