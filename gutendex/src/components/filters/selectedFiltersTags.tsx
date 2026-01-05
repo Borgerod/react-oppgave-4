@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Tag } from "./tag";
+import { Tag, TagProps } from "./tag";
 import { cn } from "@/utils/cn";
 import { simpleTextBtnClass } from "../buttonClasses";
 import { LanguageOptions } from "@/types";
@@ -86,19 +86,12 @@ export default function SelectedFiltersTags({
 								closeIcon
 								className={cn(
 									value.includes("Category")
-										? // ? "peer-checked:bg-purple-300"
-										  // ? "peer-checked:bg-[#c086ea]/30"
-										  // ? "peer-checked:bg-[#dcb6f7]/30"
-										  // ? "peer-checked:bg-[#658fd9b6]"
-										  // ? "peer-checked:bg-[#658fd9b6]/30"
-										  // ? "peer-checked:bg-[#435e8e]/30"
-										  // ? "peer-checked:bg-[#003530]/30"
-										  //   "peer-checked:bg-container-dark "
-										  "peer-checked:bg-container-dark "
+										? "peer-checked:bg-container-dark "
 										: "",
 									"",
 									""
 								)}
+								{...({} as TagProps)}
 							/>
 						</li>
 					);

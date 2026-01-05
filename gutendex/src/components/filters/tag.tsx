@@ -12,6 +12,7 @@ export type TagProps = {
 	url?: string;
 	bigText?: boolean;
 	isDownload?: boolean;
+	className?: string;
 };
 
 export function Tag({
@@ -23,8 +24,18 @@ export function Tag({
 	url,
 	bigText,
 	isDownload,
+	className,
 }: TagProps) {
 	const router = useRouter();
+
+	const darkMode: string[] = [
+		"hover:bg-accent/50",
+		" hover:text-primary",
+		"dark:bg-foreground/25 dark:hover:bg-accent/50 hover:dark:text-primary-inv",
+		"dark:bg-divider dark:hover:bg-accent/50 hover:dark:text-primary-inv",
+		"active:bg-accent-dark/50",
+		"active:dark:bg-accent-dark/50",
+	];
 
 	// When URL is provided, render as a button with navigation to avoid nested links
 	if (url) {
@@ -59,17 +70,17 @@ export function Tag({
 					"flex-nowrap w-fit",
 					"cursor-pointer",
 					// colors
-					"text-primary/80 bg-foreground/10 hover:bg-accent/50 hover:text-primary",
-					"dark:bg-foreground/25 dark:hover:bg-accent/50 hover:dark:text-primary-inv",
-					"dark:bg-divider dark:hover:bg-accent/50 hover:dark:text-primary-inv",
-					"active:bg-accent-dark/50",
-					"active:dark:bg-accent-dark/50",
+					"text-primary/80 bg-foreground/10",
+
+					darkMode,
 					"font-thin",
 					bigText ? "text-lg sm:text-sm" : "",
 
 					"",
 					"",
-					""
+					"",
+
+					className ?? ""
 				)}>
 				{item}
 			</button>
@@ -87,42 +98,55 @@ export function Tag({
 				checked={checked ?? false}
 				onChange={() => onToggle?.()}
 			/>
+
 			<label
 				htmlFor={id}
 				className={cn(
-					"flex items-center gap-1 text-xs font-thin ",
-					"rounded-full",
-					"px-2 py-0 ",
-					"py-0.5 px-2",
-					"flex-nowrap w-fit",
-
-					// colors
-					"text-primary/80 bg-foreground/10 hover:bg-accent/50 hover:text-primary",
-					"dark:bg-foreground/25 dark:hover:bg-accent/50 hover:dark:text-primary-inv",
-					"dark:bg-divider dark:hover:bg-accent/50 hover:dark:text-primary-inv",
-					"active:bg-accent-dark/50",
-					"active:dark:bg-accent-dark/50",
-					"peer-checked:bg-accent/50 peer-checked:text-primary",
-					"peer-checked:dark:text-primary-inv",
+					"flex",
+					"items-center",
+					"gap-1",
+					"text-xs",
 					"font-thin",
-					`${closeIcon ? "pr-1.5" : ""}`,
-
-					// "px-2 py-0 ",
-					// "py-0.5 px-2",
-					// "py-1 px-2",
-					"py-1 px-2 pt-1.5",
-					"sm:py-0.5",
-					// "sm:py-0",
-					"",
-
-					// "leading-0",
-					"leading-none",
-					// bigText ? "text-lg sm:text-sm lg:text-xs" : "",
+					"rounded-full",
+					"h-6",
+					"flex-nowrap",
+					"w-fit",
+					"text-primary/80",
+					"hover:text-primary",
+					"peer-checked:text-primary",
+					"font-thin",
+					"p-1",
+					// `${closeIcon ? "pr-1.5" : ""}`,
+					// `${closeIcon ? "pl-1.5 p-1" : "p-1"}`,
+					`${closeIcon ? "pl-2" : ""}`,
 					bigText ? "text-lg sm:text-base" : "text-sm",
-
 					"text-nowrap",
-					"",
-					""
+					"cursor-pointer",
+					closeIcon ? "select-none pointer-events-none" : "",
+					"text-center",
+					"content-center",
+					"dark:bg-foreground/25",
+					"dark:hover:bg-accent/50",
+					"hover:dark:text-primary-inv",
+					"dark:bg-divider",
+					// "active:bg-accent-dark/50",
+					// "active:dark:bg-accent-dark/50",
+					// "peer-checked:dark:text-primary-inv",
+					// "active:dark:bg-accent-dark/50",
+					// "peer-checked:dark:text-primary-inv",
+					"bg-foreground/10",
+					// "peer-checked:bg-accent/50",
+					// "dark:bg-foreground",
+					// "peer-checked:bg-accent",
+					// "dark:bg-container-raised",
+					// "dark:bg-edge",
+					// "dark:bg-container-solid",
+					"dark:bg-container",
+					"dark:border-edge dark:border",
+					"hover:dark:bg-edge-highlight",
+					"dark:text-accent-light!",
+					// darkMode,
+					className ?? ""
 				)}>
 				{item}
 				{closeIcon ? (
@@ -131,16 +155,28 @@ export function Tag({
 						aria-label={`Remove ${item}`}
 						onClick={() => onToggle?.()}
 						className={cn(
-							"p-0.5 my-1 rounded-full ",
-							"flex items-center",
-							"border-0 cursor-pointer",
-							"bg-container hover:bg-container-raised",
-							"text-secondary hover:text-primary hover:font-bold",
+							"p-0.5",
+							"rounded-full",
+							"flex",
+							"items-center",
+							"border-0",
+							"cursor-pointer",
+							"bg-container",
+							"hover:bg-container-raised",
+							"dark:bg-container-solid",
+							"dark:bg-edge",
+							"hover:dark:bg-edge",
+							// "hover:dark:bg-edge-dark",
+							"text-secondary",
+							"hover:text-primary",
+							"hover:font-bold",
+							"bg-accent-light/10!",
+							"text-accent-light!",
 							bigText ? "text-lg sm:text-sm" : "",
-							"",
-							""
+							"pointer-events-auto",
+							"cursor-pointer"
 						)}>
-						<IoMdClose className="" />
+						<IoMdClose />
 					</button>
 				) : null}
 			</label>
