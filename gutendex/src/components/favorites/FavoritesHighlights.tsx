@@ -1,31 +1,27 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Highlights from "@/components/ui/highlights";
 import { Book } from "@/types";
 import { FaHeart } from "react-icons/fa6";
 
-export default function FavoritesHighlights() {
-	const [favorites, setFavorites] = useState<Book[]>([]);
-	const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
-	const [loading, setLoading] = useState(true);
+function getFavoritesFromStorage(): Book[] {
+	if (typeof window === "undefined") return [];
+	const raw = localStorage.getItem("favoriteBooks");
+	if (!raw) return [];
+	try {
+		return JSON.parse(raw) as Book[];
+	} catch {
+		return [];
+	}
+}
 
-	useEffect(() => {
-		const raw = localStorage.getItem("favoriteBooks");
-		if (raw) {
-			try {
-				const parsed = JSON.parse(raw) as Book[];
-				setFavorites(parsed.slice(0, 10));
-				setFavoriteIds(parsed.map((b) => b.id));
-			} catch {
-				setFavorites([]);
-				setFavoriteIds([]);
-			}
-		} else {
-			setFavorites([]);
-			setFavoriteIds([]);
-		}
-		setLoading(false);
-	}, []);
+export default function FavoritesHighlights() {
+	const [favorites, setFavorites] = useState<Book[]>(() =>
+		getFavoritesFromStorage().slice(0, 10)
+	);
+	const [favoriteIds, setFavoriteIds] = useState<number[]>(() =>
+		getFavoritesFromStorage().map((b) => b.id)
+	);
 
 	const handleToggleFavorite = useCallback((book: Book) => {
 		const raw = localStorage.getItem("favoriteBooks");
@@ -46,7 +42,7 @@ export default function FavoritesHighlights() {
 
 	return (
 		<Highlights
-			loading={loading}
+			loading={false}
 			data={favorites}
 			title="Your Favorites"
 			tagLabel={<FaHeart />}
