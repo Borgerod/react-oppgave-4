@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Tag, TagProps } from "./tag";
+import { Tag } from "./tag";
 import { cn } from "@/utils/cn";
 import { simpleTextBtnClass } from "../buttonClasses";
 import { LanguageOptions } from "@/types";
@@ -41,7 +41,7 @@ export default function SelectedFiltersTags({
 		}
 	}
 
-	function deleteParam(key: string, value: string) {
+	function deleteParam(key: string) {
 		const params = new URLSearchParams(searchParams.toString());
 		params.delete(key);
 		router.push(`${pathname}?${params.toString()}`);
@@ -82,7 +82,7 @@ export default function SelectedFiltersTags({
 								id={`selected-topic-${key}`}
 								item={formatValue(key, value)}
 								checked={true}
-								onToggle={() => deleteParam(key, value)}
+								onToggle={() => deleteParam(key)}
 								closeIcon
 								className={cn(
 									value.includes("Category")
@@ -91,7 +91,6 @@ export default function SelectedFiltersTags({
 									"",
 									""
 								)}
-								{...({} as TagProps)}
 							/>
 						</li>
 					);
