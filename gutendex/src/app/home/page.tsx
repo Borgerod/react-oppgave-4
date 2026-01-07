@@ -15,11 +15,13 @@ async function fetchBooks(path: string): Promise<Book[]> {
 	cacheLife("hours");
 	cacheTag("home-books");
 
-	const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-	const url = new URL(path, baseUrl).toString();
+	// Extract query params from path (e.g., "/api/books?page=1")
+	const pathParts = path.split("?");
+	const search = pathParts[1] ? `?${pathParts[1]}` : "";
+	const url = `https://gutendex.com/books${search}`;
 
 	try {
-		const res = await fetch(url, { cache: "no-store" });
+		const res = await fetch(url, { next: { revalidate: 3600 } });
 		if (!res.ok) return [];
 		const json = (await res.json()) as BooksResponse;
 		return json.results;

@@ -10,10 +10,17 @@ export async function fetchPopularAuthors(): Promise<AuthorItem[]> {
 	cacheTag("popular-authors");
 
 	try {
+		// During build, this needs to return empty array since the API route isn't available
+		if (
+			process.env.NODE_ENV === "production" &&
+			!process.env.NEXT_PUBLIC_SITE_URL
+		) {
+			return [];
+		}
 		const baseUrl =
 			process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 		const res = await fetch(`${baseUrl}/api/authors/top9`, {
-			cache: "no-store",
+			next: { revalidate: 3600 },
 		});
 
 		if (!res.ok) {

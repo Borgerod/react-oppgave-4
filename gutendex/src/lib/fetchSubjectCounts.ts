@@ -8,11 +8,9 @@ export async function fetchSubjectCount(subjectName: string): Promise<number> {
 	cacheTag("subject-counts");
 
 	try {
-		const baseUrl =
-			process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 		const topic = encodeURIComponent(subjectName);
-		const res = await fetch(`${baseUrl}/api/books?topic=${topic}`, {
-			cache: "no-store",
+		const res = await fetch(`https://gutendex.com/books?topic=${topic}`, {
+			next: { revalidate: 3600 },
 		});
 
 		if (!res.ok) {
